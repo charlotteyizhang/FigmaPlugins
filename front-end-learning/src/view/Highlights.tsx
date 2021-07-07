@@ -16,6 +16,8 @@ export const Highlights = () => {
 const styles = {
   highlights: css({
     display: "flex",
+    position: "fixed",
+    right: 0,
     flexDirection: "column",
     width: "84vw",
     padding: "2rem",

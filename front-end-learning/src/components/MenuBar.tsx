@@ -4,6 +4,8 @@ import { css } from "@emotion/css";
 import { EmailIcon } from "../img/Email";
 import { themeSpacing } from "../basicStyle/spacing";
 import { PhoneIcon } from "../img/Phone";
+import { SupportIcon } from "../img/Support";
+import { LogoutIcon } from "../img/Logout";
 
 export const MenuBar = () => {
   return (
@@ -35,18 +37,23 @@ export const MenuBar = () => {
       <div className={styles.contact}>
         <h4>Contact information</h4>
         <div className={styles.contactInfo}>
-          <PhoneIcon width="1rem" height="1rem" color="#00558C" />
+          <PhoneIcon width="1rem" height="1rem" fill="#00558C" />
           <p>01234567890</p>
         </div>
         <div className={styles.contactInfo}>
-          <EmailIcon width="1rem" height="1rem" color="#00558C" />
+          <EmailIcon width="1rem" height="1rem" fill="#00558C" />
           <p>email@email.com</p>
         </div>
       </div>
-
       <div className={styles.buttons}>
-        <button type="button">Support</button>
-        <button type="button">Logout</button>
+        <button type="button">
+          <SupportIcon width="1rem" height="1rem" fill="white" />
+          <h4>Support</h4>
+        </button>
+        <button type="button">
+          <LogoutIcon width="1rem" height="1rem" fill="white" />
+          <h4>Logout</h4>
+        </button>
       </div>
     </menu>
   );
@@ -141,5 +148,12 @@ const styles = {
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
+    button: {
+      display: "flex",
+      width: "100%",
+    },
+    h4: {
+      paddingLeft: "1rem",
+    },
   }),
 };

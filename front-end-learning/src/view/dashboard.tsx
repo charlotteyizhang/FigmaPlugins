@@ -21,12 +21,12 @@ export const Dashboard = () => {
 const styles = {
   dashboard: css({
     backgroundColor: "#F4F4F4",
-    height: "100vh",
     width: "100vw",
     display: "flex",
     flexDirection: "column",
   }),
   min: css({
     display: "flex",
+    overflow: "scroll",
   }),
 };

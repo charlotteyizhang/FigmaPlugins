@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>non-renew key</title>
+    <defs>
+        <filter color-interpolation-filters="auto" id="filter-1">
+            <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0.945098 0 0 0 0 0.337255 0 0 0 0 0.435294 0 0 0 1.000000 0"></feColorMatrix>
+        </filter>
+        <filter x="-107.5%" y="-107.5%" width="315.0%" height="315.0%" filterUnits="objectBoundingBox" id="filter-2">
+            <feOffset dx="0" dy="3" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="4" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0.439215686   0 0 0 0 0.470588235   0 0 0 0 0.529411765  0 0 0 0.24 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+        <circle id="path-3" cx="10" cy="10" r="3"></circle>
+    </defs>
+    <g id="non-renew-key" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Dot" transform="translate(5.500000, 6.000000)" filter="url(#filter-1)">
+            <g filter="url(#filter-2)">
+                <circle id="Oval" fill="#FFFFFF" cx="10" cy="10" r="10"></circle>
+                <mask id="mask-4" fill="white">
+                    <use xlink:href="#path-3"></use>
+                </mask>
+                <use id="Color" fill="#838F9E" xlink:href="#path-3"></use>
+            </g>
+        </g>
+    </g>
+</svg>
