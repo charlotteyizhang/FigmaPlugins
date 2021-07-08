@@ -46,14 +46,14 @@ export const MenuBar = () => {
         </div>
       </div>
       <div className={styles.buttons}>
-        <button type="button">
-          <SupportIcon width="1rem" height="1rem" fill="white" />
+        {/* <div className={styles.button}>
+          <SupportIcon width="1rem" height="1rem" />
           <h4>Support</h4>
-        </button>
-        <button type="button">
-          <LogoutIcon width="100%" height="100%" fill="white" />
+        </div> */}
+        <div className={styles.button}>
+          <LogoutIcon width="1rem" height="1rem" />
           <h4>Logout</h4>
-        </button>
+        </div>
       </div>
     </menu>
   );
@@ -70,7 +70,8 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     textAlign: "center",
-    width: "16vw",
+    width: "16%",
+    minWidth: "220px",
     height: "90vh",
     ul: { padding: 0, margin: 0 },
     li: { listStyle: "none" },
@@ -85,14 +86,6 @@ const styles = {
       fontWeight: "bold",
     },
     ".active": { backgroundColor: "grey" },
-    button: {
-      backgroundColor: "#00558C",
-      color: "white",
-      marginBottom: themeSpacing.small,
-      padding: "1rem 1.5rem",
-      border: "none",
-      borderRadius: "10px",
-    },
     p: {
       fontSize: "14px",
     },
@@ -100,12 +93,13 @@ const styles = {
   account: css({
     img: {
       margin: "1rem 0",
+      // [`@media screen and (max-width: 1024px) `]: {
+      //   transition: "all 0.5s ease-in-out",
+      //   margin: "0.5rem 0",
+      // },
     },
     h5: {
       marginBottom: "0.3rem",
-    },
-    p: {
-      marginBottom: themeSpacing.large,
     },
   }),
   img: css({
@@ -117,24 +111,23 @@ const styles = {
     // margin: "2rem 0",
     textAlign: "left",
     listStyleType: "none",
+
     h3: {
-      margin: "2rem 0 0.7rem",
-    },
-    ul: {
-      marginBottom: "2rem",
+      margin: "0 0 0.7rem",
     },
     hr: {
-      marginBottom: themeSpacing.large,
+      margin: "2rem 0",
       color: "#39393B",
       opacity: "0.3",
+      // [`@media screen and (max-width: 1024px) `]: {
+      //   transition: "all 0.5s ease-in-out",
+      //   margin: "1.5rem 0",
+      // },
     },
   }),
   contact: css({
     marginBottom: themeSpacing.large,
     textAlign: "left",
-    [`@media screen and (max-width: 1000px) `]: {
-      backgroundColor: "pink",
-    },
     h4: {
       padding: "0",
       marginBottom: themeSpacing.default,
@@ -155,14 +148,20 @@ const styles = {
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    button: {
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      width: "100%",
-    },
     h4: {
       paddingLeft: "2rem",
     },
+  }),
+  button: css({
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+    backgroundColor: "#00558C",
+    color: "white",
+    marginBottom: themeSpacing.small,
+    padding: "1rem 1.5rem",
+    border: "none",
+    borderRadius: "10px",
   }),
 };

@@ -36,11 +36,11 @@ const styles = {
   forecast: css({
     backgroundColor: "white",
     border: "1px solid #E8E8E8",
-    flex: 1,
-    padding: "1rem",
+
+    padding: themeSpacing.large,
     h2: {
       color: "#555761",
-      marginBottom: "0.5rem",
+      marginBottom: themeSpacing.default,
     },
     hr: {
       color: "#39393B",
@@ -48,6 +48,7 @@ const styles = {
     },
   }),
   linegraph: css({
+    flex: 1,
     display: "flex",
     flexDirection: "row",
     paddingRight: themeSpacing.default,
