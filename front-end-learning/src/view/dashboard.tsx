@@ -24,9 +24,11 @@ const styles = {
     width: "100vw",
     display: "flex",
     flexDirection: "column",
+    overflow: "hidden",
+    height: "100vh",
   }),
   min: css({
     display: "flex",
-    overflow: "scroll",
+    overflowY: "hidden",
   }),
 };

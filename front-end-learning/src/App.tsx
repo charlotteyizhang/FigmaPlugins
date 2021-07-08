@@ -4,9 +4,5 @@ import "./App.css";
 import { Dashboard } from "./view/Dashboard";
 
 export const App = () => {
-  return (
-    <div className="App">
-      <Dashboard/>
-    </div>
-  );
-}
+  return <Dashboard />;
+};

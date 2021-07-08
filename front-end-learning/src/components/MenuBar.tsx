@@ -51,7 +51,7 @@ export const MenuBar = () => {
           <h4>Support</h4>
         </button>
         <button type="button">
-          <LogoutIcon width="1rem" height="1rem" fill="white" />
+          <LogoutIcon width="100%" height="100%" fill="white" />
           <h4>Logout</h4>
         </button>
       </div>
@@ -62,7 +62,7 @@ export const MenuBar = () => {
 const styles = {
   menubar: css({
     color: "#555761",
-    overflow: "none",
+    overflow: "hidden",
     padding: themeSpacing.large,
     boxSizing: "border-box",
     backgroundColor: "white",
@@ -104,6 +104,9 @@ const styles = {
     h5: {
       marginBottom: "0.3rem",
     },
+    p: {
+      marginBottom: themeSpacing.large,
+    },
   }),
   img: css({
     width: "30%",
@@ -111,8 +114,7 @@ const styles = {
     borderRadius: "50%",
   }),
   dashboardLinks: css({
-    // ">*"
-    margin: "2rem 0",
+    // margin: "2rem 0",
     textAlign: "left",
     listStyleType: "none",
     h3: {
@@ -122,15 +124,20 @@ const styles = {
       marginBottom: "2rem",
     },
     hr: {
+      marginBottom: themeSpacing.large,
       color: "#39393B",
       opacity: "0.3",
     },
   }),
   contact: css({
-    marginBottom: "2rem",
+    marginBottom: themeSpacing.large,
     textAlign: "left",
+    [`@media screen and (max-width: 1000px) `]: {
+      backgroundColor: "pink",
+    },
     h4: {
-      margin: "1rem 0 0.7rem",
+      padding: "0",
+      marginBottom: themeSpacing.default,
     },
     p: {
       marginBottom: "0.5rem",
@@ -150,10 +157,12 @@ const styles = {
     alignItems: "center",
     button: {
       display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
       width: "100%",
     },
     h4: {
-      paddingLeft: "1rem",
+      paddingLeft: "2rem",
     },
   }),
 };
