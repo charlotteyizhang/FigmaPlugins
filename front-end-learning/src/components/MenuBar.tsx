@@ -86,7 +86,7 @@ const styles = {
       color: "#00558C",
       fontWeight: "bold",
     },
-    ".active": { backgroundColor: "grey" },
+    // ".active": { backgroundColor: "grey" },
     p: {
       fontSize: "14px",
     },

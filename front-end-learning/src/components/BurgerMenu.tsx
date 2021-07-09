@@ -7,10 +7,9 @@ import { PhoneIcon } from "../img/Phone";
 import { SupportIcon } from "../img/Support";
 import { LogoutIcon } from "../img/Logout";
 
-export const BurgerMenu = ({}) => {
+export const BurgerMenu = () => {
   return (
     <menu className={styles.burgermenu}>
-      <h3>Dashboard</h3>
       <ul>
         <li>
           <a href="#">Highlights</a>
@@ -32,15 +31,54 @@ export const BurgerMenu = ({}) => {
 
 const styles = {
   burgermenu: css({
-    background: "pink",
+    padding: themeSpacing.large,
+    backgroundColor: "white",
     zIndex: 1,
-    width: "100%",
-    height: "100%",
+    width: "100vw",
+    height: "100vh",
     display: "flex",
     flexDirection: "column",
+    ul: {
+      listStyle: "none",
+      justifyContent: "center",
+      alignItems: "center",
+    },
     li: {
-      backgroundColor: "grey",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      width: "100%",
+      backgroundColor: "#00558C",
+      marginBottom: themeSpacing.small,
+      padding: "1rem 1.5rem",
+      border: "none",
+      borderRadius: "10px",
+    },
+    "li:hover": {
+      border: "1px solid #00558C",
+      backgroundColor: "white",
+      a: {
+        color: "#00558C",
+        fontWeight: "bold",
+      },
+    },
+    "a, a:link, a:visited": {
+      color: "white",
+      textDecoration: "none",
+      display: "block",
+      padding: "0.5rem 0",
     },
   }),
-  burgerbutton: css({}),
+  burgerbutton: css({
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+    backgroundColor: "#00558C",
+    color: "white",
+    marginBottom: themeSpacing.small,
+    padding: "1rem 1.5rem",
+    border: "none",
+    borderRadius: "10px",
+  }),
 };

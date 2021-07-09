@@ -1,14 +1,19 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { css, keyframes } from "@emotion/css";
 import { themeSpacing } from "../basicStyle/spacing";
 import { ChargeNow } from "./ChargeNow";
 
 export const Notification = () => {
+  const [date, setDate] = useState(new Date());
+  useEffect(() => {
+    setInterval(() => setDate(new Date()), 1000);
+  }, []);
   return (
     <div className={styles.notification}>
       <div className={styles.notificationTitle}>
         <h1>The recommended time to charge is: 9:30 - 12:30</h1>
         {/* <h1>09:30 - 12:30</h1> */}
+        {date.toISOString()}
       </div>
       <div className={styles.illustration1}>
         <ChargeNow
