@@ -37,9 +37,17 @@ const styles = {
     h1: {
       color: "#555761",
       marginBottom: "0.5rem",
+      [`@media screen and (max-width: 900px) `]: {
+        transition: "all 0.5s ease-in-out",
+        fontSize: "1.8rem",
+      },
       [`@media screen and (max-width: 800px) `]: {
         transition: "all 0.5s ease-in-out",
         fontSize: "1.5rem",
+      },
+      [`@media screen and (max-width: 726px) `]: {
+        transition: "all 0.5s ease-in-out",
+        fontSize: "1.3rem",
       },
     },
   }),

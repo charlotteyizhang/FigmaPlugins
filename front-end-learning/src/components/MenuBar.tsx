@@ -90,6 +90,10 @@ const styles = {
     p: {
       fontSize: "14px",
     },
+    [`@media screen and (max-width: 1024px) `]: {
+      transition: "all 0.5s ease-in-out",
+      justifyContent: "normal",
+    },
     [`@media screen and (max-width: 800px)`]: {
       transition: "all 0.5s ease-in-out",
       minWidth: "180px",
@@ -108,9 +112,9 @@ const styles = {
         padding: "0.3rem 0",
       },
     },
-    [`@media screen and (max-width: 1024px) `]: {
+    [`@media screen and (max-width: 650px)`]: {
       transition: "all 0.5s ease-in-out",
-      justifyContent: "normal",
+      display: "none",
     },
   }),
   account: css({

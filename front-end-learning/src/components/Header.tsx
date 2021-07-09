@@ -1,6 +1,7 @@
 import React from "react";
 import { css } from "@emotion/css";
 import { themeSpacing } from "../basicStyle/spacing";
+import { NONAME } from "dns";
 
 export const Header = () => {
   return (
@@ -10,6 +11,9 @@ export const Header = () => {
       </div>
       <div className={styles.head}>
         <h3>Dashboard</h3>
+        <div className={styles.menuBtn}>
+          <span></span>
+        </div>
       </div>
     </header>
   );
@@ -59,6 +63,37 @@ const styles = {
       fontSize: "20px",
       fontWeight: "bold",
       paddingLeft: themeSpacing.large,
+    },
+  }),
+  menuBtn: css({
+    display: "none",
+    [`@media screen and (max-width: 650px)`]: {
+      display: "block",
+      position: "absolute",
+      zIndex: 1,
+      right: themeSpacing.large,
+      top: themeSpacing.large,
+      height: "20px",
+      width: "28px",
+      cursor: "pointer",
+      transition: "all 0.5s ease-in-out",
+      "span, span::before, span::after": {
+        content: "''",
+        position: "absolute",
+        width: "28px",
+        height: "3px",
+        backgroundColor: "#00558C",
+      },
+      span: {
+        right: 0,
+        top: "0rem",
+      },
+      "span::before": {
+        top: "-0.5rem",
+      },
+      "span::after": {
+        top: "0.5rem",
+      },
     },
   }),
 };

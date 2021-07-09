@@ -142,9 +142,11 @@ export const ChargeNow = ({
           className={lineAnimation}
           d="M278.5 207.5c40.74-11.14 69.374-16.88 85.906-17.22 49.73-1.022 107.763 12.493 139.594 8.284 63.233-8.36 152.42-78.994 225-90.884 3.37-.552 13.714-.402 17.73 0 44.044 4.41 117.048 61.046 160.27 61.24 1.852.008 11.74.167 13.724 0C978.086 164.102 1080.692 88.461 1130 90c1.804.056 8.577-.15 10.39 0 51.58 4.27 101.504 45.476 138.97 47 25.745 1.047 53.42-12.706 83.025-41.26"
           stroke="#A8CB68"
-          strokeWidth={7}
-          strokeDasharray="50"
-          strokeLinecap="square"
+          strokeWidth={10}
+          // opacity={0.5}
+          strokeDasharray="1000"
+          strokeDashoffset="1000"
+          // strokeLinecap="square"
           transform="translate(29 57)"
         />
         <text
@@ -192,9 +194,10 @@ export const ChargeNow = ({
 };
 
 const lineAnimation = css({
-  animation: "line 2s linear 0s infinite",
+  animation: "line 2s linear 3s infinite",
   "@keyframes line": {
-    "0%": { strokeDashoffset: 200 },
-    "100%": { strokeDashoffset: 0 },
+    from: { strokeDashoffset: 900 },
+    to: { strokeDashoffset: 10 },
   },
 });
+
