@@ -40,6 +40,10 @@ const styles = {
       fontWeight: "bold",
       textDecoration: "none",
     },
+    [`@media screen and (max-width: 800px)`]: {
+      transition: "all 0.5s ease-in-out",
+      minWidth: "180px",
+    },
   }),
   head: css({
     backgroundColor: "white",

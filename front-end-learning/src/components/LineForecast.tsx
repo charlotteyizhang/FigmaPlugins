@@ -76,5 +76,11 @@ const styles = {
       fontSize: "14px",
       paddingLeft: themeSpacing.default,
     },
+    [`@media screen and (max-width: 800px)`]: {
+      p: {
+        fontSize: "12px",
+        paddingBottom: themeSpacing.default,
+      },
+    },
   }),
 };

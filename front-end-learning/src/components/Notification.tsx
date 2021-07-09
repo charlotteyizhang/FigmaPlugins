@@ -11,7 +11,12 @@ export const Notification = () => {
         <h1>09:30 - 12:30</h1>
       </div>
       <div className={styles.illustration1}>
-        <ChargeNow width="100%" height="100%" text="CHARGE NOW" colour="pink" />
+        <ChargeNow
+          width="100%"
+          height="100%"
+          text="CHARGE NOW"
+          colour="#A8CB68"
+        />
       </div>
     </div>
   );
@@ -19,11 +24,9 @@ export const Notification = () => {
 
 const styles = {
   notification: css({
-    height: "220px",
     position: "relative",
     backgroundColor: "white",
     border: "1px solid #E8E8E8",
-    // overflow: "hidden",
     display: "flex",
     flexDirection: "column",
     marginBottom: themeSpacing.large,
@@ -45,7 +48,6 @@ const styles = {
     display: "flex",
     flex: 1,
     animation: "lineAnimation 5s infinite",
-    marginBottom: themeSpacing.default,
     [`@media screen and (max-width: 1000px) `]: {
       transition: "all 0.5s ease-in-out",
       paddingTop: themeSpacing.large,

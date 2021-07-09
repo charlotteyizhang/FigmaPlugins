@@ -69,10 +69,11 @@ const styles = {
     borderRight: "1px solid #E8E8E8",
     display: "flex",
     flexDirection: "column",
+    justifyContent: "space-around",
     textAlign: "center",
     width: "16%",
     minWidth: "220px",
-    height: "90vh",
+    height: "100%",
     ul: { padding: 0, margin: 0 },
     li: { listStyle: "none" },
     "a, a:link, a:visited": {
@@ -89,14 +90,32 @@ const styles = {
     p: {
       fontSize: "14px",
     },
+    [`@media screen and (max-width: 800px)`]: {
+      transition: "all 0.5s ease-in-out",
+      minWidth: "180px",
+      height: "100vh",
+      h4: {
+        fontSize: "14px",
+      },
+      h5: {
+        fontSize: "12px",
+      },
+      p: {
+        fontSize: "11px",
+      },
+      "a, a:visited, a:link": {
+        fontSize: "12px",
+        padding: "0.3rem 0",
+      },
+    },
+    [`@media screen and (max-width: 1024px) `]: {
+      transition: "all 0.5s ease-in-out",
+      justifyContent: "normal",
+    },
   }),
   account: css({
     img: {
       margin: "1rem 0",
-      // [`@media screen and (max-width: 1024px) `]: {
-      //   transition: "all 0.5s ease-in-out",
-      //   margin: "0.5rem 0",
-      // },
     },
     h5: {
       marginBottom: "0.3rem",
@@ -108,10 +127,8 @@ const styles = {
     borderRadius: "50%",
   }),
   dashboardLinks: css({
-    // margin: "2rem 0",
     textAlign: "left",
     listStyleType: "none",
-
     h3: {
       margin: "0 0 0.7rem",
     },
@@ -119,10 +136,6 @@ const styles = {
       margin: "2rem 0",
       color: "#39393B",
       opacity: "0.3",
-      // [`@media screen and (max-width: 1024px) `]: {
-      //   transition: "all 0.5s ease-in-out",
-      //   margin: "1.5rem 0",
-      // },
     },
   }),
   contact: css({
@@ -130,12 +143,19 @@ const styles = {
     textAlign: "left",
     h4: {
       padding: "0",
+      wordWrap: "break-word",
       marginBottom: themeSpacing.default,
     },
     p: {
       marginBottom: "0.5rem",
       display: "inline",
       paddingLeft: "1rem",
+    },
+    [`@media screen and (max-width: 800px)`]: {
+      transition: "all 0.5s ease-in-out",
+      p: {
+        paddingLeft: "0.5rem",
+      },
     },
   }),
   contactInfo: css({
@@ -151,6 +171,12 @@ const styles = {
     h4: {
       paddingLeft: "2rem",
     },
+    [`@media screen and (max-width: 800px)`]: {
+      transition: "all 0.5s ease-in-out",
+      h4: {
+        paddingLeft: "1rem",
+      },
+    },
   }),
   button: css({
     display: "flex",
@@ -163,5 +189,9 @@ const styles = {
     padding: "1rem 1.5rem",
     border: "none",
     borderRadius: "10px",
+    [`@media screen and (max-width: 800px)`]: {
+      transition: "all 0.5s ease-in-out",
+      padding: "1rem 0.5rem",
+    },
   }),
 };
