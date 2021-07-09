@@ -48,6 +48,10 @@ const styles = {
       transition: "all 0.5s ease-in-out",
       minWidth: "180px",
     },
+    [`@media screen and (max-width: 650px)`]: {
+      transition: "all 0.5s ease-in-out",
+      minWidth: "60px",
+    },
   }),
   head: css({
     backgroundColor: "white",
@@ -68,15 +72,17 @@ const styles = {
   menuBtn: css({
     display: "none",
     [`@media screen and (max-width: 650px)`]: {
-      display: "block",
+      display: "flex",
       position: "absolute",
-      zIndex: 1,
+      // zIndex: 1,
       right: themeSpacing.large,
       top: themeSpacing.large,
       height: "20px",
       width: "28px",
       cursor: "pointer",
       transition: "all 0.5s ease-in-out",
+      justifyContent: "center",
+      alignItems: "center",
       "span, span::before, span::after": {
         content: "''",
         position: "absolute",

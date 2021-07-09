@@ -2,8 +2,8 @@ import React from "react";
 import { css } from "@emotion/css";
 import { Header } from "../components/Header";
 import { MenuBar } from "../components/MenuBar";
-// import { Notification } from "../components/Notification";
 import { Highlights } from "./Highlights";
+import { BurgerMenu } from "../components/BurgerMenu";
 
 export const Dashboard = () => {
   return (
@@ -11,7 +11,7 @@ export const Dashboard = () => {
       <Header />
       <div className={styles.min}>
         <MenuBar />
-        {/* <Notification /> */}
+        {/* <BurgerMenu /> */}
         <Highlights />
       </div>
     </div>

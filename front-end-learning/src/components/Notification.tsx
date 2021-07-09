@@ -7,8 +7,8 @@ export const Notification = () => {
   return (
     <div className={styles.notification}>
       <div className={styles.notificationTitle}>
-        <h1>The recommended time to charge is</h1>
-        <h1>09:30 - 12:30</h1>
+        <h1>The recommended time to charge is: 9:30 - 12:30</h1>
+        {/* <h1>09:30 - 12:30</h1> */}
       </div>
       <div className={styles.illustration1}>
         <ChargeNow
@@ -31,6 +31,12 @@ const styles = {
     flexDirection: "column",
     marginBottom: themeSpacing.large,
     padding: themeSpacing.large,
+    [`@media screen and (max-width: 650px) `]: {
+      transition: "all 0.5s ease-in-out",
+      width: "100%",
+      height: "160px",
+      padding: themeSpacing.default,
+    },
   }),
   notificationTitle: css({
     position: "absolute",
@@ -47,7 +53,11 @@ const styles = {
       },
       [`@media screen and (max-width: 726px) `]: {
         transition: "all 0.5s ease-in-out",
-        fontSize: "1.3rem",
+        fontSize: "1.4rem",
+      },
+      [`@media screen and (max-width: 650px) `]: {
+        transition: "all 0.5s ease-in-out",
+        fontSize: "1.2rem",
       },
     },
   }),
@@ -59,6 +69,10 @@ const styles = {
     [`@media screen and (max-width: 1000px) `]: {
       transition: "all 0.5s ease-in-out",
       paddingTop: themeSpacing.large,
+    },
+    [`@media screen and (max-width: 650px) `]: {
+      transition: "all 0.5s ease-in-out",
+      paddingTop: "3rem",
     },
   }),
 };

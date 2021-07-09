@@ -36,7 +36,6 @@ const styles = {
   forecast: css({
     backgroundColor: "white",
     border: "1px solid #E8E8E8",
-
     padding: themeSpacing.large,
     h2: {
       color: "#555761",
@@ -46,6 +45,14 @@ const styles = {
       color: "#39393B",
       opacity: "0.3",
     },
+    [`@media screen and (max-width: 650px) `]: {
+      transition: "all 0.5s ease-in-out",
+      width: "100%",
+      padding: themeSpacing.default,
+      h2: {
+        fontSize: "1.2rem",
+      },
+    },
   }),
   linegraph: css({
     flex: 1,
@@ -54,6 +61,20 @@ const styles = {
     paddingRight: themeSpacing.default,
     img: {
       width: "60%",
+    },
+    [`@media screen and (max-width: 950px)`]: {
+      flexDirection: "column",
+      img: {
+        width: "100%",
+        height: "100%",
+      },
+    },
+    [`@media screen and (max-width: 650px)`]: {
+      flexDirection: "column",
+      img: {
+        width: "110%",
+        height: "110%",
+      },
     },
   }),
   keys: css({
@@ -66,6 +87,26 @@ const styles = {
       width: "30px",
       height: "30px",
     },
+    [`@media screen and (max-width: 950px)`]: {
+      flexDirection: "row",
+      justifyContent: "center",
+      img: {
+        width: "20px",
+        height: "20px",
+      },
+    },
+    [`@media screen and (max-width: 650px)`]: {
+      flexDirection: "row",
+      justifyContent: "center",
+      alignItems: "center",
+      img: {
+        width: "12px",
+        height: "12px",
+      },
+      p: {
+        fontSize: "10px",
+      },
+    },
   }),
   key: css({
     display: "flex",
@@ -76,7 +117,8 @@ const styles = {
       fontSize: "14px",
       paddingLeft: themeSpacing.default,
     },
-    [`@media screen and (max-width: 800px)`]: {
+    [`@media screen and (max-width: 950px)`]: {
+      justifyContent: "flex-start",
       p: {
         fontSize: "12px",
         paddingBottom: themeSpacing.default,
