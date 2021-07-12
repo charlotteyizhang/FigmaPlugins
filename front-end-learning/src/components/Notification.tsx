@@ -2,25 +2,84 @@ import React, { useState, useEffect } from "react";
 import { css, keyframes } from "@emotion/css";
 import { themeSpacing } from "../basicStyle/spacing";
 import { ChargeNow } from "./ChargeNow";
+interface NotificationProps {}
+type Color = "#A8CB68" | "pink";
+type ChargeStatus = "now" | "soon" | "loading" | "error";
+const textFromChargeStatus = (chargeStatus: ChargeStatus): string => {
+  switch (chargeStatus) {
+    case "now":
+      return "charge now";
+    case "soon":
+      return "charge soon";
+    case "loading":
+      return "loading";
+    case "error":
+      return "error";
 
-export const Notification = () => {
-  const [date, setDate] = useState(new Date());
+    default:
+      const x: never = chargeStatus;
+      return x;
+  }
+};
+const colorFromChargeStatus = (chargeStatus: ChargeStatus): string => {
+  switch (chargeStatus) {
+    case "now":
+      return "#A8CB68";
+    case "soon":
+      return "#F1B434";
+    case "loading":
+      return "pink";
+    case "error":
+      return "#BA1731";
+
+    default:
+      const x: never = chargeStatus;
+      return x;
+  }
+};
+
+const chargeStatusFromData = (data: any): ChargeStatus => {
+  const intensity = data.data[0].intensity.index;
+  console.log({ data, intensity });
+
+  switch (intensity) {
+    case "very low":
+    case "low":
+      return "now";
+    case "moderate":
+      return "soon";
+    case "high":
+    case "very high":
+      return "loading";
+
+    default:
+      return "error";
+  }
+};
+
+// 'very low', 'low', 'moderate', 'high', 'very high'
+
+export const Notification = ({}: NotificationProps) => {
+  const [chargeStatus, setChargeStatus] = useState<ChargeStatus>("loading");
+
   useEffect(() => {
-    setInterval(() => setDate(new Date()), 1000);
+    fetch("https://api.carbonintensity.org.uk/intensity")
+      .then((response) => response.json())
+      .then((data) => {
+        setChargeStatus(chargeStatusFromData(data));
+      });
   }, []);
   return (
     <div className={styles.notification}>
       <div className={styles.notificationTitle}>
         <h1>The recommended time to charge is: 9:30 - 12:30</h1>
-        {/* <h1>09:30 - 12:30</h1> */}
-        {date.toISOString()}
       </div>
       <div className={styles.illustration1}>
         <ChargeNow
           width="100%"
           height="100%"
-          text="CHARGE NOW"
-          colour="#A8CB68"
+          text={textFromChargeStatus(chargeStatus)}
+          color={colorFromChargeStatus(chargeStatus)}
         />
       </div>
     </div>
