@@ -3,9 +3,10 @@ import { css } from "@emotion/css";
 import { themeSpacing } from "../basicStyle/spacing";
 import { ChargeNow } from "./ChargeNow";
 import { ChargeStatus } from "../data/chargeStatus";
+import { time } from "console";
 
 interface NotificationProps {}
-const x: ChargeStatus = {};
+
 const chargeStatusFromData = (data: any): ChargeStatus => {
   // const intensity = data.data[0].intensity.index;
   const intensity = data.data[0].intensity;
@@ -13,6 +14,7 @@ const chargeStatusFromData = (data: any): ChargeStatus => {
   const actual = intensity.actual;
   const forecast = intensity.forecast;
   const from = data.data[0].from;
+  const to = data.data[0].to;
 
   console.log({ data, intensity, index, actual, forecast });
 
@@ -20,19 +22,21 @@ const chargeStatusFromData = (data: any): ChargeStatus => {
     case "very low":
     case "low":
     case "moderate":
-      return;
+      return { state: "now", time: { from, to } };
     case "high":
-      return "soon";
+      return { state: "soon", time: { from, to } };
     case "very high":
-      return "loading";
+      return { state: "loading" };
 
     default:
-      return "error";
+      return { state: "error" };
   }
 };
 
 export const Notification = ({}: NotificationProps) => {
-  const [chargeStatus, setChargeStatus] = useState<ChargeStatus>("loading");
+  const [chargeStatus, setChargeStatus] = useState<ChargeStatus>({
+    state: "loading",
+  });
 
   useEffect(() => {
     fetch("https://api.carbonintensity.org.uk/intensity")
@@ -42,12 +46,17 @@ export const Notification = ({}: NotificationProps) => {
       });
   }, []);
 
-  const x = (data: any): string => data.data[0].from;
+  // const x = (data: any): string => data.data[0].from;
   return (
     <div className={styles.notification}>
       <div className={styles.notificationTitle}>
-        <h1>The recommended time to charge is: 09:30 - 10:30</h1>
-        <h1>{x}</h1>
+        <h1>
+          The recommended time to charge is:{" "}
+          {chargeStatus.state === "now" || chargeStatus.state === "soon"
+            ? `${chargeStatus.time.from} - ${chargeStatus.time.to}`
+            : "-"}
+        </h1>
+        {/* <h1>{x}</h1> */}
       </div>
       <div className={styles.illustration1}>
         <ChargeNow width="100%" height="100%" chargeStatus={chargeStatus} />

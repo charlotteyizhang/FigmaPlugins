@@ -6,16 +6,6 @@ interface ChargeStatusNow {
   };
 }
 
-const x: ChargeStatusNow = {
-  state: "now",
-  time: {
-    from: "",
-    to: "string",
-  },
-};
-
-const a: ChargeStatus = x;
-
 interface ChargeStatusSoon {
   state: "soon";
   time: {

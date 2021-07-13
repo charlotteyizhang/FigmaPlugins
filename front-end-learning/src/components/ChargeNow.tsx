@@ -32,7 +32,7 @@ const errorStyle: ChargeStatusStyle = {
 const chargeStatusStyleFromChargeStatus = (
   chargeStatus: ChargeStatus
 ): ChargeStatusStyle => {
-  switch (chargeStatus) {
+  switch (chargeStatus.state) {
     case "now":
       return chargeNowStyle;
     case "soon":
@@ -86,30 +86,6 @@ export const ChargeNow = ({
           d="M0 6.032c0 3.332 2.806 6.032 6.268 6.032 3.461 0 6.266-2.7 6.266-6.032C12.534 2.701 9.729 0 6.268 0 2.806 0 0 2.701 0 6.032z"
           id="g"
         />
-        {/* <filter colorInterpolationFilters="auto" id="i">
-          <feColorMatrix
-            in="SourceGraphic"
-            values="0 0 0 0 0.658824 0 0 0 0 0.796078 0 0 0 0 0.407843 0 0 0 1.000000 0"
-          />
-        </filter>
-        <filter colorInterpolationFilters="auto" id="j">
-          <feColorMatrix
-            in="SourceGraphic"
-            values="0 0 0 0 0.658824 0 0 0 0 0.796078 0 0 0 0 0.407843 0 0 0 1.000000 0"
-          />
-        </filter>
-        <filter colorInterpolationFilters="auto" id="k">
-          <feColorMatrix
-            in="SourceGraphic"
-            values="0 0 0 0 0.658824 0 0 0 0 0.796078 0 0 0 0 0.407843 0 0 0 1.000000 0"
-          />
-        </filter>
-        <filter colorInterpolationFilters="auto" id="l">
-          <feColorMatrix
-            in="SourceGraphic"
-            values="0 0 0 0 0.658824 0 0 0 0 0.796078 0 0 0 0 0.407843 0 0 0 1.000000 0"
-          />
-        </filter> */}
       </defs>
       <g stroke="none" strokeWidth={1} fill="none" fillRule="evenodd">
         <g transform="translate(29 57) translate(1411.258 144.86)">
