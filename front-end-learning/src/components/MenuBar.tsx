@@ -4,7 +4,7 @@ import { css } from "@emotion/css";
 import { EmailIcon } from "../img/Email";
 import { themeSpacing } from "../basicStyle/spacing";
 import { PhoneIcon } from "../img/Phone";
-import { SupportIcon } from "../img/Support";
+// import { SupportIcon } from "../img/Support";
 import { LogoutIcon } from "../img/Logout";
 
 export const MenuBar = () => {

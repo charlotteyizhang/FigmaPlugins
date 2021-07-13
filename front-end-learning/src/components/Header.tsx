@@ -1,7 +1,7 @@
 import React from "react";
 import { css } from "@emotion/css";
 import { themeSpacing } from "../basicStyle/spacing";
-import { NONAME } from "dns";
+// import { NONAME } from "dns"; 
 
 export const Header = () => {
   return (

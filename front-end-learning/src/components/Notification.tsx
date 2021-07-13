@@ -1,54 +1,28 @@
 import React, { useState, useEffect } from "react";
-import { css, keyframes } from "@emotion/css";
+import { css } from "@emotion/css";
 import { themeSpacing } from "../basicStyle/spacing";
 import { ChargeNow } from "./ChargeNow";
+import { ChargeStatus } from "../data/chargeStatus";
+
 interface NotificationProps {}
-type Color = "#A8CB68" | "pink";
-type ChargeStatus = "now" | "soon" | "loading" | "error";
-const textFromChargeStatus = (chargeStatus: ChargeStatus): string => {
-  switch (chargeStatus) {
-    case "now":
-      return "charge now";
-    case "soon":
-      return "charge soon";
-    case "loading":
-      return "loading";
-    case "error":
-      return "error";
-
-    default:
-      const x: never = chargeStatus;
-      return x;
-  }
-};
-const colorFromChargeStatus = (chargeStatus: ChargeStatus): string => {
-  switch (chargeStatus) {
-    case "now":
-      return "#A8CB68";
-    case "soon":
-      return "#F1B434";
-    case "loading":
-      return "pink";
-    case "error":
-      return "#BA1731";
-
-    default:
-      const x: never = chargeStatus;
-      return x;
-  }
-};
-
+const x: ChargeStatus = {};
 const chargeStatusFromData = (data: any): ChargeStatus => {
-  const intensity = data.data[0].intensity.index;
-  console.log({ data, intensity });
+  // const intensity = data.data[0].intensity.index;
+  const intensity = data.data[0].intensity;
+  const index = intensity.index;
+  const actual = intensity.actual;
+  const forecast = intensity.forecast;
+  const from = data.data[0].from;
 
-  switch (intensity) {
+  console.log({ data, intensity, index, actual, forecast });
+
+  switch (index) {
     case "very low":
     case "low":
-      return "now";
     case "moderate":
-      return "soon";
+      return;
     case "high":
+      return "soon";
     case "very high":
       return "loading";
 
@@ -56,8 +30,6 @@ const chargeStatusFromData = (data: any): ChargeStatus => {
       return "error";
   }
 };
-
-// 'very low', 'low', 'moderate', 'high', 'very high'
 
 export const Notification = ({}: NotificationProps) => {
   const [chargeStatus, setChargeStatus] = useState<ChargeStatus>("loading");
@@ -69,18 +41,16 @@ export const Notification = ({}: NotificationProps) => {
         setChargeStatus(chargeStatusFromData(data));
       });
   }, []);
+
+  const x = (data: any): string => data.data[0].from;
   return (
     <div className={styles.notification}>
       <div className={styles.notificationTitle}>
-        <h1>The recommended time to charge is: 9:30 - 12:30</h1>
+        <h1>The recommended time to charge is: 09:30 - 10:30</h1>
+        <h1>{x}</h1>
       </div>
       <div className={styles.illustration1}>
-        <ChargeNow
-          width="100%"
-          height="100%"
-          text={textFromChargeStatus(chargeStatus)}
-          color={colorFromChargeStatus(chargeStatus)}
-        />
+        <ChargeNow width="100%" height="100%" chargeStatus={chargeStatus} />
       </div>
     </div>
   );
