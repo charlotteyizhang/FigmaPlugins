@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1171px" height="272px" viewBox="0 0 1171 272" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Error Message Copy</title>
+    <g id="Error-Message-Copy" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Error-Board" transform="translate(78.000000, 48.000000)">
+            <g id="Group">
+                <circle id="Oval" stroke="#FFFFFF" stroke-width="5" fill="#BA1731" cx="88" cy="88" r="85.5"></circle>
+                <g id="1)-icon/correct" transform="translate(84.406250, 39.000000)" fill="#FFFFFF">
+                    <path d="M4.25390625,90.4921875 C6.6032738,90.4921875 8.5078125,92.3967262 8.5078125,94.7460938 C8.5078125,97.0954613 6.6032738,99 4.25390625,99 C1.9045387,99 0,97.0954613 0,94.7460938 C0,92.3967262 1.9045387,90.4921875 4.25390625,90.4921875 Z M3.8671875,0 C5.78939731,0 7.34765625,1.55825894 7.34765625,3.48046875 L7.34765625,3.48046875 L7.34765625,77.7304688 C7.34765625,79.6526786 5.78939731,81.2109375 3.8671875,81.2109375 C1.94497769,81.2109375 0.38671875,79.6526786 0.38671875,77.7304688 L0.38671875,77.7304688 L0.38671875,3.48046875 C0.38671875,1.55825894 1.94497769,0 3.8671875,0 Z" id="Combined-Shape"></path>
+                </g>
+            </g>
+            <text id="Oops…there-has-been" font-family="Helvetica-Bold, Helvetica" font-size="48" font-weight="bold" line-spacing="65" fill="#000000">
+                <tspan x="237" y="102">Oops…there has been an error</tspan>
+            </text>
+        </g>
+    </g>
+</svg>

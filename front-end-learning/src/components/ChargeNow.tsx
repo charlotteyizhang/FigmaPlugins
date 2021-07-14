@@ -6,6 +6,7 @@ interface ChargeStatusStyle {
   text: string;
   color: string;
   withAnimation: boolean;
+  // showAnimation: boolean;
 }
 
 const chargeNowStyle: ChargeStatusStyle = {
@@ -18,14 +19,19 @@ const chargeSoonStyle: ChargeStatusStyle = {
   text: "charge soon",
   withAnimation: false,
 };
+const chargeLaterStyle: ChargeStatusStyle = {
+  color: "#BE4305",
+  text: "charge later",
+  withAnimation: false,
+};
 const loadingStyle: ChargeStatusStyle = {
-  color: "#E8E8E8",
-  text: "loading",
+  color: "",
+  text: "",
   withAnimation: false,
 };
 const errorStyle: ChargeStatusStyle = {
-  color: "#BA1731",
-  text: "error",
+  color: "",
+  text: "",
   withAnimation: false,
 };
 
@@ -37,6 +43,8 @@ const chargeStatusStyleFromChargeStatus = (
       return chargeNowStyle;
     case "soon":
       return chargeSoonStyle;
+    case "later":
+      return chargeLaterStyle;
     case "loading":
       return loadingStyle;
     case "error":
@@ -167,16 +175,16 @@ export const ChargeNow = ({
           stroke={color}
           strokeWidth={10}
           strokeDasharray="1200"
-          transform="translate(29 57)"
+          transform="translate(27 57)"
         />
         <text
           fontFamily="Helvetica-Bold, Helvetica"
-          fontSize={24}
+          fontSize={27}
           fontWeight="bold"
           fill="#FEFEFE"
           transform="translate(29 57)"
         >
-          <tspan x={54.7192} y={206.3609}>
+          <tspan x={65} y={206}>
             {text}
           </tspan>
         </text>
@@ -216,7 +224,7 @@ export const ChargeNow = ({
 const lineAnimation = css({
   animation: "line 2s linear 3s infinite",
   "@keyframes line": {
-    from: { strokeDashoffset: 1200 },
-    to: { strokeDashoffset: 10 },
+    from: { strokeDashoffset: 1250 },
+    to: { strokeDashoffset: 100 },
   },
 });
