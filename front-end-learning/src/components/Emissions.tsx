@@ -11,13 +11,104 @@ import { Imports } from "../img/fuelIcons/Imports";
 import { Nuclear } from "../img/fuelIcons/Nuclear";
 import { Others } from "../img/fuelIcons/Others";
 
+// const percentageFromData= ({ biomass, hydro, solar, wind, coal, gas, imports, nuclear, other }: FuelType): FuelType => {
+//   const percentage = response.data.generationmix
+//   return {
+// biomass:
+// hydro:
+// solar:
+// wind:
+// coal:
+// gas:
+// imports:
+// nuclear:
+// other:
+//   };
+// };
+
+// create types...
+
+// interface FuelPercentage {
+//   fuelType:
+//     | ("biomass" & "hydro")
+//     | "solar"
+//     | "wind"
+//     | "coal"
+//     | "gas"
+//     | "imports"
+//     | "nuclear"
+//     | "other";
+//   percentage: string;
+// }
+
+interface FuelPercentage {
+  biomass: number;
+  hydro: number;
+  solar: number;
+  wind: number;
+  coal: number;
+  gas: number;
+  imports: number;
+  nuclear: number;
+  other: number;
+}
+
+const fuelTypeOrder: Array<FuelType> = [
+  "biomass",
+  "hydro",
+  "wind",
+  "solar",
+  "coal",
+  "gas",
+  "imports",
+  "nuclear",
+  "other",
+];
+
+type FuelType = keyof FuelPercentage;
+
+const fuelDetailsFromFuelType: Record<
+  FuelType,
+  { title: string; Icon: (props: any) => JSX.Element }
+> = {
+  biomass: { title: "Biomass", Icon: Biomass },
+  hydro: { title: "Hydro", Icon: Hydro },
+  solar: { title: "Solar", Icon: Solar },
+  wind: { title: "Wind", Icon: Wind },
+  coal: { title: "Coal", Icon: Coal },
+  gas: { title: "Gas", Icon: Gas },
+  imports: { title: "Imports", Icon: Imports },
+  nuclear: { title: "Nuclear", Icon: Nuclear },
+  other: { title: "Other", Icon: Others },
+};
+
+// FuelPercentage consists of name and number, need to implement this...
+// const percentageFromData = (data: any): FuelPercentage => {
+const percentageFromData = (data: any): FuelPercentage => {
+  return Object.fromEntries(
+    data.data.generationmix.map((item: any) => [item.fuel, item.perc])
+  ) as any;
+};
+
 export const Emissions = () => {
-  const chnagePercentage = () => {};
-  // const [color, setColor] = useState<string>("#78D5C6");
-  // const origin = 5;
-  const [percentage, setPercentage] = useState(5);
+  // const chnagePercentage = () => {};
+  // const originPerc = 5;
+  // const [percentage, setPercentage] = useState(originPerc);
+  // useEffect(() => {
+  //   setTimeout(() => setPercentage(percentage + 1), 5000);
+  // }, []);
+
+  // const [fuelPercentage, setFuelPercentage] = useState<FuelPercentage>({percentage: "0", });
+  const [fuelPercentage, setFuelPercentage] = useState<
+    FuelPercentage | undefined
+  >(undefined);
+
   useEffect(() => {
-    setTimeout(() => setPercentage(percentage + 1), 5000);
+    fetch("https://api.carbonintensity.org.uk/generation")
+      .then((response) => response.json())
+      .then((data) => {
+        setFuelPercentage(percentageFromData(data));
+      });
   }, []);
 
   return (
@@ -41,74 +132,29 @@ export const Emissions = () => {
         <span className={styles.others}></span>
       </div>
       <table className={styles.table}>
-        <tr>
-          <th></th>
-          <th>Fuel Type</th>
-          <th>% Emissions</th>
-        </tr>
-        <tr>
-          <td>
-            <Biomass />
-          </td>
-          <td>Biomass</td>
-          <td>{percentage}</td>
-        </tr>
-        <tr>
-          <td>
-            <Hydro />
-          </td>
-          <td>Hydro</td>
-          <td>18</td>
-        </tr>
-        <tr>
-          <td>
-            <Wind />
-          </td>
-          <td>Wind</td>
-          <td>10</td>
-        </tr>
-        <tr>
-          <td>
-            <Solar />
-          </td>
-          <td>Solar</td>
-          <td>20</td>
-        </tr>
-        <tr>
-          <td>
-            <Coal />
-          </td>
-          <td>Coal</td>
-          <td>7</td>
-        </tr>
-        <tr>
-          <td>
-            <Gas />
-          </td>
-          <td>Gas</td>
-          <td>17</td>
-        </tr>
-        <tr>
-          <td>
-            <Imports />
-          </td>
-          <td>Imports</td>
-          <td>6</td>
-        </tr>
-        <tr>
-          <td>
-            <Nuclear />
-          </td>
-          <td>Nuclear</td>
-          <td>10</td>
-        </tr>
-        <tr>
-          <td>
-            <Others />
-          </td>
-          <td>Others</td>
-          <td>7</td>
-        </tr>
+        <thead>
+          <tr>
+            <th></th>
+            <th>Fuel Type</th>
+            <th>% Emissions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {fuelPercentage === undefined
+            ? null
+            : fuelTypeOrder.map((key) => {
+                const { title, Icon } = fuelDetailsFromFuelType[key];
+                return (
+                  <tr key={key}>
+                    <td>
+                      <Icon />
+                    </td>
+                    <td>{title}</td>
+                    <td>{fuelPercentage[key]}</td>
+                  </tr>
+                );
+              })}
+        </tbody>
       </table>
     </div>
   );

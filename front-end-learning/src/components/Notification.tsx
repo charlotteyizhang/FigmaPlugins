@@ -8,6 +8,7 @@ import { ErrorNotif } from "./ErrorNotif";
 import { time } from "console";
 
 interface NotificationProps {}
+
 const makeTimeFromResponse = ({ from, to }: Time): Time => {
   const intl = new Intl.DateTimeFormat("en-GB", { timeStyle: "short" });
   return {
@@ -28,7 +29,7 @@ const makeTimeFromResponse = ({ from, to }: Time): Time => {
 const chargeStatusFromData = (response: any): ChargeStatus => {
   const {
     intensity: { index, actual, forecast },
-    // ...rest -- all the keys not explicitly mentioned so from and to
+    // ...rest -- all the keys not explicitly mentioned (so from and to)
     from,
     to,
   } = response.data[0];
@@ -58,7 +59,7 @@ export const Notification = ({}: NotificationProps) => {
       .then((response) => response.json())
       .then((data) => {
         setChargeStatus(chargeStatusFromData(data));
-      });  
+      });
   }, []);
 
   const title =
