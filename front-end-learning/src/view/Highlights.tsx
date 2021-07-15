@@ -4,12 +4,14 @@ import { themeSpacing } from "../basicStyle/spacing";
 import { Notification } from "../components/Notification";
 import { LineForecast } from "../components/LineForecast";
 import { BurgerMenu } from "../components/BurgerMenu";
+import { Emissions } from "../components/Emissions";
 
 export const Highlights = () => {
   return (
     <div className={styles.highlights}>
       <Notification />
       <LineForecast />
+      <Emissions />
     </div>
   );
 };

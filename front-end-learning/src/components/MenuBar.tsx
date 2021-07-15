@@ -25,7 +25,7 @@ export const MenuBar = () => {
             <a href="#">Highlights</a>
           </li>
           <li>
-            <a href="#">CO2 emissions</a>
+            <a href="#">CO₂ emissions</a>
           </li>
           <li>
             <a href="#">Carbon intensity</a>
