@@ -58,7 +58,7 @@ export const Notification = ({}: NotificationProps) => {
       .then((response) => response.json())
       .then((data) => {
         setChargeStatus(chargeStatusFromData(data));
-      });
+      });  
   }, []);
 
   const title =
