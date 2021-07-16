@@ -11,63 +11,71 @@ import { Imports } from "../img/fuelIcons/Imports";
 import { Nuclear } from "../img/fuelIcons/Nuclear";
 import { Others } from "../img/fuelIcons/Others";
 import { title } from "process";
+import {
+  PercentageHover,
+  fuelDetailsFromFuelType,
+  fuelTypeOrder,
+  FuelPercentage,
+  percentageFromData,
+  PercHoverProps,
+} from "./PercentageHover";
+// import { fuelDetailsFromFuelType,  } from "./PercentageHover";
 
-interface FuelPercentage {
-  biomass: number;
-  hydro: number;
-  solar: number;
-  wind: number;
-  coal: number;
-  gas: number;
-  imports: number;
-  nuclear: number;
-  other: number;
-}
+// interface FuelPercentage {
+//   biomass: number;
+//   hydro: number;
+//   solar: number;
+//   wind: number;
+//   coal: number;
+//   gas: number;
+//   imports: number;
+//   nuclear: number;
+//   other: number;
+// }
 
-const fuelTypeOrder: Array<FuelType> = [
-  "biomass",
-  "hydro",
-  "wind",
-  "solar",
-  "coal",
-  "gas",
-  "imports",
-  "nuclear",
-  "other",
-];
+// const fuelTypeOrder: Array<FuelType> = [
+//   "biomass",
+//   "hydro",
+//   "wind",
+//   "solar",
+//   "coal",
+//   "gas",
+//   "imports",
+//   "nuclear",
+//   "other",
+// ];
 
-type FuelType = keyof FuelPercentage;
+// type FuelType = keyof FuelPercentage;
 
-const fuelDetailsFromFuelType: Record<
-  FuelType,
-  { title: string; color: string; Icon: (props: any) => JSX.Element }
-> = {
-  biomass: { title: "Biomass", color: "#78D5C6", Icon: Biomass },
-  hydro: { title: "Hydro", color: "#40C1AC", Icon: Hydro },
-  solar: { title: "Solar", color: "#259482", Icon: Solar },
-  wind: { title: "Wind", color: "#216056", Icon: Wind },
-  coal: { title: "Coal", color: "#F79CAB", Icon: Coal },
-  gas: { title: "Gas", color: "#EE8092", Icon: Gas },
-  imports: { title: "Imports", color: "#F1566F", Icon: Imports },
-  nuclear: { title: "Nuclear", color: "#D22949", Icon: Nuclear },
-  other: { title: "Other", color: "#BA0C2F", Icon: Others },
-};
+// const fuelDetailsFromFuelType: Record<
+//   FuelType,
+//   { title: string; color: string; Icon: (props: any) => JSX.Element }
+// > = {
+//   biomass: { title: "Biomass", color: "#78D5C6", Icon: Biomass },
+//   hydro: { title: "Hydro", color: "#40C1AC", Icon: Hydro },
+//   solar: { title: "Solar", color: "#259482", Icon: Solar },
+//   wind: { title: "Wind", color: "#216056", Icon: Wind },
+//   coal: { title: "Coal", color: "#F79CAB", Icon: Coal },
+//   gas: { title: "Gas", color: "#EE8092", Icon: Gas },
+//   imports: { title: "Imports", color: "#F1566F", Icon: Imports },
+//   nuclear: { title: "Nuclear", color: "#D22949", Icon: Nuclear },
+//   other: { title: "Other", color: "#BA0C2F", Icon: Others },
+// };
 
-// FuelPercentage consists of name and number, need to implement this...
-const percentageFromData = (data: any): FuelPercentage => {
-  // The Object.fromEntries() method transforms a list of key-value pairs into an object.
-  return Object.fromEntries(
-    data.data.generationmix.map((item: any) => [item.fuel, item.perc])
-  ) as any;
-};
+// // FuelPercentage consists of name and number, need to implement this...
+// const percentageFromData = (data: any): FuelPercentage => {
+//   // The Object.fromEntries() method transforms a list of key-value pairs into an object.
+//   return Object.fromEntries(
+//     data.data.generationmix.map((item: any) => [item.fuel, item.perc])
+//   ) as any;
+// };
 
 export const Emissions = () => {
-  const [percBox, setPercBox] = useState(false);
+  const [percBox, setPercBox] = useState<PercHoverProps | undefined>(undefined);
   const [fuelPercentage, setFuelPercentage] = useState<
     FuelPercentage | undefined
   >(undefined);
 
-  const onMouseEnter = () => setPercBox(true);
   useEffect(() => {
     fetch("https://api.carbonintensity.org.uk/generation")
       .then((response) => response.json())
@@ -98,26 +106,45 @@ export const Emissions = () => {
                     backgroundColor: color,
                     width: fuelPercentage[key] + "%",
                     height: "1.5rem",
+                    // "&:hover": {
+                    //   cursor: "pointer",
+                    // },
                   })}
-                ></span>
-              );
-            })}
-      </div>
-
-      {/* Replace with onMouseEnter */}
-      <div className="hoverBackground">
-        {fuelPercentage === undefined
-          ? null
-          : fuelTypeOrder.map((key) => {
-              const { title, color } = fuelDetailsFromFuelType[key];
-              return (
-                <span key={key}>
-                  <p>{title}</p>
-                  <p>{fuelPercentage[key]}</p>
+                  // i have added the onmouseenter and onmouseleave, like charlotte mentioned
+                  onMouseEnter={() =>
+                    setPercBox({ title, value: `${fuelPercentage[key]}%` })
+                  }
+                  onMouseLeave={() => setPercBox(undefined)}
+                >
+                  {/* I added this in here just to test out using the p tag, but the problem is that its within the span tag */}
+                  {/* {percBox ? (
+                    <p className={styles.hoverBackground}>
+                      {title} : {fuelPercentage[key]}
+                    </p>
+                  ) : null} */}
                 </span>
               );
             })}
       </div>
+      {/* // Commented this out to test the above /// */}
+      {percBox ? (
+        <PercentageHover title={percBox.title} value={percBox.value} />
+      ) : null}
+      {/* {percBox ? (
+        <div className="hoverBackground">
+          {fuelPercentage === undefined
+            ? null
+            : fuelTypeOrder.map((key) => {
+                const { title, color } = fuelDetailsFromFuelType[key];
+                return (
+                  <span key={key}>
+                    <p>{title}</p>
+                    <p>{fuelPercentage[key]}</p>
+                  </span>
+                );
+              })}
+        </div>
+      ) : null} */}
       <table className={styles.table}>
         <thead>
           <tr>
@@ -184,6 +211,12 @@ const styles = {
     marginBottom: themeSpacing.large,
     overflow: "hidden",
   }),
+  backContainer: css({
+    backgroundColor: "blue",
+    width: "50%",
+    margin: "0 auto",
+    textAlign: "center",
+  }),
   table: css({
     width: "100%",
     justifyContent: "space-between",
@@ -191,5 +224,13 @@ const styles = {
     "th, td": {
       padding: themeSpacing.default,
     },
+  }),
+  hoverBackground: css({
+    backgroundColor: "yellow",
+    boxShadow: "",
+    padding: themeSpacing.default,
+    cursor: "pointer",
+    width: "50%",
+    height: "30%",
   }),
 };
