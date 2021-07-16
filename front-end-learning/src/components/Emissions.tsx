@@ -10,36 +10,7 @@ import { Gas } from "../img/fuelIcons/Gas";
 import { Imports } from "../img/fuelIcons/Imports";
 import { Nuclear } from "../img/fuelIcons/Nuclear";
 import { Others } from "../img/fuelIcons/Others";
-
-// const percentageFromData= ({ biomass, hydro, solar, wind, coal, gas, imports, nuclear, other }: FuelType): FuelType => {
-//   const percentage = response.data.generationmix
-//   return {
-// biomass:
-// hydro:
-// solar:
-// wind:
-// coal:
-// gas:
-// imports:
-// nuclear:
-// other:
-//   };
-// };
-
-// create types...
-
-// interface FuelPercentage {
-//   fuelType:
-//     | ("biomass" & "hydro")
-//     | "solar"
-//     | "wind"
-//     | "coal"
-//     | "gas"
-//     | "imports"
-//     | "nuclear"
-//     | "other";
-//   percentage: string;
-// }
+import { title } from "process";
 
 interface FuelPercentage {
   biomass: number;
@@ -69,40 +40,34 @@ type FuelType = keyof FuelPercentage;
 
 const fuelDetailsFromFuelType: Record<
   FuelType,
-  { title: string; Icon: (props: any) => JSX.Element }
+  { title: string; color: string; Icon: (props: any) => JSX.Element }
 > = {
-  biomass: { title: "Biomass", Icon: Biomass },
-  hydro: { title: "Hydro", Icon: Hydro },
-  solar: { title: "Solar", Icon: Solar },
-  wind: { title: "Wind", Icon: Wind },
-  coal: { title: "Coal", Icon: Coal },
-  gas: { title: "Gas", Icon: Gas },
-  imports: { title: "Imports", Icon: Imports },
-  nuclear: { title: "Nuclear", Icon: Nuclear },
-  other: { title: "Other", Icon: Others },
+  biomass: { title: "Biomass", color: "#78D5C6", Icon: Biomass },
+  hydro: { title: "Hydro", color: "#40C1AC", Icon: Hydro },
+  solar: { title: "Solar", color: "#259482", Icon: Solar },
+  wind: { title: "Wind", color: "#216056", Icon: Wind },
+  coal: { title: "Coal", color: "#F79CAB", Icon: Coal },
+  gas: { title: "Gas", color: "#EE8092", Icon: Gas },
+  imports: { title: "Imports", color: "#F1566F", Icon: Imports },
+  nuclear: { title: "Nuclear", color: "#D22949", Icon: Nuclear },
+  other: { title: "Other", color: "#BA0C2F", Icon: Others },
 };
 
 // FuelPercentage consists of name and number, need to implement this...
-// const percentageFromData = (data: any): FuelPercentage => {
 const percentageFromData = (data: any): FuelPercentage => {
+  // The Object.fromEntries() method transforms a list of key-value pairs into an object.
   return Object.fromEntries(
     data.data.generationmix.map((item: any) => [item.fuel, item.perc])
   ) as any;
 };
 
 export const Emissions = () => {
-  // const chnagePercentage = () => {};
-  // const originPerc = 5;
-  // const [percentage, setPercentage] = useState(originPerc);
-  // useEffect(() => {
-  //   setTimeout(() => setPercentage(percentage + 1), 5000);
-  // }, []);
-
-  // const [fuelPercentage, setFuelPercentage] = useState<FuelPercentage>({percentage: "0", });
+  const [percBox, setPercBox] = useState(false);
   const [fuelPercentage, setFuelPercentage] = useState<
     FuelPercentage | undefined
   >(undefined);
 
+  const onMouseEnter = () => setPercBox(true);
   useEffect(() => {
     fetch("https://api.carbonintensity.org.uk/generation")
       .then((response) => response.json())
@@ -120,16 +85,38 @@ export const Emissions = () => {
         <p>100%</p>
       </div>
       <div className={styles.chart}>
-        {/* <input type="range" /> */}
-        <span className={styles.biomass}></span>
-        <span className={styles.hydro}></span>
-        <span className={styles.wind}></span>
-        <span className={styles.solar}></span>
-        <span className={styles.coal}></span>
-        <span className={styles.gas}></span>
-        <span className={styles.imports}></span>
-        <span className={styles.nuclear}></span>
-        <span className={styles.others}></span>
+        {/* <span style={{ width: gasPerc }} className={styles.gas}></span> */}
+
+        {fuelPercentage === undefined
+          ? null
+          : fuelTypeOrder.map((key) => {
+              const { title, color } = fuelDetailsFromFuelType[key];
+              return (
+                <span
+                  key={key}
+                  className={css({
+                    backgroundColor: color,
+                    width: fuelPercentage[key] + "%",
+                    height: "1.5rem",
+                  })}
+                ></span>
+              );
+            })}
+      </div>
+
+      {/* Replace with onMouseEnter */}
+      <div className="hoverBackground">
+        {fuelPercentage === undefined
+          ? null
+          : fuelTypeOrder.map((key) => {
+              const { title, color } = fuelDetailsFromFuelType[key];
+              return (
+                <span key={key}>
+                  <p>{title}</p>
+                  <p>{fuelPercentage[key]}</p>
+                </span>
+              );
+            })}
       </div>
       <table className={styles.table}>
         <thead>
@@ -190,57 +177,12 @@ const styles = {
   }),
   chart: css({
     // border: "1px solid black",
-    borderRadius: "20px",
+    width: "100%",
+    borderRadius: "30px",
     display: "flex",
     flexDirection: "row",
     marginBottom: themeSpacing.large,
-  }),
-  biomass: css({
-    backgroundColor: "#78D5C6",
-    width: "5%",
-    height: themeSpacing.default,
-    borderRadius: "20px 0 0 20px",
-  }),
-  hydro: css({
-    backgroundColor: "#40C1AC",
-    width: "18%",
-    height: themeSpacing.default,
-  }),
-  wind: css({
-    backgroundColor: "#259482",
-    width: "10%",
-    height: themeSpacing.default,
-  }),
-  solar: css({
-    backgroundColor: "#216056",
-    width: "20%",
-    height: themeSpacing.default,
-  }),
-  coal: css({
-    backgroundColor: "#F79CAB",
-    width: "7%",
-    height: themeSpacing.default,
-  }),
-  gas: css({
-    backgroundColor: "#EE8092",
-    width: "17%",
-    height: themeSpacing.default,
-  }),
-  imports: css({
-    backgroundColor: "#F1566F",
-    width: "6%",
-    height: themeSpacing.default,
-  }),
-  nuclear: css({
-    backgroundColor: "#D22949",
-    width: "10%",
-    height: themeSpacing.default,
-  }),
-  others: css({
-    backgroundColor: "#BA0C2F",
-    width: "7%",
-    height: themeSpacing.default,
-    borderRadius: "0 20px 20px 0",
+    overflow: "hidden",
   }),
   table: css({
     width: "100%",
