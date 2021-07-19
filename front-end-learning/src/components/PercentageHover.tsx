@@ -54,32 +54,48 @@ export const fuelDetailsFromFuelType: Record<
 
 // FuelPercentage consists of name and number, need to implement this...
 export const percentageFromData = (data: any): FuelPercentage => {
-  // The Object.fromEntries() method transforms a list of key-value pairs into an object.
   return Object.fromEntries(
     data.data.generationmix.map((item: any) => [item.fuel, item.perc])
   ) as any;
 };
+
+// const onMouseMove = (e: any) => {
+//   const x = `${e.clientY + 20}px`;
+//   const y = `${e.clientX + 20}px`;
+// };
+
+// window.onmousemove = (e) => {
+//   var x = e.clientX;
+//   var y = e.clientY;
+// };
+
 export interface PercHoverProps {
   title: string;
   value: string;
 }
+
 export const PercentageHover = ({ title, value }: PercHoverProps) => {
   return (
-    <div>
-      <span className={styles.hoverBackground}>
-        <p>
-          {title} : {value}
-        </p>
-      </span>
+    <div className={styles.hoverBackground}>
+      <p>
+        {title} : {value}
+      </p>
     </div>
   );
 };
 
 const styles = {
   hoverBackground: css({
-    backgroundColor: "yellow",
-    cursor: "pointer",
-    width: "50%",
-    height: "30%",
+    backgroundColor: "white",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "17%",
+    height: "2rem",
+    border: "1px solid #E8E8E8",
+    borderRadius: "5px",
+    position: "absolute",
+    left: "40%",
+    top: "9.5%",
   }),
 };

@@ -104,46 +104,29 @@ export const Emissions = () => {
                   key={key}
                   className={css({
                     backgroundColor: color,
-                    width: fuelPercentage[key] + "%",
+                    width: `${fuelPercentage[key]}%`,
                     height: "1.5rem",
-                    // "&:hover": {
-                    //   cursor: "pointer",
-                    // },
+                    "&:hover": {
+                      cursor: "pointer",
+                    },
                   })}
-                  // i have added the onmouseenter and onmouseleave, like charlotte mentioned
                   onMouseEnter={() =>
                     setPercBox({ title, value: `${fuelPercentage[key]}%` })
                   }
                   onMouseLeave={() => setPercBox(undefined)}
                 >
-                  {/* I added this in here just to test out using the p tag, but the problem is that its within the span tag */}
-                  {/* {percBox ? (
-                    <p className={styles.hoverBackground}>
-                      {title} : {fuelPercentage[key]}
-                    </p>
-                  ) : null} */}
+                  {percBox ? (
+                    <PercentageHover
+                      title={percBox.title}
+                      value={percBox.value}
+                    />
+                  ) : null}
                 </span>
               );
             })}
       </div>
-      {/* // Commented this out to test the above /// */}
-      {percBox ? (
-        <PercentageHover title={percBox.title} value={percBox.value} />
-      ) : null}
       {/* {percBox ? (
-        <div className="hoverBackground">
-          {fuelPercentage === undefined
-            ? null
-            : fuelTypeOrder.map((key) => {
-                const { title, color } = fuelDetailsFromFuelType[key];
-                return (
-                  <span key={key}>
-                    <p>{title}</p>
-                    <p>{fuelPercentage[key]}</p>
-                  </span>
-                );
-              })}
-        </div>
+        <PercentageHover title={percBox.title} value={percBox.value} />
       ) : null} */}
       <table className={styles.table}>
         <thead>
@@ -176,6 +159,7 @@ export const Emissions = () => {
 
 const styles = {
   emissions: css({
+    position: "relative",
     backgroundColor: "white",
     border: "1px solid #E8E8E8",
     padding: themeSpacing.large,
@@ -201,6 +185,7 @@ const styles = {
     display: "flex",
     justifyContent: "space-between",
     marginBottom: themeSpacing.small,
+    // position: "relative",
   }),
   chart: css({
     // border: "1px solid black",
