@@ -1,17 +1,17 @@
 import * as React from "react";
 
-// interface NextIconProps {
-//   opacity: number;
-// }
+interface NextIconProps {
+  nextOpacity: number;
+  onClick: any;
+}
 
-export const NextIcon = (props: any) => {
+export const NextIcon = ({ nextOpacity }: NextIconProps): JSX.Element => {
   return (
     <svg
       width={32}
       height={32}
       viewBox="0 0 32 32"
       xmlns="http://www.w3.org/2000/svg"
-      {...props}
     >
       <title>{"next"}</title>
       <defs>
@@ -28,7 +28,8 @@ export const NextIcon = (props: any) => {
           fill="#555761"
           stroke="#555761"
           strokeWidth={2}
-          opacity={0.5}
+          opacity={nextOpacity}
+          cursor="pointer"
         />
       </g>
     </svg>

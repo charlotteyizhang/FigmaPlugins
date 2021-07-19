@@ -11,14 +11,55 @@ import {
 } from "./PercentageHover";
 import { PrevIcon } from "../img/PrevIcon";
 import { NextIcon } from "../img/NextIcon";
+import { EmissionStatus } from "../data/emissionStatus";
+
+// type EmissionStatus = "current" | "past";
+
+// on click sends info here. this then returns info used in
+//setEmissionStatus to fetch data.
+const emissionStatusStyleFromEmissionStatus = (
+  emissionStatus: EmissionStatus
+): EmissionStatusStyle => {
+  switch (emissionStatus.state) {
+    case "current":
+      return currentEmissionStatusStyle;
+    case "past":
+      return pastEmissionStatusStyle;
+
+    default:
+      const x: never = emissionStatus;
+      return x;
+  }
+};
+
+interface EmissionStatusStyle {
+  dataSelection: "next" | "previous";
+  nextOpacity: number;
+  previousOpacity: number;
+}
+
+const currentEmissionStatusStyle: EmissionStatusStyle = {
+  dataSelection: "next",
+  nextOpacity: 0.2,
+  previousOpacity: 0.5,
+};
+
+const pastEmissionStatusStyle: EmissionStatusStyle = {
+  dataSelection: "previous",
+  nextOpacity: 0.5,
+  previousOpacity: 0.2,
+};
 
 export const Emissions = () => {
   const [percBox, setPercBox] = useState<PercHoverProps | undefined>(undefined);
   const [fuelPercentage, setFuelPercentage] = useState<
     FuelPercentage | undefined
   >(undefined);
-  const [currentState, setCurrentState] = useState(true);
+  const [emissionStatus, setEmissionStatus] = useState<EmissionStatus>({
+    state: "current",
+  });
 
+  //if state === current, show generation data. else, show fromTo data
   useEffect(() => {
     fetch("https://api.carbonintensity.org.uk/generation")
       .then((response) => response.json())
@@ -31,17 +72,24 @@ export const Emissions = () => {
     <div className={styles.emissions}>
       <div className={styles.titleContainer}>
         <PrevIcon
-          className={css({ cursor: "pointer" })}
-          onClick={currentState ? () => setCurrentState(false) : null}
+          onClick={
+            emissionStatus
+              ? () =>
+                  setEmissionStatus(
+                    emissionStatusStyleFromEmissionStatus({ state: "past" })
+                  )
+              : null
+          }
+          // onClick={setEmissionStatus(emissionStatusFromButton(emissionStatus))}
         />
         <h2>
-          {`Percentage CO₂ emission for
-          ${currentState ? "current half hour" : "past 4 hours"}`}
+          {emissionStatus.state === "current"
+            ? `Percentage CO₂ emission for current half hour`
+            : `Percentage CO₂ emission for next four hours`}
         </h2>
         {/* <h2>Percentage CO₂ emission for current half hour</h2> */}
         <NextIcon
-          className={css({ cursor: "pointer" })}
-          onClick={currentState ? null : () => setCurrentState(true)}
+        // onClick={currentState ? null : () => setCurrentState(true)}
         />
       </div>
       <hr></hr>

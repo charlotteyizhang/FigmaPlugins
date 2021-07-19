@@ -1,17 +1,17 @@
 import * as React from "react";
 
-// interface PrevIconProps {
-//   opacity: number;
-// }
+interface PrevIconProps {
+  previousOpacity: number;
+  onClick: any;
+}
 
-export const PrevIcon = (props: any) => {
+export const PrevIcon = ({ previousOpacity }: PrevIconProps): JSX.Element => {
   return (
     <svg
       width={32}
       height={32}
       viewBox="0 0 32 32"
       xmlns="http://www.w3.org/2000/svg"
-      {...props}
     >
       <title>{"prev"}</title>
       <defs>
@@ -28,7 +28,8 @@ export const PrevIcon = (props: any) => {
           fill="#555761"
           stroke="#555761"
           strokeWidth={2}
-          opacity={0.5}
+          opacity={previousOpacity}
+          cursor="pointer"
         />
       </g>
     </svg>
