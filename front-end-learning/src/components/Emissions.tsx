@@ -19,56 +19,6 @@ import {
   percentageFromData,
   PercHoverProps,
 } from "./PercentageHover";
-// import { fuelDetailsFromFuelType,  } from "./PercentageHover";
-
-// interface FuelPercentage {
-//   biomass: number;
-//   hydro: number;
-//   solar: number;
-//   wind: number;
-//   coal: number;
-//   gas: number;
-//   imports: number;
-//   nuclear: number;
-//   other: number;
-// }
-
-// const fuelTypeOrder: Array<FuelType> = [
-//   "biomass",
-//   "hydro",
-//   "wind",
-//   "solar",
-//   "coal",
-//   "gas",
-//   "imports",
-//   "nuclear",
-//   "other",
-// ];
-
-// type FuelType = keyof FuelPercentage;
-
-// const fuelDetailsFromFuelType: Record<
-//   FuelType,
-//   { title: string; color: string; Icon: (props: any) => JSX.Element }
-// > = {
-//   biomass: { title: "Biomass", color: "#78D5C6", Icon: Biomass },
-//   hydro: { title: "Hydro", color: "#40C1AC", Icon: Hydro },
-//   solar: { title: "Solar", color: "#259482", Icon: Solar },
-//   wind: { title: "Wind", color: "#216056", Icon: Wind },
-//   coal: { title: "Coal", color: "#F79CAB", Icon: Coal },
-//   gas: { title: "Gas", color: "#EE8092", Icon: Gas },
-//   imports: { title: "Imports", color: "#F1566F", Icon: Imports },
-//   nuclear: { title: "Nuclear", color: "#D22949", Icon: Nuclear },
-//   other: { title: "Other", color: "#BA0C2F", Icon: Others },
-// };
-
-// // FuelPercentage consists of name and number, need to implement this...
-// const percentageFromData = (data: any): FuelPercentage => {
-//   // The Object.fromEntries() method transforms a list of key-value pairs into an object.
-//   return Object.fromEntries(
-//     data.data.generationmix.map((item: any) => [item.fuel, item.perc])
-//   ) as any;
-// };
 
 export const Emissions = () => {
   const [percBox, setPercBox] = useState<PercHoverProps | undefined>(undefined);
@@ -185,7 +135,6 @@ const styles = {
     display: "flex",
     justifyContent: "space-between",
     marginBottom: themeSpacing.small,
-    // position: "relative",
   }),
   chart: css({
     // border: "1px solid black",

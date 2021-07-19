@@ -37,8 +37,8 @@ const chargeStatusFromData = (response: any): ChargeStatus => {
   switch (index) {
     case "very low":
     case "low":
-    case "moderate":
       return { state: "now", time };
+    case "moderate":
     case "high":
       return { state: "soon", time };
     case "very high":

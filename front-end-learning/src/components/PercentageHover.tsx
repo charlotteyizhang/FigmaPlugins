@@ -59,14 +59,14 @@ export const percentageFromData = (data: any): FuelPercentage => {
   ) as any;
 };
 
-// const onMouseMove = (e: any) => {
-//   const x = `${e.clientY + 20}px`;
-//   const y = `${e.clientX + 20}px`;
-// };
+// interface OnMouseMoveType {
+//   x: number;
+//   y: number;
+// }
 
-// window.onmousemove = (e) => {
-//   var x = e.clientX;
-//   var y = e.clientY;
+// const onMouseMove = ({x, y}: OnMouseMoveType) => {
+//   const hoverX = x.clientY + 20;
+//   const hoverY = y.clientX + 20;
 // };
 
 export interface PercHoverProps {
@@ -75,8 +75,26 @@ export interface PercHoverProps {
 }
 
 export const PercentageHover = ({ title, value }: PercHoverProps) => {
+  // const [hoverPosition, setHoverPosition] = useState({ x: null, y: null });
+
+  // const updateHoverPosition = (ev: any) => {
+  //   setHoverPosition({ x: ev.clientX + 20, y: ev.clientY + 20 });
+  // };
+
+  // useEffect(() => {
+  //   window.addEventListener("mousemove", updateHoverPosition);
+
+  //   return () => window.removeEventListener("mousemove", updateHoverPosition);
+  // }, []);
+
+  // console.log(hoverPosition);
+
   return (
-    <div className={styles.hoverBackground}>
+    <div
+      id="hoverBAckground"
+      className={styles.hoverBackground}
+      // onMouseMove={hoverPosition}
+    >
       <p>
         {title} : {value}
       </p>
@@ -95,7 +113,7 @@ const styles = {
     border: "1px solid #E8E8E8",
     borderRadius: "5px",
     position: "absolute",
-    left: "40%",
     top: "9.5%",
+    left: "40%",
   }),
 };
