@@ -11,9 +11,11 @@ import {
 } from "./PercentageHover";
 import { PrevIcon } from "../img/PrevIcon";
 import { NextIcon } from "../img/NextIcon";
-import { EmissionStatus } from "../data/emissionStatus";
-
-// type EmissionStatus = "current" | "past";
+import {
+  EmissionStatus,
+  makeCurrentEmissionStatus,
+  makePastEmissionStatus,
+} from "../data/emissionStatus";
 
 // on click sends info here. this then returns info used in
 //setEmissionStatus to fetch data.
@@ -33,19 +35,19 @@ const emissionStatusStyleFromEmissionStatus = (
 };
 
 interface EmissionStatusStyle {
-  dataSelection: "next" | "previous";
+  // dataSelection: "next" | "previous";
   nextOpacity: number;
   previousOpacity: number;
 }
 
 const currentEmissionStatusStyle: EmissionStatusStyle = {
-  dataSelection: "next",
+  // dataSelection: "next",
   nextOpacity: 0.2,
   previousOpacity: 0.5,
 };
 
 const pastEmissionStatusStyle: EmissionStatusStyle = {
-  dataSelection: "previous",
+  // dataSelection: "previous",
   nextOpacity: 0.5,
   previousOpacity: 0.2,
 };
@@ -58,6 +60,7 @@ export const Emissions = () => {
   const [emissionStatus, setEmissionStatus] = useState<EmissionStatus>({
     state: "current",
   });
+  // const []
 
   //if state === current, show generation data. else, show fromTo data
   useEffect(() => {
@@ -68,29 +71,42 @@ export const Emissions = () => {
       });
   }, []);
 
+  // to hide button, if opacity = 0.2, hide it
   return (
     <div className={styles.emissions}>
       <div className={styles.titleContainer}>
-        <PrevIcon
+        <button
           onClick={
             emissionStatus
-              ? () =>
-                  setEmissionStatus(
-                    emissionStatusStyleFromEmissionStatus({ state: "past" })
-                  )
-              : null
+              ? () => setEmissionStatus(makeCurrentEmissionStatus())
+              : undefined
           }
-          // onClick={setEmissionStatus(emissionStatusFromButton(emissionStatus))}
-        />
+        >
+          <PrevIcon
+            previousOpacity={
+              emissionStatusStyleFromEmissionStatus(emissionStatus)
+                .previousOpacity
+            }
+          />
+        </button>
         <h2>
           {emissionStatus.state === "current"
             ? `Percentage CO₂ emission for current half hour`
             : `Percentage CO₂ emission for next four hours`}
         </h2>
-        {/* <h2>Percentage CO₂ emission for current half hour</h2> */}
-        <NextIcon
-        // onClick={currentState ? null : () => setCurrentState(true)}
-        />
+        <button
+          onClick={
+            emissionStatus
+              ? () => setEmissionStatus(makePastEmissionStatus())
+              : undefined
+          }
+        >
+          <NextIcon
+            nextOpacity={
+              emissionStatusStyleFromEmissionStatus(emissionStatus).nextOpacity
+            }
+          />{" "}
+        </button>
       </div>
       <hr></hr>
       <div className={styles.percentage}>
@@ -129,9 +145,6 @@ export const Emissions = () => {
               );
             })}
       </div>
-      {/* {percBox ? (
-        <PercentageHover title={percBox.title} value={percBox.value} />
-      ) : null} */}
       <table className={styles.table}>
         <thead>
           <tr>
@@ -188,6 +201,13 @@ const styles = {
     marginBottom: themeSpacing.default,
     h2: {
       color: "#555761",
+    },
+    button: {
+      background: "none",
+      border: "none",
+      "&:disabled": {
+        opacity: 0,
+      },
     },
   }),
   percentage: css({

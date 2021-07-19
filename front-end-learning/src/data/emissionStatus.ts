@@ -7,3 +7,11 @@ interface PastEmissionStatus {
 }
 
 export type EmissionStatus = PastEmissionStatus | CurrentEmissionStatus;
+
+export const makePastEmissionStatus = (): CurrentEmissionStatus => {
+  return { state: "current" };
+};
+
+export const makeCurrentEmissionStatus = (): PastEmissionStatus => {
+  return { state: "past" };
+};

@@ -2,7 +2,6 @@ import * as React from "react";
 
 interface PrevIconProps {
   previousOpacity: number;
-  onClick: any;
 }
 
 export const PrevIcon = ({ previousOpacity }: PrevIconProps): JSX.Element => {

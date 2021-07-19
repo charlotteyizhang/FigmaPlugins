@@ -2,7 +2,6 @@ import * as React from "react";
 
 interface NextIconProps {
   nextOpacity: number;
-  onClick: any;
 }
 
 export const NextIcon = ({ nextOpacity }: NextIconProps): JSX.Element => {
