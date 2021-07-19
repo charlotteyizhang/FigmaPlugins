@@ -1,16 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { css } from "@emotion/css";
 import { themeSpacing } from "../basicStyle/spacing";
-import { Biomass } from "../img/fuelIcons/Biomass";
-import { Hydro } from "../img/fuelIcons/Hydro";
-import { Wind } from "../img/fuelIcons/Wind";
-import { Solar } from "../img/fuelIcons/Solar";
-import { Coal } from "../img/fuelIcons/Coal";
-import { Gas } from "../img/fuelIcons/Gas";
-import { Imports } from "../img/fuelIcons/Imports";
-import { Nuclear } from "../img/fuelIcons/Nuclear";
-import { Others } from "../img/fuelIcons/Others";
-import { title } from "process";
 import {
   PercentageHover,
   fuelDetailsFromFuelType,
@@ -19,12 +9,15 @@ import {
   percentageFromData,
   PercHoverProps,
 } from "./PercentageHover";
+import { PrevIcon } from "../img/PrevIcon";
+import { NextIcon } from "../img/NextIcon";
 
 export const Emissions = () => {
   const [percBox, setPercBox] = useState<PercHoverProps | undefined>(undefined);
   const [fuelPercentage, setFuelPercentage] = useState<
     FuelPercentage | undefined
   >(undefined);
+  const [currentState, setCurrentState] = useState(true);
 
   useEffect(() => {
     fetch("https://api.carbonintensity.org.uk/generation")
@@ -36,15 +29,28 @@ export const Emissions = () => {
 
   return (
     <div className={styles.emissions}>
-      <h2>Current Percentage CO₂ Emission</h2>
+      <div className={styles.titleContainer}>
+        <PrevIcon
+          className={css({ cursor: "pointer" })}
+          onClick={currentState ? () => setCurrentState(false) : null}
+        />
+        <h2>
+          {`Percentage CO₂ emission for
+          ${currentState ? "current half hour" : "past 4 hours"}`}
+        </h2>
+        {/* <h2>Percentage CO₂ emission for current half hour</h2> */}
+        <NextIcon
+          className={css({ cursor: "pointer" })}
+          onClick={currentState ? null : () => setCurrentState(true)}
+        />
+      </div>
       <hr></hr>
       <div className={styles.percentage}>
         <p>0%</p>
         <p>100%</p>
       </div>
-      <div className={styles.chart}>
-        {/* <span style={{ width: gasPerc }} className={styles.gas}></span> */}
 
+      <div className={styles.chart}>
         {fuelPercentage === undefined
           ? null
           : fuelTypeOrder.map((key) => {
@@ -113,14 +119,10 @@ const styles = {
     backgroundColor: "white",
     border: "1px solid #E8E8E8",
     padding: themeSpacing.large,
-    h2: {
-      color: "#555761",
-      marginBottom: themeSpacing.default,
-    },
     hr: {
       color: "#39393B",
       opacity: "0.3",
-      marginBottom: themeSpacing.default,
+      marginBottom: themeSpacing.large,
     },
     [`@media screen and (max-width: 650px) `]: {
       transition: "all 0.5s ease-in-out",
@@ -131,13 +133,21 @@ const styles = {
       },
     },
   }),
+  titleContainer: css({
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: themeSpacing.default,
+    h2: {
+      color: "#555761",
+    },
+  }),
   percentage: css({
     display: "flex",
     justifyContent: "space-between",
     marginBottom: themeSpacing.small,
   }),
   chart: css({
-    // border: "1px solid black",
     width: "100%",
     borderRadius: "30px",
     display: "flex",
@@ -153,7 +163,6 @@ const styles = {
   }),
   table: css({
     width: "100%",
-    justifyContent: "space-between",
     textAlign: "left",
     "th, td": {
       padding: themeSpacing.default,
