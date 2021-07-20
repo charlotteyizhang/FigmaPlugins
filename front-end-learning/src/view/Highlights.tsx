@@ -10,8 +10,8 @@ export const Highlights = () => {
   return (
     <div className={styles.highlights}>
       <Notification />
-      <LineForecast />
       <Emissions />
+      <LineForecast />
     </div>
   );
 };

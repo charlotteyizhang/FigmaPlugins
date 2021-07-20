@@ -28,7 +28,7 @@ export const NextIcon = ({ nextOpacity }: NextIconProps): JSX.Element => {
           stroke="#555761"
           strokeWidth={2}
           opacity={nextOpacity}
-          cursor="pointer"
+          cursor={nextOpacity === 0.2 ? "not-allowed" : "pointer"}
         />
       </g>
     </svg>

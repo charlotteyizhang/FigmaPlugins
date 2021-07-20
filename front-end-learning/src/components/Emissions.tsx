@@ -1,24 +1,24 @@
-import React, { useState, useEffect } from "react";
 import { css } from "@emotion/css";
+import React, { useEffect, useState } from "react";
 import { themeSpacing } from "../basicStyle/spacing";
-import {
-  PercentageHover,
-  fuelDetailsFromFuelType,
-  fuelTypeOrder,
-  FuelPercentage,
-  percentageFromData,
-  PercHoverProps,
-} from "./PercentageHover";
-import { PrevIcon } from "../img/PrevIcon";
-import { NextIcon } from "../img/NextIcon";
 import {
   EmissionStatus,
   makeCurrentEmissionStatus,
   makePastEmissionStatus,
 } from "../data/emissionStatus";
+import { NextIcon } from "../img/NextIcon";
+import { PrevIcon } from "../img/PrevIcon";
+import {
+  fuelDetailsFromFuelType,
+  FuelPercentage,
+  fuelTypeOrder,
+  percentageFromCurrentTime,
+  PercentageHover,
+  PercHoverProps,
+} from "./PercentageHover";
 
-// on click sends info here. this then returns info used in
-//setEmissionStatus to fetch data.
+// on click sends info to function which sets emissionStatus. inside the
+// Next/Prev Icons, the emissionStatus is sent here to set the button style.
 const emissionStatusStyleFromEmissionStatus = (
   emissionStatus: EmissionStatus
 ): EmissionStatusStyle => {
@@ -52,6 +52,24 @@ const pastEmissionStatusStyle: EmissionStatusStyle = {
   previousOpacity: 0.2,
 };
 
+// ATTEMPTING TO MAKE BUTTON HIDE WHEN OPACITY IS 0.2 ...
+
+// onClick{() => {
+//   setDisable(true);
+//   setEmissionStatus(makePastEmissionStatus());
+//   setDisable(false);
+// }}
+//
+// const changeEmissionStatus = (emissionStatus: EmissionStatus) => {
+// emissionStatus
+//   ? () => setEmissionStatus(makeCurrentEmissionStatus())
+//   : undefined;
+// };
+//
+// const makeButtonHidden = () => {
+//   previousOpacity === 0.2 ? setDisable(true): undefined
+// }
+
 export const Emissions = () => {
   const [percBox, setPercBox] = useState<PercHoverProps | undefined>(undefined);
   const [fuelPercentage, setFuelPercentage] = useState<
@@ -60,14 +78,17 @@ export const Emissions = () => {
   const [emissionStatus, setEmissionStatus] = useState<EmissionStatus>({
     state: "current",
   });
-  // const []
+  // const [disable, setDisable] = useState(false);
 
   //if state === current, show generation data. else, show fromTo data
   useEffect(() => {
-    fetch("https://api.carbonintensity.org.uk/generation")
+    fetch(
+      "https://api.carbonintensity.org.uk/generation/2021-07-18T12:35Z/2021-07-18T16:35Z"
+    )
       .then((response) => response.json())
       .then((data) => {
-        setFuelPercentage(percentageFromData(data));
+        console.log({ data });
+        setFuelPercentage(percentageFromCurrentTime(data));
       });
   }, []);
 
@@ -76,6 +97,7 @@ export const Emissions = () => {
     <div className={styles.emissions}>
       <div className={styles.titleContainer}>
         <button
+          // disabled={disable}
           onClick={
             emissionStatus
               ? () => setEmissionStatus(makeCurrentEmissionStatus())
@@ -92,9 +114,10 @@ export const Emissions = () => {
         <h2>
           {emissionStatus.state === "current"
             ? `Percentage CO₂ emission for current half hour`
-            : `Percentage CO₂ emission for next four hours`}
+            : `Percentage CO₂ emission from four hours ago`}
         </h2>
         <button
+          // disabled={disable}
           onClick={
             emissionStatus
               ? () => setEmissionStatus(makePastEmissionStatus())
@@ -205,9 +228,10 @@ const styles = {
     button: {
       background: "none",
       border: "none",
-      "&:disabled": {
-        opacity: 0,
-      },
+      // cursor: "pointer",
+      // "&:disabled": {
+      //   cursor: "not-allowed",
+      // },
     },
   }),
   percentage: css({

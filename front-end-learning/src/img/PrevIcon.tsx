@@ -28,7 +28,7 @@ export const PrevIcon = ({ previousOpacity }: PrevIconProps): JSX.Element => {
           stroke="#555761"
           strokeWidth={2}
           opacity={previousOpacity}
-          cursor="pointer"
+          cursor={previousOpacity === 0.2 ? "not-allowed" : "pointer"}
         />
       </g>
     </svg>
