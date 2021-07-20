@@ -25,10 +25,10 @@ export const MenuBar = () => {
             <a href="#">Highlights</a>
           </li>
           <li>
-            <a href="#">CO₂ emissions</a>
+            <a href="#co2emissions">CO₂ emissions</a>
           </li>
           <li>
-            <a href="#">Carbon intensity</a>
+            <a href="#carbonintensity">Carbon intensity</a>
           </li>
         </ul>
         <hr></hr>

@@ -53,44 +53,44 @@ export const fuelDetailsFromFuelType: Record<
 };
 
 // FuelPercentage consists of name and number, need to implement this...
-export const percentageFromInterval = (data: any): FuelPercentage => {
-  // const sum = fuelTypeOrder.reduce(
-  //   (acc, fuelType) => ({ ...acc, [fuelType]: 0 }),
-  //   {}
-  // );
+// export const percentageFromInterval = (data: any): FuelPercentage => {
+//   // mapping array to object with initial value of 0
+//   const sum = Object.fromEntries(
+//     fuelTypeOrder.map((fuelType) => [fuelType, 0])
+//   ) as any;
 
-  // mapping array to object with initial value of 0
-  const sum = Object.fromEntries(
-    fuelTypeOrder.map((fuelType) => [fuelType, 0])
-  ) as any;
+//   // console.log({ sum });
 
-  // console.log({ sum });
+//   //two loops. inner loop is creating one array of all the fuel types.
+//   // outer loop is adding the percentages together and placing into that array.
 
-  //two loops. inner loop is creating one array of all the fuel types.
-  // outer loop is adding the percentages together and placing into that array.
+//   // data is an array of generation mixes over time
+//   //generation mix is an array of different fuel types
 
-  // data is an array of generation mixes over time
-  //generation mix is an array of different fuel types
+//   // we are iterating data to sum this object so we can print all values together
+//   // first iteration turns everything into an object, then we sum them together
+//   return data.data.reduce((acc: FuelPercentage, v: any) => {
+//     return v.generationmix.reduce((a: any, item: any) => {
+//       return { ...a, [item.fuel]: a[item.fuel] + item.perc };
+//     }, acc);
+//   }, sum);
+//   // console.log({ dataArray });
 
-  // we are iterating data to sum this object so we can print all values together
-  // first iteration turns everything into an object, then we sum them together
-  return data.data.reduce((acc: FuelPercentage, v: any) => {
-    return v.generationmix.reduce((a: any, item: any) => {
-      return { ...a, [item.fuel]: a[item.fuel] + item.perc };
-    }, acc);
-  }, sum);
-  // console.log({ dataArray });
-
-  // return data.data[0].generationmix.reduce((acc: FuelPercentage, item: any) => {
-  //   return { ...acc, [item.fuel]: item.perc };
-  // }, sum);
-  // data.data[0].generationmix.map((item: any) => [item.fuel, { ...sum }])
-  // dataList.map();
-};
+//   // return data.data[0].generationmix.reduce((acc: FuelPercentage, item: any) => {
+//   //   return { ...acc, [item.fuel]: item.perc };
+//   // }, sum);
+//   // data.data[0].generationmix.map((item: any) => [item.fuel, { ...sum }])
+//   // dataList.map();
+// };
 
 //mapping array to object.
-export const percentageFromCurrentTime = (data: any): FuelPercentage => {
-  console.log({ data });
+// export const percentageCurrent = (data: any): FuelPercentage => {
+//   return Object.fromEntries(
+//     data.data.generationmix.map((item: any) => [item.fuel, item.perc])
+//   ) as any;
+// };
+
+export const percentageFromData = (data: any): FuelPercentage => {
   return Object.fromEntries(
     data.data[0].generationmix.map((item: any) => [item.fuel, item.perc])
   ) as any;

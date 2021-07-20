@@ -12,9 +12,9 @@ import {
   fuelDetailsFromFuelType,
   FuelPercentage,
   fuelTypeOrder,
-  percentageFromCurrentTime,
   PercentageHover,
   PercHoverProps,
+  percentageFromData,
 } from "./PercentageHover";
 
 // on click sends info to function which sets emissionStatus. inside the
@@ -35,40 +35,58 @@ const emissionStatusStyleFromEmissionStatus = (
 };
 
 interface EmissionStatusStyle {
-  // dataSelection: "next" | "previous";
   nextOpacity: number;
   previousOpacity: number;
 }
 
 const currentEmissionStatusStyle: EmissionStatusStyle = {
-  // dataSelection: "next",
   nextOpacity: 0.2,
   previousOpacity: 0.5,
 };
 
 const pastEmissionStatusStyle: EmissionStatusStyle = {
-  // dataSelection: "previous",
   nextOpacity: 0.5,
   previousOpacity: 0.2,
 };
 
-// ATTEMPTING TO MAKE BUTTON HIDE WHEN OPACITY IS 0.2 ...
+// creating variable for API to check four hours ago
+const fourHoursAgo = new Intl.DateTimeFormat("en-GB", {
+  timeStyle: "short",
+}).format(new Date().setHours(new Date().getHours() - 4));
 
-// onClick{() => {
-//   setDisable(true);
-//   setEmissionStatus(makePastEmissionStatus());
-//   setDisable(false);
-// }}
-//
-// const changeEmissionStatus = (emissionStatus: EmissionStatus) => {
-// emissionStatus
-//   ? () => setEmissionStatus(makeCurrentEmissionStatus())
-//   : undefined;
+const halfHourAgo = new Intl.DateTimeFormat("en-GB", {
+  timeStyle: "short",
+}).format(new Date().setMinutes(new Date().getMinutes() - 30));
+
+const currentTime = new Intl.DateTimeFormat("en-GB", {
+  timeStyle: "short",
+}).format(new Date());
+
+// function to set the date for the API
+const date = new Date().toISOString().split("T")[0];
+
+// const settingTime = (emissionStatus: EmissionStatus) => {
+//   const from = null
+//   emissionStatus.state === "current" ? from = halfHourAgo : from = fourHoursAgo
+//   // if emission state is current, from is halfHourAgo, else from is fourHoursAgo
 // };
-//
-// const makeButtonHidden = () => {
-//   previousOpacity === 0.2 ? setDisable(true): undefined
-// }
+
+const setTimeForData = () => {
+  const timeStyle = new Intl.DateTimeFormat("en-GB", { timeStyle: "short" });
+  const to = timeStyle.format(new Date());
+  const fromPresent = timeStyle.format(
+    new Date().setMinutes(new Date().getMinutes() - 30)
+  );
+  const fromPast = timeStyle.format(
+    new Date().setHours(new Date().getHours() - 4)
+  );
+  // emissionStatus.state === "current"
+  //   ? (from = timeStyle.format(
+  //       new Date().setMinutes(new Date().getMinutes() - 30)
+  //     ))
+  //   : (from = timeStyle.format(new Date().setHours(new Date().getHours() - 4)));
+  return { fromPresent, fromPast, to };
+};
 
 export const Emissions = () => {
   const [percBox, setPercBox] = useState<PercHoverProps | undefined>(undefined);
@@ -78,19 +96,47 @@ export const Emissions = () => {
   const [emissionStatus, setEmissionStatus] = useState<EmissionStatus>({
     state: "current",
   });
-  // const [disable, setDisable] = useState(false);
 
   //if state === current, show generation data. else, show fromTo data
+  //using state to change the from and to, so depending on the state from="" and to=""
   useEffect(() => {
+    const time = setTimeForData();
+    const from =
+      emissionStatus.state === "current" ? time.fromPresent : time.fromPast;
     fetch(
-      "https://api.carbonintensity.org.uk/generation/2021-07-18T12:35Z/2021-07-18T16:35Z"
+      `https://api.carbonintensity.org.uk/generation/${date}T${from}Z/${date}T${time.to}Z`
     )
       .then((response) => response.json())
       .then((data) => {
-        console.log({ data });
-        setFuelPercentage(percentageFromCurrentTime(data));
+        setFuelPercentage(percentageFromData(data));
       });
-  }, []);
+  }, [emissionStatus]);
+  // useEffect switching data dependent .on state
+  // useEffect(() => {
+  //   emissionStatus.state === "current"
+  //     ? fetch("https://api.carbonintensity.org.uk/generation/")
+  //         .then((response) => response.json())
+  //         .then((data) => {
+  //           setFuelPercentage(percentageCurrent(data));
+  //         })
+  //     : fetch(
+  //         `https://api.carbonintensity.org.uk/generation/2021-07-20T${fourHoursAgo}Z/2021-07-20T${currentTime}Z`
+  //       )
+  //         .then((response) => response.json())
+  //         .then((data) => {
+  //           setFuelPercentage(percentagePast(data));
+  //         });
+  // }, [emissionStatus]);
+  //
+  // original use effect
+  // useEffect(() => {
+  //   fetch(`https://api.carbonintensity.org.uk/generation/`)
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       console.log({ data });
+  //       setFuelPercentage(percentageFromCurrentTime(data));
+  //     });
+  // }, []);
 
   // to hide button, if opacity = 0.2, hide it
   return (
@@ -100,7 +146,7 @@ export const Emissions = () => {
           // disabled={disable}
           onClick={
             emissionStatus
-              ? () => setEmissionStatus(makeCurrentEmissionStatus())
+              ? () => setEmissionStatus(makePastEmissionStatus())
               : undefined
           }
         >
@@ -120,7 +166,7 @@ export const Emissions = () => {
           // disabled={disable}
           onClick={
             emissionStatus
-              ? () => setEmissionStatus(makePastEmissionStatus())
+              ? () => setEmissionStatus(makeCurrentEmissionStatus())
               : undefined
           }
         >
