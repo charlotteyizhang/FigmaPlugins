@@ -49,44 +49,41 @@ const pastEmissionStatusStyle: EmissionStatusStyle = {
   previousOpacity: 0.2,
 };
 
-// creating variable for API to check four hours ago
-const fourHoursAgo = new Intl.DateTimeFormat("en-GB", {
-  timeStyle: "short",
-}).format(new Date().setHours(new Date().getHours() - 4));
+// creating variable for API to check four hours ago //
+// const fourHoursAgo = new Intl.DateTimeFormat("en-GB", {
+//   timeStyle: "short",
+// }).format(new Date().setHours(new Date().getHours() - 4));
 
-const halfHourAgo = new Intl.DateTimeFormat("en-GB", {
-  timeStyle: "short",
-}).format(new Date().setMinutes(new Date().getMinutes() - 30));
+// const halfHourAgo = new Intl.DateTimeFormat("en-GB", {
+//   timeStyle: "short",
+// }).format(new Date().setMinutes(new Date().getMinutes() - 30));
 
-const currentTime = new Intl.DateTimeFormat("en-GB", {
-  timeStyle: "short",
-}).format(new Date());
+// const currentTime = new Intl.DateTimeFormat("en-GB", {
+//   timeStyle: "short",
+// }).format(new Date());
+
+const now = new Date();
 
 // function to set the date for the API
-const date = new Date().toISOString().split("T")[0];
-
-// const settingTime = (emissionStatus: EmissionStatus) => {
-//   const from = null
-//   emissionStatus.state === "current" ? from = halfHourAgo : from = fourHoursAgo
-//   // if emission state is current, from is halfHourAgo, else from is fourHoursAgo
-// };
+const date = now.toISOString().split("T")[0];
 
 const setTimeForData = () => {
   const timeStyle = new Intl.DateTimeFormat("en-GB", { timeStyle: "short" });
-  const to = timeStyle.format(new Date());
-  const fromPresent = timeStyle.format(
-    new Date().setMinutes(new Date().getMinutes() - 30)
-  );
-  const fromPast = timeStyle.format(
-    new Date().setHours(new Date().getHours() - 4)
-  );
-  // emissionStatus.state === "current"
-  //   ? (from = timeStyle.format(
-  //       new Date().setMinutes(new Date().getMinutes() - 30)
-  //     ))
-  //   : (from = timeStyle.format(new Date().setHours(new Date().getHours() - 4)));
-  return { fromPresent, fromPast, to };
+  const to = timeStyle.format(now);
+  const fromPresent = timeStyle.format(now.setMinutes(now.getMinutes() - 30));
+  const fromPast = timeStyle.format(now.setHours(now.getHours() - 4));
+  const fourHoursAgo = `${date}T${fromPast}Z`;
+  const halfHourAgo = `${date}T${fromPresent}Z`;
+  const toNow = `${date}T${to}Z`;
+  return { fourHoursAgo, halfHourAgo, toNow };
 };
+
+// const formatDateTime = () => {
+//   // takes date, fromPresent, fromPast, to and combines
+//   const fourHoursAgo = `${date}T${fromPast}Z`
+//   const halfHourAgo = `${date}T${fromPresent}Z`
+//   const toNow = `${date}T${to}Z`
+// }
 
 export const Emissions = () => {
   const [percBox, setPercBox] = useState<PercHoverProps | undefined>(undefined);
@@ -101,11 +98,12 @@ export const Emissions = () => {
   //using state to change the from and to, so depending on the state from="" and to=""
   useEffect(() => {
     const time = setTimeForData();
+    const to = time.toNow;
     const from =
-      emissionStatus.state === "current" ? time.fromPresent : time.fromPast;
-    fetch(
-      `https://api.carbonintensity.org.uk/generation/${date}T${from}Z/${date}T${time.to}Z`
-    )
+      emissionStatus.state === "current" ? time.halfHourAgo : time.fourHoursAgo;
+    console.log(from, to);
+
+    fetch(`https://api.carbonintensity.org.uk/generation/${from}/${to}`)
       .then((response) => response.json())
       .then((data) => {
         setFuelPercentage(percentageFromData(data));
