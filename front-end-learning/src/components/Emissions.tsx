@@ -106,7 +106,6 @@ export const Emissions = () => {
     const to = time.toNow;
     const from =
       emissionStatus.state === "current" ? time.halfHourAgo : time.fourHoursAgo;
-    console.log(from, to);
 
     fetch(`https://api.carbonintensity.org.uk/generation/${from}/${to}`)
       .then((response) => response.json())

@@ -1,9 +1,42 @@
-import React from "react";
+import React, { useState } from "react";
 import { css } from "@emotion/css";
 import { themeSpacing } from "../basicStyle/spacing";
-// import { NONAME } from "dns"; 
+import { BurgerMenu } from "./BurgerMenu";
+// import { Highlights } from "../view/Highlights";
+// import { NONAME } from "dns";
+
+export type MobileStatus = "active" | "inactive";
+
+const menuAnimation = (mobileStatus: MobileStatus) => {
+  switch (mobileStatus) {
+    case "active":
+      console.log("hello");
+      return;
+    case "inactive":
+      console.log("bye");
+      return;
+
+    default:
+      const x: never = mobileStatus;
+      return x;
+  }
+};
+
+// const animIn = (mobileStatus: MobileStatus) => {
+//   {
+//     mobileStatus === "active" ? "HEllo" : "YEs";
+//   }
+// };
+// const animIn = (mobileStatus: MobileStatus) => {
+//   {
+//     mobileStatus === "inactive" ? "bye" : "No";
+//   }
+// };
 
 export const Header = () => {
+  const [mobileStatus, setMobileStatus] = useState<MobileStatus>("inactive");
+  // Note for tomorrow: create a useEffect and onClick function to add to the onClick in the button and make useEffect dependent on mobileStatus
+
   return (
     <header className={styles.header}>
       <div className={styles.logoContainer}>
@@ -11,10 +44,17 @@ export const Header = () => {
       </div>
       <div className={styles.head}>
         <h3>Dashboard</h3>
-        <div className={styles.menuBtn}>
+        <button
+          onClick={
+            mobileStatus === "inactive"
+              ? () => setMobileStatus("active")
+              : () => setMobileStatus("inactive")
+          }
+        >
           <span></span>
-        </div>
+        </button>
       </div>
+      {mobileStatus === "active" ? menuAnimation(mobileStatus) : null}
     </header>
   );
 };
@@ -68,37 +108,43 @@ const styles = {
       fontWeight: "bold",
       paddingLeft: themeSpacing.large,
     },
-  }),
-  menuBtn: css({
-    display: "none",
-    [`@media screen and (max-width: 650px)`]: {
-      display: "flex",
-      position: "absolute",
-      // zIndex: 1,
-      right: themeSpacing.large,
-      top: themeSpacing.large,
-      height: "20px",
-      width: "28px",
-      cursor: "pointer",
-      transition: "all 0.5s ease-in-out",
-      justifyContent: "center",
-      alignItems: "center",
-      "span, span::before, span::after": {
-        content: "''",
+    button: {
+      display: "none",
+      [`@media screen and (max-width: 650px)`]: {
+        background: "none",
+        border: "none",
+        boxSizing: "border-box",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
         position: "absolute",
+        // zIndex: 1,
+        right: themeSpacing.large,
+        // top: themeSpacing.large,
+        height: "20px",
         width: "28px",
-        height: "3px",
-        backgroundColor: "#00558C",
-      },
-      span: {
-        right: 0,
-        top: "0rem",
-      },
-      "span::before": {
-        top: "-0.5rem",
-      },
-      "span::after": {
-        top: "0.5rem",
+        cursor: "pointer",
+        transition: "all 0.5s ease-in-out",
+        overflow: "hidden",
+        "span, span::before, span::after": {
+          content: "''",
+          position: "absolute",
+          width: "28px",
+          height: "3px",
+          backgroundColor: "#00558C",
+        },
+        span: {
+          right: 0,
+          top: "0.5",
+        },
+        "span::before": {
+          top: "-0.5rem",
+          right: 0,
+        },
+        "span::after": {
+          top: "0.5rem",
+          right: 0,
+        },
       },
     },
   }),

@@ -3,7 +3,6 @@ import { css } from "@emotion/css";
 import { themeSpacing } from "../basicStyle/spacing";
 import { Notification } from "../components/Notification";
 import { LineForecast } from "../components/LineForecast";
-import { BurgerMenu } from "../components/BurgerMenu";
 import { Emissions } from "../components/Emissions";
 
 export const Highlights = () => {
@@ -22,6 +21,7 @@ export const Highlights = () => {
 const styles = {
   highlights: css({
     display: "flex",
+    zIndex: 0,
     flexDirection: "column",
     width: "84vw",
     padding: "0 2rem",

@@ -31,6 +31,9 @@ export const BurgerMenu = () => {
 
 const styles = {
   burgermenu: css({
+    position: "fixed",
+    top: "4rem",
+    // left: 0,
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
@@ -38,9 +41,10 @@ const styles = {
     border: "1px solid #E8E8E8",
     zIndex: 1,
     width: "100vw",
-    height: "81vh",
+    // height: "81vh",
+    height: "91vh",
     padding: themeSpacing.large,
-    margin: themeSpacing.large,
+    // margin: themeSpacing.large,
     ul: {
       listStyleType: "none",
       cursor: "pointer",
