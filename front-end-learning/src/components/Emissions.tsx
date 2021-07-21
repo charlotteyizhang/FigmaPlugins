@@ -257,12 +257,20 @@ const styles = {
       opacity: "0.3",
       marginBottom: themeSpacing.large,
     },
-    [`@media screen and (max-width: 650px) `]: {
+    [`@media screen and (max-width: 800px)`]: {
       transition: "all 0.5s ease-in-out",
       width: "100%",
       padding: themeSpacing.default,
       h2: {
         fontSize: "1.2rem",
+      },
+    },
+    [`@media screen and (max-width: 650px) `]: {
+      transition: "all 0.5s ease-in-out",
+      width: "100%",
+      padding: themeSpacing.default,
+      h2: {
+        fontSize: "1rem",
       },
     },
   }),

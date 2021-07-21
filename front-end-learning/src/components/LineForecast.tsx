@@ -38,7 +38,6 @@ const styles = {
     border: "1px solid #E8E8E8",
     padding: themeSpacing.large,
     marginBottom: themeSpacing.large,
-    marginTop: themeSpacing.large,
     h2: {
       color: "#555761",
       marginBottom: themeSpacing.default,

@@ -12,13 +12,13 @@ export const BurgerMenu = () => {
     <menu className={styles.burgermenu}>
       <ul>
         <li>
-          <a href="#">Highlights</a>
+          <a href="#highlight">Highlights</a>
         </li>
         <li>
-          <a href="#">CO2 emissions</a>
+          <a href="#co2Emissions">CO2 emissions</a>
         </li>
         <li>
-          <a href="#">Carbon intensity</a>
+          <a href="#carbonIntensity">Carbon intensity</a>
         </li>
       </ul>
       <div className={styles.burgerbutton}>
@@ -31,36 +31,37 @@ export const BurgerMenu = () => {
 
 const styles = {
   burgermenu: css({
-    padding: themeSpacing.large,
-    backgroundColor: "white",
-    zIndex: 1,
-    width: "100vw",
-    height: "100vh",
     display: "flex",
     flexDirection: "column",
+    justifyContent: "space-between",
+    backgroundColor: "white",
+    border: "1px solid #E8E8E8",
+    zIndex: 1,
+    width: "100vw",
+    height: "81vh",
+    padding: themeSpacing.large,
+    margin: themeSpacing.large,
     ul: {
-      listStyle: "none",
-      justifyContent: "center",
-      alignItems: "center",
+      listStyleType: "none",
+      cursor: "pointer",
+      padding: 0,
     },
     li: {
       display: "flex",
       justifyContent: "center",
-      alignItems: "center",
       width: "100%",
       backgroundColor: "#00558C",
-      marginBottom: themeSpacing.small,
+      fontWeight: "bold",
+      marginBottom: themeSpacing.large,
       padding: "1rem 1.5rem",
       border: "none",
       borderRadius: "10px",
+      boxShadow: "0 0 10px rgba(0, 85, 140, 0.25)",
     },
     "li:hover": {
-      border: "1px solid #00558C",
-      backgroundColor: "white",
-      a: {
-        color: "#00558C",
-        fontWeight: "bold",
-      },
+      // border: "1px solid #00558C",
+      boxShadow: "none",
+      backgroundColor: "rgba(0, 85, 140, 0.9)",
     },
     "a, a:link, a:visited": {
       color: "white",
@@ -70,15 +71,24 @@ const styles = {
     },
   }),
   burgerbutton: css({
+    cursor: "pointer",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
     width: "100%",
+    // margin: themeSpacing.large,
     backgroundColor: "#00558C",
     color: "white",
-    marginBottom: themeSpacing.small,
-    padding: "1rem 1.5rem",
+    padding: "1.5rem",
     border: "none",
     borderRadius: "10px",
+    boxShadow: "0 0 10px rgba(0, 85, 140, 0.25)",
+    "&:hover": {
+      boxShadow: "none",
+      backgroundColor: "rgba(0, 85, 140, 0.9)",
+    },
+    h4: {
+      paddingLeft: themeSpacing.large,
+    },
   }),
 };

@@ -101,7 +101,6 @@ const styles = {
     border: "1px solid #E8E8E8",
     display: "flex",
     flexDirection: "column",
-    marginBottom: themeSpacing.large,
     padding: themeSpacing.large,
     [`@media screen and (max-width: 650px) `]: {
       transition: "all 0.5s ease-in-out",

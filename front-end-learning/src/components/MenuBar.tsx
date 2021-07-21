@@ -50,10 +50,10 @@ export const MenuBar = () => {
           <SupportIcon width="1rem" height="1rem" />
           <h4>Support</h4>
         </div> */}
-        <div className={styles.button}>
+        <button>
           <LogoutIcon width="1rem" height="1rem" />
           <h4>Logout</h4>
-        </div>
+        </button>
       </div>
     </menu>
   );
@@ -181,21 +181,27 @@ const styles = {
         paddingLeft: "1rem",
       },
     },
-  }),
-  button: css({
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-    backgroundColor: "#00558C",
-    color: "white",
-    marginBottom: themeSpacing.small,
-    padding: "1rem 1.5rem",
-    border: "none",
-    borderRadius: "10px",
-    [`@media screen and (max-width: 800px)`]: {
-      transition: "all 0.5s ease-in-out",
-      padding: "1rem 0.5rem",
+    button: {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      width: "100%",
+      backgroundColor: "#00558C",
+      color: "white",
+      marginBottom: themeSpacing.small,
+      padding: "1rem 1.5rem",
+      border: "none",
+      borderRadius: "10px",
+      boxShadow: "0 0 10px rgba(0, 85, 140, 0.25)",
+      "&:hover": {
+        cursor: "pointer",
+        boxShadow: "none",
+        backgroundColor: "rgba(0, 85, 140, 0.9)",
+      },
+      [`@media screen and (max-width: 800px)`]: {
+        transition: "all 0.5s ease-in-out",
+        padding: "1rem 0.5rem",
+      },
     },
   }),
 };
