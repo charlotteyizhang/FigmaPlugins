@@ -22,13 +22,13 @@ export const MenuBar = () => {
         <h4>Dashboard</h4>
         <ul className={styles.dashboardLinks}>
           <li>
-            <a href="#">Highlights</a>
+            <a href="#highlight">Highlights</a>
           </li>
           <li>
-            <a href="#co2emissions">CO₂ emissions</a>
+            <a href="#co2Emissions">CO₂ emissions</a>
           </li>
           <li>
-            <a href="#carbonintensity">Carbon intensity</a>
+            <a href="#carbonIntensity">Carbon intensity</a>
           </li>
         </ul>
         <hr></hr>

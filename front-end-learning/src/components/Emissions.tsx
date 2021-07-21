@@ -62,19 +62,24 @@ const pastEmissionStatusStyle: EmissionStatusStyle = {
 //   timeStyle: "short",
 // }).format(new Date());
 
-const now = new Date();
-
 // function to set the date for the API
-const date = now.toISOString().split("T")[0];
+const isoFornat = (time: string) => {
+  const date = new Date().toISOString().split("T")[0];
+  return `${date}T${time}Z`;
+};
 
 const setTimeForData = () => {
   const timeStyle = new Intl.DateTimeFormat("en-GB", { timeStyle: "short" });
-  const to = timeStyle.format(now);
-  const fromPresent = timeStyle.format(now.setMinutes(now.getMinutes() - 30));
-  const fromPast = timeStyle.format(now.setHours(now.getHours() - 4));
-  const fourHoursAgo = `${date}T${fromPast}Z`;
-  const halfHourAgo = `${date}T${fromPresent}Z`;
-  const toNow = `${date}T${to}Z`;
+  const to = timeStyle.format(new Date());
+  const fromPresent = timeStyle.format(
+    new Date().setMinutes(new Date().getMinutes() - 30)
+  );
+  const fromPast = timeStyle.format(
+    new Date().setHours(new Date().getHours() - 4)
+  );
+  const fourHoursAgo = isoFornat(fromPast);
+  const halfHourAgo = isoFornat(fromPresent);
+  const toNow = isoFornat(to);
   return { fourHoursAgo, halfHourAgo, toNow };
 };
 
