@@ -7,7 +7,7 @@ import { BurgerMenu } from "./BurgerMenu";
 
 export type MobileStatus = "active" | "inactive";
 
-const menuAnimation = (mobileStatus: MobileStatus) => {
+export const menuAnimation = (mobileStatus: MobileStatus) => {
   switch (mobileStatus) {
     case "active":
       console.log("hello");
@@ -54,7 +54,7 @@ export const Header = () => {
           <span></span>
         </button>
       </div>
-      {mobileStatus === "active" ? menuAnimation(mobileStatus) : null}
+      {mobileStatus === "active" ? <BurgerMenu /> : null}
     </header>
   );
 };

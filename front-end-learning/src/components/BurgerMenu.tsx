@@ -6,13 +6,23 @@ import { themeSpacing } from "../basicStyle/spacing";
 import { PhoneIcon } from "../img/Phone";
 import { SupportIcon } from "../img/Support";
 import { LogoutIcon } from "../img/Logout";
+import { MobileStatus } from "./Header";
+import { menuAnimation } from "./Header";
 
 export const BurgerMenu = () => {
   return (
     <menu className={styles.burgermenu}>
       <ul>
         <li>
-          <a href="#highlight">Highlights</a>
+          <button
+          // onClick={
+          //   mobileStatus === "active"
+          //     ? () => setMobileStatus("inactive")
+          //     : undefined
+          // }
+          >
+            <a href="#highlight">Highlights</a>
+          </button>
         </li>
         <li>
           <a href="#co2Emissions">CO2 emissions</a>
@@ -61,6 +71,12 @@ const styles = {
       border: "none",
       borderRadius: "10px",
       boxShadow: "0 0 10px rgba(0, 85, 140, 0.25)",
+      button: {
+        backgroundColor: "Transparent",
+        border: "none",
+        fontWeight: "bold",
+        fontSize: "1rem",
+      },
     },
     "li:hover": {
       // border: "1px solid #00558C",
