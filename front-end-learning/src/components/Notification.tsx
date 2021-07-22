@@ -130,6 +130,10 @@ const styles = {
         transition: "all 0.5s ease-in-out",
         fontSize: "1.2rem",
       },
+      [`@media screen and (max-width: 440px) `]: {
+        transition: "all 0.5s ease-in-out",
+        fontSize: "1rem",
+      },
     },
   }),
   illustration1: css({
