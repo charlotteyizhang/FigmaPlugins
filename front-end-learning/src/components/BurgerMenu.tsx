@@ -7,7 +7,6 @@ import { PhoneIcon } from "../img/Phone";
 import { SupportIcon } from "../img/Support";
 import { LogoutIcon } from "../img/Logout";
 import { MobileStatus } from "./Header";
-import { menuAnimation } from "./Header";
 
 interface BurgerMenuProps {
   className?: string;
