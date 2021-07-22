@@ -1,37 +1,33 @@
 import React from "react";
 import userImg from "../img/user-img.jpg";
-import { css, cx } from "@emotion/css";
+import { css } from "@emotion/css";
 import { EmailIcon } from "../img/Email";
 import { themeSpacing } from "../basicStyle/spacing";
 import { PhoneIcon } from "../img/Phone";
 import { SupportIcon } from "../img/Support";
 import { LogoutIcon } from "../img/Logout";
-import { MobileStatus } from "./Header";
+// import { MobileStatus } from "./Header";
 
 interface BurgerMenuProps {
-  className?: string;
+  onClick: (e: string) => void;
 }
 
-export const BurgerMenu = ({ className }: BurgerMenuProps) => {
+export const BurgerMenu = ({ onClick }: BurgerMenuProps) => {
   return (
-    <menu className={cx(menuStyles.burgerMenu, className)}>
+    <menu className={menuStyles.burgerMenu}>
       <ul>
         <li>
-          <button
-          // onClick={
-          //   mobileStatus === "active"
-          //     ? () => setMobileStatus("inactive")
-          //     : undefined
-          // }
-          >
-            <a href="#highlight">Highlights</a>
+          <button onClick={() => onClick("#highlight")}>Highlights</button>
+        </li>
+        <li>
+          <button onClick={() => onClick("#co2Emissions")}>
+            CO2 emissions
           </button>
         </li>
         <li>
-          <a href="#co2Emissions">CO2 emissions</a>
-        </li>
-        <li>
-          <a href="#carbonIntensity">Carbon intensity</a>
+          <button onClick={() => onClick("#carbonIntensity")}>
+            Carbon intensity
+          </button>
         </li>
       </ul>
       <div className={menuStyles.logoutButton}>
@@ -55,6 +51,7 @@ export const menuStyles = {
     width: "100vw",
     height: "91vh",
     padding: themeSpacing.large,
+    overflowY: "hidden",
     ul: {
       listStyleType: "none",
       cursor: "pointer",
@@ -79,11 +76,10 @@ export const menuStyles = {
       },
     },
     "li:hover": {
-      // border: "1px solid #00558C",
       boxShadow: "none",
       backgroundColor: "rgba(0, 85, 140, 0.9)",
     },
-    "a, a:link, a:visited": {
+    button: {
       color: "white",
       textDecoration: "none",
       display: "block",
@@ -96,7 +92,6 @@ export const menuStyles = {
     justifyContent: "center",
     alignItems: "center",
     width: "100%",
-    // margin: themeSpacing.large,
     backgroundColor: "#00558C",
     color: "white",
     padding: "1.5rem",
@@ -115,8 +110,11 @@ export const menuStyles = {
     transform: "translateX(100%) scaleX(0)",
     transition: "all 0.5s ease-in-out",
     transformOrigin: "0% 100%",
-    justifyContent: "flex-start",
-    width: "100%",
-    position: "absolute",
+    backgroundColor: "blue",
+  }),
+  menuAnimateOut: css({
+    transform: "translateX(0) scaleX(1)",
+    transition: "all 0.5s ease-in-out",
+    backgroundColor: "pink",
   }),
 };

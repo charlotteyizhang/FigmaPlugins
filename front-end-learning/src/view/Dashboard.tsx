@@ -1,6 +1,6 @@
 import React from "react";
 import { css } from "@emotion/css";
-import { Header, MobileStatus } from "../components/Header";
+import { Header } from "../components/Header";
 import { MenuBar } from "../components/MenuBar";
 import { Highlights } from "./Highlights";
 // import { BurgerMenu } from "../components/BurgerMenu";

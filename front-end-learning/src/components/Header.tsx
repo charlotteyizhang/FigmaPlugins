@@ -2,23 +2,37 @@ import React, { useState } from "react";
 import { css, cx } from "@emotion/css";
 import { themeSpacing } from "../basicStyle/spacing";
 import { BurgerMenu, menuStyles } from "./BurgerMenu";
+import {
+  makeActiveMobileStataus,
+  makeInactiveMobileStataus,
+  MobileStatus,
+} from "../data/mobileStatus";
 // import { Highlights } from "../view/Highlights";
 // import { NONAME } from "dns";
 
-export type MobileStatus = "active" | "inactive";
+interface MobileStatusStyle {
+  state: MobileStatus;
+  animation: string;
+}
+// const activeMobileStatusStyle: MobileStatusStyle = {
+//   animation: menuStyles.menuAnimateIn,
+// };
+// const inactiveMobileStatusStyle: MobileStatusStyle = {
+//   animation: menuStyles.menuAnimateOut,
+// };
 
-const menuAnimation = (mobileStatus: MobileStatus): MobileStatus => {
-  switch (mobileStatus) {
-    case "active":
-      return "inactive";
-    case "inactive":
-      return "active";
+// const menuAnimation = (mobileStatus: MobileStatus): MobileStatusStyle => {
+//   switch (mobileStatus) {
+//     case "active":
+//       return activeMobileStatusStyle;
+//     case "inactive":
+//       return inactiveMobileStatusStyle;
 
-    default:
-      const x: never = mobileStatus;
-      return x;
-  }
-};
+//     default:
+//       const x: never = mobileStatus;
+//       return x;
+//   }
+// };
 
 // const animIn = (mobileStatus: MobileStatus) => {
 //   {
@@ -32,7 +46,9 @@ const menuAnimation = (mobileStatus: MobileStatus): MobileStatus => {
 // };
 
 export const Header = () => {
-  const [mobileStatus, setMobileStatus] = useState<MobileStatus>("inactive");
+  const [mobileStatus, setMobileStatus] = useState<MobileStatus>({
+    state: "inactive",
+  });
   // Note for tomorrow: create a useEffect and onClick function to add to the onClick in the button and make useEffect dependent on mobileStatus
 
   return (
@@ -42,16 +58,22 @@ export const Header = () => {
       </div>
       <div className={styles.head}>
         <h3>Dashboard</h3>
-        <button onClick={() => setMobileStatus(menuAnimation(mobileStatus))}>
+        <button
+          onClick={
+            mobileStatus.state === "inactive"
+              ? () => setMobileStatus(makeActiveMobileStataus())
+              : () => setMobileStatus(makeInactiveMobileStataus())
+          }
+        >
           <span></span>
         </button>
       </div>
-      {mobileStatus === "active" ? (
+      {mobileStatus.state === "active" ? (
         <BurgerMenu
-        // className={cx(
-        //   menuStyles.burgerMenu,
-        //   mobileStatus ? "" : styles.menuAnimateOut
-        // )}
+          onClick={(s) => {
+            setMobileStatus(makeInactiveMobileStataus());
+            window.location.replace(window.location.origin + s);
+          }}
         />
       ) : null}
     </header>
@@ -145,12 +167,6 @@ const styles = {
           right: 0,
         },
       },
-    },
-  }),
-  menuAnimateOut: css({
-    [`@media screen and (max-width: 650px)`]: {
-      transform: "translateX(0) scaleX(1)",
-      transition: "all 0.5s ease-in-out",
     },
   }),
 };
