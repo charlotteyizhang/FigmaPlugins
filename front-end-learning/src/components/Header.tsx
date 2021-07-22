@@ -1,20 +1,18 @@
 import React, { useState } from "react";
-import { css } from "@emotion/css";
+import { css, cx } from "@emotion/css";
 import { themeSpacing } from "../basicStyle/spacing";
-import { BurgerMenu } from "./BurgerMenu";
+import { BurgerMenu, menuStyles } from "./BurgerMenu";
 // import { Highlights } from "../view/Highlights";
 // import { NONAME } from "dns";
 
 export type MobileStatus = "active" | "inactive";
 
-const menuAnimation = (mobileStatus: MobileStatus) => {
+const menuAnimation = (mobileStatus: MobileStatus): MobileStatus => {
   switch (mobileStatus) {
     case "active":
-      console.log("hello");
-      return;
+      return "inactive";
     case "inactive":
-      console.log("bye");
-      return;
+      return "active";
 
     default:
       const x: never = mobileStatus;
@@ -44,17 +42,18 @@ export const Header = () => {
       </div>
       <div className={styles.head}>
         <h3>Dashboard</h3>
-        <button
-          onClick={
-            mobileStatus === "inactive"
-              ? () => setMobileStatus("active")
-              : () => setMobileStatus("inactive")
-          }
-        >
+        <button onClick={() => setMobileStatus(menuAnimation(mobileStatus))}>
           <span></span>
         </button>
       </div>
-      {mobileStatus === "active" ? menuAnimation(mobileStatus) : null}
+      {mobileStatus === "active" ? (
+        <BurgerMenu
+        // className={cx(
+        //   menuStyles.burgerMenu,
+        //   mobileStatus ? "" : styles.menuAnimateOut
+        // )}
+        />
+      ) : null}
     </header>
   );
 };
@@ -146,6 +145,12 @@ const styles = {
           right: 0,
         },
       },
+    },
+  }),
+  menuAnimateOut: css({
+    [`@media screen and (max-width: 650px)`]: {
+      transform: "translateX(0) scaleX(1)",
+      transition: "all 0.5s ease-in-out",
     },
   }),
 };

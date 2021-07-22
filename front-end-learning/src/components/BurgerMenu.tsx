@@ -1,15 +1,19 @@
 import React from "react";
 import userImg from "../img/user-img.jpg";
-import { css } from "@emotion/css";
+import { css, cx } from "@emotion/css";
 import { EmailIcon } from "../img/Email";
 import { themeSpacing } from "../basicStyle/spacing";
 import { PhoneIcon } from "../img/Phone";
 import { SupportIcon } from "../img/Support";
 import { LogoutIcon } from "../img/Logout";
 
-export const BurgerMenu = () => {
+interface BurgerMenuProps {
+  className?: string;
+}
+
+export const BurgerMenu = ({ className }: BurgerMenuProps) => {
   return (
-    <menu className={styles.burgermenu}>
+    <menu className={cx(menuStyles.burgerMenu, className)}>
       <ul>
         <li>
           <a href="#highlight">Highlights</a>
@@ -21,7 +25,7 @@ export const BurgerMenu = () => {
           <a href="#carbonIntensity">Carbon intensity</a>
         </li>
       </ul>
-      <div className={styles.burgerbutton}>
+      <div className={menuStyles.logoutButton}>
         <LogoutIcon width="1rem" height="1rem" />
         <h4>Account</h4>
       </div>
@@ -29,11 +33,10 @@ export const BurgerMenu = () => {
   );
 };
 
-const styles = {
-  burgermenu: css({
-    position: "fixed",
+export const menuStyles = {
+  burgerMenu: css({
+    position: "absolute",
     top: "4rem",
-    // left: 0,
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
@@ -41,10 +44,8 @@ const styles = {
     border: "1px solid #E8E8E8",
     zIndex: 1,
     width: "100vw",
-    // height: "81vh",
     height: "91vh",
     padding: themeSpacing.large,
-    // margin: themeSpacing.large,
     ul: {
       listStyleType: "none",
       cursor: "pointer",
@@ -74,7 +75,7 @@ const styles = {
       padding: "0.5rem 0",
     },
   }),
-  burgerbutton: css({
+  logoutButton: css({
     cursor: "pointer",
     display: "flex",
     justifyContent: "center",
@@ -94,5 +95,13 @@ const styles = {
     h4: {
       paddingLeft: themeSpacing.large,
     },
+  }),
+  menuAnimateIn: css({
+    transform: "translateX(100%) scaleX(0)",
+    transition: "all 0.5s ease-in-out",
+    transformOrigin: "0% 100%",
+    justifyContent: "flex-start",
+    width: "100%",
+    position: "absolute",
   }),
 };
