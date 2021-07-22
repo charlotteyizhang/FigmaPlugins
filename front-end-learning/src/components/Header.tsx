@@ -1,19 +1,18 @@
 import React, { useState } from "react";
 import { css, cx } from "@emotion/css";
-import { themeSpacing } from "../basicStyle/spacing";
+import { colors, themeSizing } from "../basicStyle/styling";
 import { BurgerMenu, menuStyles } from "./BurgerMenu";
 import {
   makeActiveMobileStataus,
   makeInactiveMobileStataus,
   MobileStatus,
 } from "../data/mobileStatus";
-// import { Highlights } from "../view/Highlights";
-// import { NONAME } from "dns";
 
 interface MobileStatusStyle {
   state: MobileStatus;
   animation: string;
 }
+// to animate burger
 // const activeMobileStatusStyle: MobileStatusStyle = {
 //   animation: menuStyles.menuAnimateIn,
 // };
@@ -34,22 +33,10 @@ interface MobileStatusStyle {
 //   }
 // };
 
-// const animIn = (mobileStatus: MobileStatus) => {
-//   {
-//     mobileStatus === "active" ? "HEllo" : "YEs";
-//   }
-// };
-// const animIn = (mobileStatus: MobileStatus) => {
-//   {
-//     mobileStatus === "inactive" ? "bye" : "No";
-//   }
-// };
-
 export const Header = () => {
   const [mobileStatus, setMobileStatus] = useState<MobileStatus>({
     state: "inactive",
   });
-  // Note for tomorrow: create a useEffect and onClick function to add to the onClick in the button and make useEffect dependent on mobileStatus
 
   return (
     <header className={styles.header}>
@@ -100,7 +87,7 @@ const styles = {
     justifyContent: "center",
     alignItems: "center",
     a: {
-      color: "#00558C",
+      color: colors.logo,
       fontSize: "25px",
       fontWeight: "bold",
       textDecoration: "none",
@@ -124,10 +111,10 @@ const styles = {
     justifyContent: "left",
     alignItems: "center",
     h3: {
-      color: "#00558C",
+      color: colors.logo,
       fontSize: "20px",
       fontWeight: "bold",
-      paddingLeft: themeSpacing.large,
+      paddingLeft: themeSizing.large,
     },
     button: {
       display: "none",
@@ -140,7 +127,7 @@ const styles = {
         alignItems: "center",
         position: "absolute",
         // zIndex: 1,
-        right: themeSpacing.large,
+        right: themeSizing.large,
         // top: themeSpacing.large,
         height: "20px",
         width: "28px",
@@ -152,18 +139,18 @@ const styles = {
           position: "absolute",
           width: "28px",
           height: "3px",
-          backgroundColor: "#00558C",
+          backgroundColor: colors.logo,
         },
         span: {
           right: 0,
-          top: "0.5",
+          top: themeSizing.small,
         },
         "span::before": {
           top: "-0.5rem",
           right: 0,
         },
         "span::after": {
-          top: "0.5rem",
+          top: themeSizing.small,
           right: 0,
         },
       },

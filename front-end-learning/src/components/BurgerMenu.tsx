@@ -2,11 +2,10 @@ import React from "react";
 import userImg from "../img/user-img.jpg";
 import { css } from "@emotion/css";
 import { EmailIcon } from "../img/Email";
-import { themeSpacing } from "../basicStyle/spacing";
+import { colors, themeSizing } from "../basicStyle/styling";
 import { PhoneIcon } from "../img/Phone";
 import { SupportIcon } from "../img/Support";
 import { LogoutIcon } from "../img/Logout";
-// import { MobileStatus } from "./Header";
 
 interface BurgerMenuProps {
   onClick: (e: string) => void;
@@ -46,13 +45,13 @@ export const menuStyles = {
       top: "4rem",
       display: "flex",
       flexDirection: "column",
-      justifyContent: "space-between",
+      justifyContent: "space-around",
       backgroundColor: "white",
       border: "1px solid #E8E8E8",
       zIndex: 1,
       width: "100vw",
-      height: "91vh",
-      padding: themeSpacing.large,
+      height: "93vh",
+      padding: themeSizing.large,
       overflowY: "hidden",
       ul: {
         listStyleType: "none",
@@ -63,9 +62,9 @@ export const menuStyles = {
         display: "flex",
         justifyContent: "center",
         width: "100%",
-        backgroundColor: "#00558C",
+        backgroundColor: colors.logo,
         fontWeight: "bold",
-        marginBottom: themeSpacing.large,
+        marginBottom: themeSizing.large,
         padding: "1rem 1.5rem",
         border: "none",
         borderRadius: "10px",
@@ -74,12 +73,12 @@ export const menuStyles = {
           backgroundColor: "Transparent",
           border: "none",
           fontWeight: "bold",
-          fontSize: "1rem",
+          fontSize: themeSizing.default,
         },
       },
       "li:hover": {
         boxShadow: "none",
-        backgroundColor: "rgba(0, 85, 140, 0.9)",
+        backgroundColor: colors.hoverButton,
       },
       button: {
         color: "white",
@@ -96,30 +95,19 @@ export const menuStyles = {
       justifyContent: "center",
       alignItems: "center",
       width: "100%",
-      backgroundColor: "#00558C",
+      backgroundColor: colors.logo,
       color: "white",
-      padding: "1.5rem",
+      padding: themeSizing.medium,
       border: "none",
       borderRadius: "10px",
       boxShadow: "0 0 10px rgba(0, 85, 140, 0.25)",
       "&:hover": {
         boxShadow: "none",
-        backgroundColor: "rgba(0, 85, 140, 0.9)",
+        backgroundColor: colors.hoverButton,
       },
       h4: {
-        paddingLeft: themeSpacing.large,
+        paddingLeft: themeSizing.large,
       },
     },
-  }),
-  menuAnimateIn: css({
-    transform: "translateX(100%) scaleX(0)",
-    transition: "all 0.5s ease-in-out",
-    transformOrigin: "0% 100%",
-    backgroundColor: "blue",
-  }),
-  menuAnimateOut: css({
-    transform: "translateX(0) scaleX(1)",
-    transition: "all 0.5s ease-in-out",
-    backgroundColor: "pink",
   }),
 };

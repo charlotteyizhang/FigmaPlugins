@@ -1,6 +1,6 @@
 import React from "react";
 import { css } from "@emotion/css";
-import { themeSpacing } from "../basicStyle/spacing";
+import { themeSizing } from "../basicStyle/styling";
 import { Notification } from "../components/Notification";
 import { LineForecast } from "../components/LineForecast";
 import { Emissions } from "../components/Emissions";
@@ -24,7 +24,7 @@ const styles = {
     zIndex: 0,
     flexDirection: "column",
     width: "84vw",
-    padding: "0 2rem",
+    padding: "0 1.5rem",
     overflowY: "scroll",
     [`@media screen and (max-width: 650px) `]: {
       transition: "all 0.5s ease-in-out",
@@ -32,12 +32,12 @@ const styles = {
     },
   }),
   highlight: css({
-    paddingTop: themeSpacing.large,
+    paddingTop: themeSizing.large,
   }),
   co2Emissions: css({
-    paddingTop: themeSpacing.large,
+    paddingTop: themeSizing.large,
   }),
   carbonIntensity: css({
-    paddingTop: themeSpacing.large,
+    paddingTop: themeSizing.large,
   }),
 };

@@ -1,6 +1,6 @@
 import { css } from "@emotion/css";
 import React, { useEffect, useState } from "react";
-import { themeSpacing } from "../basicStyle/spacing";
+import { colors, themeSizing } from "../basicStyle/styling";
 import {
   EmissionStatus,
   makeCurrentEmissionStatus,
@@ -49,19 +49,6 @@ const pastEmissionStatusStyle: EmissionStatusStyle = {
   previousOpacity: 0.2,
 };
 
-// creating variable for API to check four hours ago //
-// const fourHoursAgo = new Intl.DateTimeFormat("en-GB", {
-//   timeStyle: "short",
-// }).format(new Date().setHours(new Date().getHours() - 4));
-
-// const halfHourAgo = new Intl.DateTimeFormat("en-GB", {
-//   timeStyle: "short",
-// }).format(new Date().setMinutes(new Date().getMinutes() - 30));
-
-// const currentTime = new Intl.DateTimeFormat("en-GB", {
-//   timeStyle: "short",
-// }).format(new Date());
-
 // function to set the date for the API
 const isoFornat = (time: string) => {
   const date = new Date().toISOString().split("T")[0];
@@ -82,13 +69,6 @@ const setTimeForData = () => {
   const toNow = isoFornat(to);
   return { fourHoursAgo, halfHourAgo, toNow };
 };
-
-// const formatDateTime = () => {
-//   // takes date, fromPresent, fromPast, to and combines
-//   const fourHoursAgo = `${date}T${fromPast}Z`
-//   const halfHourAgo = `${date}T${fromPresent}Z`
-//   const toNow = `${date}T${to}Z`
-// }
 
 export const Emissions = () => {
   const [percBox, setPercBox] = useState<PercHoverProps | undefined>(undefined);
@@ -113,39 +93,12 @@ export const Emissions = () => {
         setFuelPercentage(percentageFromData(data));
       });
   }, [emissionStatus]);
-  // useEffect switching data dependent .on state
-  // useEffect(() => {
-  //   emissionStatus.state === "current"
-  //     ? fetch("https://api.carbonintensity.org.uk/generation/")
-  //         .then((response) => response.json())
-  //         .then((data) => {
-  //           setFuelPercentage(percentageCurrent(data));
-  //         })
-  //     : fetch(
-  //         `https://api.carbonintensity.org.uk/generation/2021-07-20T${fourHoursAgo}Z/2021-07-20T${currentTime}Z`
-  //       )
-  //         .then((response) => response.json())
-  //         .then((data) => {
-  //           setFuelPercentage(percentagePast(data));
-  //         });
-  // }, [emissionStatus]);
-  //
-  // original use effect
-  // useEffect(() => {
-  //   fetch(`https://api.carbonintensity.org.uk/generation/`)
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       console.log({ data });
-  //       setFuelPercentage(percentageFromCurrentTime(data));
-  //     });
-  // }, []);
 
   // to hide button, if opacity = 0.2, hide it
   return (
     <div className={styles.emissions}>
       <div className={styles.titleContainer}>
         <button
-          // disabled={disable}
           onClick={
             emissionStatus
               ? () => setEmissionStatus(makePastEmissionStatus())
@@ -165,7 +118,6 @@ export const Emissions = () => {
             : `Percentage CO₂ emission from four hours ago`}
         </h2>
         <button
-          // disabled={disable}
           onClick={
             emissionStatus
               ? () => setEmissionStatus(makeCurrentEmissionStatus())
@@ -250,26 +202,25 @@ const styles = {
     position: "relative",
     backgroundColor: "white",
     border: "1px solid #E8E8E8",
-    padding: themeSpacing.large,
+    padding: themeSizing.xlarge,
     hr: {
-      color: "#39393B",
+      color: colors.hr,
       opacity: "0.3",
-      marginBottom: themeSpacing.large,
+      marginBottom: themeSizing.large,
     },
     [`@media screen and (max-width: 800px)`]: {
       transition: "all 0.5s ease-in-out",
       width: "100%",
-      padding: themeSpacing.default,
       h2: {
-        fontSize: "1.2rem",
+        fontSize: "1.1rem",
       },
     },
     [`@media screen and (max-width: 650px) `]: {
       transition: "all 0.5s ease-in-out",
       width: "100%",
-      padding: themeSpacing.default,
+      padding: themeSizing.large,
       h2: {
-        fontSize: "1rem",
+        fontSize: themeSizing.default,
       },
     },
   }),
@@ -277,30 +228,26 @@ const styles = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: themeSpacing.default,
+    marginBottom: themeSizing.default,
     h2: {
-      color: "#555761",
+      color: colors.text,
     },
     button: {
       background: "none",
       border: "none",
-      // cursor: "pointer",
-      // "&:disabled": {
-      //   cursor: "not-allowed",
-      // },
     },
   }),
   percentage: css({
     display: "flex",
     justifyContent: "space-between",
-    marginBottom: themeSpacing.small,
+    marginBottom: themeSizing.small,
   }),
   chart: css({
     width: "100%",
     borderRadius: "30px",
     display: "flex",
     flexDirection: "row",
-    marginBottom: themeSpacing.large,
+    marginBottom: themeSizing.large,
     overflow: "hidden",
   }),
   backContainer: css({
@@ -313,13 +260,17 @@ const styles = {
     width: "100%",
     textAlign: "left",
     "th, td": {
-      padding: themeSpacing.default,
+      padding: themeSizing.default,
+      color: colors.text,
+      [`@media screen and (max-width: 650px) `]: {
+        fontSize: "0.9rem",
+      },
     },
   }),
   hoverBackground: css({
     backgroundColor: "yellow",
     boxShadow: "",
-    padding: themeSpacing.default,
+    padding: themeSizing.default,
     cursor: "pointer",
     width: "50%",
     height: "30%",

@@ -1,6 +1,6 @@
 import React from "react";
 import { css } from "@emotion/css";
-import { themeSpacing } from "../basicStyle/spacing";
+import { colors, themeSizing } from "../basicStyle/styling";
 import LineGraph from "../img/LineGraph.png";
 import Pointer from "../img/Pointer.svg";
 import NonRenewKey from "../img/NonRenewKey.svg";
@@ -36,20 +36,19 @@ const styles = {
   forecast: css({
     backgroundColor: "white",
     border: "1px solid #E8E8E8",
-    padding: themeSpacing.large,
-    marginBottom: themeSpacing.large,
+    padding: themeSizing.large,
+    marginBottom: themeSizing.large,
     h2: {
-      color: "#555761",
-      marginBottom: themeSpacing.default,
+      color: colors.text,
+      marginBottom: themeSizing.default,
     },
     hr: {
-      color: "#39393B",
+      color: colors.hr,
       opacity: "0.3",
     },
     [`@media screen and (max-width: 650px) `]: {
       transition: "all 0.5s ease-in-out",
       width: "100%",
-      padding: themeSpacing.default,
       h2: {
         fontSize: "1.2rem",
       },
@@ -59,7 +58,7 @@ const styles = {
     flex: 1,
     display: "flex",
     flexDirection: "row",
-    paddingRight: themeSpacing.default,
+    paddingRight: themeSizing.default,
     img: {
       width: "60%",
     },
@@ -82,8 +81,8 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     alignItems: "flex-start",
-    paddingTop: themeSpacing.default,
-    paddingLeft: themeSpacing.default,
+    paddingTop: themeSizing.default,
+    paddingLeft: themeSizing.default,
     img: {
       width: "30px",
       height: "30px",
@@ -116,13 +115,13 @@ const styles = {
     alignItems: "center",
     p: {
       fontSize: "14px",
-      paddingLeft: themeSpacing.default,
+      paddingLeft: themeSizing.default,
     },
     [`@media screen and (max-width: 950px)`]: {
       justifyContent: "flex-start",
       p: {
         fontSize: "12px",
-        paddingBottom: themeSpacing.default,
+        paddingBottom: themeSizing.default,
       },
     },
   }),

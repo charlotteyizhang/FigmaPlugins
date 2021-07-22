@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { css } from "@emotion/css";
-import { themeSpacing } from "../basicStyle/spacing";
+import { colors, themeSizing } from "../basicStyle/styling";
 import { ChargeNow } from "./ChargeNow";
 import { ChargeStatus, Time } from "../data/chargeStatus";
 import { LoadingNotif } from "./LoadingNotif";
@@ -17,15 +17,6 @@ const makeTimeFromResponse = ({ from, to }: Time): Time => {
   };
 };
 
-// long hand
-// const x = {
-//   name: "takle",
-// };
-
-// short hand
-// const name = "takle";
-// const a = { name };
-
 const chargeStatusFromData = (response: any): ChargeStatus => {
   const {
     intensity: { index, actual, forecast },
@@ -40,7 +31,7 @@ const chargeStatusFromData = (response: any): ChargeStatus => {
       return { state: "now", time };
     case "moderate":
     case "high":
-      return { state: "soon", time };
+      return { state: "now", time };
     case "very high":
       return { state: "later", time };
     // add case for error
@@ -101,18 +92,18 @@ const styles = {
     border: "1px solid #E8E8E8",
     display: "flex",
     flexDirection: "column",
-    padding: themeSpacing.large,
+    padding: themeSizing.xlarge,
     [`@media screen and (max-width: 650px) `]: {
       transition: "all 0.5s ease-in-out",
       width: "100%",
       height: "160px",
-      padding: themeSpacing.default,
+      padding: themeSizing.default,
     },
   }),
   notificationTitle: css({
     position: "absolute",
     h1: {
-      color: "#555761",
+      color: colors.text,
       marginBottom: "0.5rem",
       [`@media screen and (max-width: 900px) `]: {
         transition: "all 0.5s ease-in-out",
@@ -120,7 +111,7 @@ const styles = {
       },
       [`@media screen and (max-width: 800px) `]: {
         transition: "all 0.5s ease-in-out",
-        fontSize: "1.5rem",
+        fontSize: themeSizing.medium,
       },
       [`@media screen and (max-width: 726px) `]: {
         transition: "all 0.5s ease-in-out",
@@ -132,7 +123,7 @@ const styles = {
       },
       [`@media screen and (max-width: 440px) `]: {
         transition: "all 0.5s ease-in-out",
-        fontSize: "1rem",
+        fontSize: themeSizing.default,
       },
     },
   }),
@@ -143,11 +134,11 @@ const styles = {
     animation: "lineAnimation 5s infinite",
     [`@media screen and (max-width: 1000px) `]: {
       transition: "all 0.5s ease-in-out",
-      paddingTop: themeSpacing.large,
+      paddingTop: themeSizing.large,
     },
     [`@media screen and (max-width: 650px) `]: {
       transition: "all 0.5s ease-in-out",
-      paddingTop: "1rem",
+      paddingTop: themeSizing.default,
     },
   }),
 };

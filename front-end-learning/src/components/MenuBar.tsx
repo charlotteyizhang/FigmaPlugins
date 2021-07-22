@@ -2,9 +2,8 @@ import React from "react";
 import userImg from "../img/user-img.jpg";
 import { css } from "@emotion/css";
 import { EmailIcon } from "../img/Email";
-import { themeSpacing } from "../basicStyle/spacing";
+import { colors, themeSizing } from "../basicStyle/styling";
 import { PhoneIcon } from "../img/Phone";
-// import { SupportIcon } from "../img/Support";
 import { LogoutIcon } from "../img/Logout";
 
 export const MenuBar = () => {
@@ -46,10 +45,6 @@ export const MenuBar = () => {
         </div>
       </div>
       <div className={styles.buttons}>
-        {/* <div className={styles.button}>
-          <SupportIcon width="1rem" height="1rem" />
-          <h4>Support</h4>
-        </div> */}
         <button>
           <LogoutIcon width="1rem" height="1rem" />
           <h4>Logout</h4>
@@ -61,9 +56,9 @@ export const MenuBar = () => {
 
 const styles = {
   menubar: css({
-    color: "#555761",
+    color: colors.text,
     overflow: "hidden",
-    padding: themeSpacing.large,
+    padding: themeSizing.large,
     boxSizing: "border-box",
     backgroundColor: "white",
     borderRight: "1px solid #E8E8E8",
@@ -77,13 +72,13 @@ const styles = {
     ul: { padding: 0, margin: 0 },
     li: { listStyle: "none" },
     "a, a:link, a:visited": {
-      color: "#555761",
+      color: colors.text,
       textDecoration: "none",
       display: "block",
       padding: "0.5rem 0",
     },
     "a:hover, a:active": {
-      color: "#00558C",
+      color: colors.logo,
       fontWeight: "bold",
     },
     // ".active": { backgroundColor: "grey" },
@@ -138,27 +133,27 @@ const styles = {
     },
     hr: {
       margin: "2rem 0",
-      color: "#39393B",
+      color: colors.hr,
       opacity: "0.3",
     },
   }),
   contact: css({
-    marginBottom: themeSpacing.large,
+    marginBottom: themeSizing.large,
     textAlign: "left",
     h4: {
       padding: "0",
       wordWrap: "break-word",
-      marginBottom: themeSpacing.default,
+      marginBottom: themeSizing.default,
     },
     p: {
-      marginBottom: "0.5rem",
+      marginBottom: themeSizing.small,
       display: "inline",
-      paddingLeft: "1rem",
+      paddingLeft: themeSizing.default,
     },
     [`@media screen and (max-width: 800px)`]: {
       transition: "all 0.5s ease-in-out",
       p: {
-        paddingLeft: "0.5rem",
+        paddingLeft: themeSizing.small,
       },
     },
   }),
@@ -173,12 +168,12 @@ const styles = {
     justifyContent: "center",
     alignItems: "center",
     h4: {
-      paddingLeft: "2rem",
+      paddingLeft: themeSizing.large,
     },
     [`@media screen and (max-width: 800px)`]: {
       transition: "all 0.5s ease-in-out",
       h4: {
-        paddingLeft: "1rem",
+        paddingLeft: themeSizing.default,
       },
     },
     button: {
@@ -186,9 +181,9 @@ const styles = {
       justifyContent: "center",
       alignItems: "center",
       width: "100%",
-      backgroundColor: "#00558C",
+      backgroundColor: colors.logo,
       color: "white",
-      marginBottom: themeSpacing.small,
+      marginBottom: themeSizing.small,
       padding: "1rem 1.5rem",
       border: "none",
       borderRadius: "10px",
@@ -196,7 +191,7 @@ const styles = {
       "&:hover": {
         cursor: "pointer",
         boxShadow: "none",
-        backgroundColor: "rgba(0, 85, 140, 0.9)",
+        backgroundColor: colors.hoverButton,
       },
       [`@media screen and (max-width: 800px)`]: {
         transition: "all 0.5s ease-in-out",

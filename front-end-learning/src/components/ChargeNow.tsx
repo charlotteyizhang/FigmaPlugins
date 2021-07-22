@@ -1,26 +1,26 @@
 import { css } from "@emotion/css";
 import * as React from "react";
+import { colors } from "../basicStyle/styling";
 import { ChargeStatus } from "../data/chargeStatus";
 
 interface ChargeStatusStyle {
   text: string;
   color: string;
   withAnimation: boolean;
-  // showAnimation: boolean;
 }
 
 const chargeNowStyle: ChargeStatusStyle = {
-  color: "#A8CB68",
+  color: colors.chargeNow,
   text: "charge now",
   withAnimation: true,
 };
 const chargeSoonStyle: ChargeStatusStyle = {
-  color: "#F1B434",
+  color: colors.chargeSoon,
   text: "charge soon",
   withAnimation: false,
 };
 const chargeLaterStyle: ChargeStatusStyle = {
-  color: "#BE4305",
+  color: colors.chargeLater,
   text: "charge later",
   withAnimation: false,
 };
@@ -184,7 +184,7 @@ export const ChargeNow = ({
           fill="#FEFEFE"
           transform="translate(29 57)"
         >
-          <tspan x={65} y={206}>
+          <tspan x={63} y={203}>
             {text}
           </tspan>
         </text>

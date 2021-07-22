@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { css } from "@emotion/css";
-import { themeSpacing } from "../basicStyle/spacing";
+import { colors, themeSizing } from "../basicStyle/styling";
 import { Biomass } from "../img/fuelIcons/Biomass";
 import { Hydro } from "../img/fuelIcons/Hydro";
 import { Wind } from "../img/fuelIcons/Wind";
@@ -41,60 +41,24 @@ export const fuelDetailsFromFuelType: Record<
   FuelType,
   { title: string; color: string; Icon: (props: any) => JSX.Element }
 > = {
-  biomass: { title: "Biomass", color: "#78D5C6", Icon: Biomass },
-  hydro: { title: "Hydro", color: "#40C1AC", Icon: Hydro },
-  solar: { title: "Solar", color: "#259482", Icon: Solar },
-  wind: { title: "Wind", color: "#216056", Icon: Wind },
-  coal: { title: "Coal", color: "#F79CAB", Icon: Coal },
-  gas: { title: "Gas", color: "#EE8092", Icon: Gas },
-  imports: { title: "Imports", color: "#F1566F", Icon: Imports },
-  nuclear: { title: "Nuclear", color: "#D22949", Icon: Nuclear },
-  other: { title: "Other", color: "#BA0C2F", Icon: Others },
+  biomass: { title: "Biomass", color: colors.biomass, Icon: Biomass },
+  hydro: { title: "Hydro", color: colors.hydro, Icon: Hydro },
+  solar: { title: "Solar", color: colors.solar, Icon: Solar },
+  wind: { title: "Wind", color: colors.wind, Icon: Wind },
+  coal: { title: "Coal", color: colors.coal, Icon: Coal },
+  gas: { title: "Gas", color: colors.gas, Icon: Gas },
+  imports: { title: "Imports", color: colors.imports, Icon: Imports },
+  nuclear: { title: "Nuclear", color: colors.nuclear, Icon: Nuclear },
+  other: { title: "Other", color: colors.other, Icon: Others },
 };
-
-// FuelPercentage consists of name and number, need to implement this...
-// export const percentageFromInterval = (data: any): FuelPercentage => {
-//   // mapping array to object with initial value of 0
-//   const sum = Object.fromEntries(
-//     fuelTypeOrder.map((fuelType) => [fuelType, 0])
-//   ) as any;
-
-//   // console.log({ sum });
-
-//   //two loops. inner loop is creating one array of all the fuel types.
-//   // outer loop is adding the percentages together and placing into that array.
-
-//   // data is an array of generation mixes over time
-//   //generation mix is an array of different fuel types
-
-//   // we are iterating data to sum this object so we can print all values together
-//   // first iteration turns everything into an object, then we sum them together
-//   return data.data.reduce((acc: FuelPercentage, v: any) => {
-//     return v.generationmix.reduce((a: any, item: any) => {
-//       return { ...a, [item.fuel]: a[item.fuel] + item.perc };
-//     }, acc);
-//   }, sum);
-//   // console.log({ dataArray });
-
-//   // return data.data[0].generationmix.reduce((acc: FuelPercentage, item: any) => {
-//   //   return { ...acc, [item.fuel]: item.perc };
-//   // }, sum);
-//   // data.data[0].generationmix.map((item: any) => [item.fuel, { ...sum }])
-//   // dataList.map();
-// };
-
-//mapping array to object.
-// export const percentageCurrent = (data: any): FuelPercentage => {
-//   return Object.fromEntries(
-//     data.data.generationmix.map((item: any) => [item.fuel, item.perc])
-//   ) as any;
-// };
 
 export const percentageFromData = (data: any): FuelPercentage => {
   return Object.fromEntries(
     data.data[0].generationmix.map((item: any) => [item.fuel, item.perc])
   ) as any;
 };
+
+// hover box to followv mouse?
 
 // interface OnMouseMoveType {
 //   x: number;
@@ -141,12 +105,12 @@ export const PercentageHover = ({ title, value }: PercHoverProps) => {
 
 const styles = {
   hoverBackground: css({
-    backgroundColor: "white",
+    backgroundColor: colors.divBackground,
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
     width: "17%",
-    height: "2rem",
+    height: themeSizing.large,
     border: "1px solid #E8E8E8",
     borderRadius: "5px",
     position: "absolute",
