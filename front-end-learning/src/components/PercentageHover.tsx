@@ -92,7 +92,7 @@ export const PercentageHover = ({ title, value }: PercHoverProps) => {
 
   return (
     <div
-      id="hoverBAckground"
+      id="hoverBackground"
       className={styles.hoverBackground}
       // onMouseMove={hoverPosition}
     >
@@ -109,12 +109,14 @@ const styles = {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    width: "17%",
-    height: themeSizing.large,
+    textAlign: "center",
+    width: "30%",
+    height: themeSizing.xlarge,
     border: "1px solid #E8E8E8",
     borderRadius: "5px",
     position: "absolute",
     top: "9.5%",
-    left: "40%",
+    left: "37%",
+    padding: themeSizing.default,
   }),
 };
