@@ -43,6 +43,7 @@ export const menuStyles = {
     [`@media screen and (max-width: 650px)`]: {
       position: "absolute",
       top: "4rem",
+      right: 0,
       display: "flex",
       flexDirection: "column",
       justifyContent: "space-around",
@@ -52,7 +53,7 @@ export const menuStyles = {
       width: "100vw",
       height: "93vh",
       padding: themeSizing.large,
-      overflowY: "hidden",
+      overflow: "hidden",
       ul: {
         listStyleType: "none",
         cursor: "pointer",
