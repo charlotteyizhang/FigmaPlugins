@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="788px" height="545px" viewBox="0 0 788 545" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Desktop</title>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="132" height="132" rx="8"></rect>
+        <filter x="-3.0%" y="-3.0%" width="109.1%" height="109.1%" filterUnits="objectBoundingBox" id="filter-2">
+            <feMorphology radius="2" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="4" dy="4" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feComposite in="shadowOffsetOuter1" in2="SourceAlpha" operator="out" result="shadowOffsetOuter1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowOffsetOuter1"></feColorMatrix>
+        </filter>
+        <rect id="path-3" x="0" y="0" width="100" height="100" rx="8"></rect>
+        <filter x="-3.0%" y="-3.0%" width="110.0%" height="110.0%" filterUnits="objectBoundingBox" id="filter-4">
+            <feMorphology radius="1" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="4" dy="4" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feComposite in="shadowOffsetOuter1" in2="SourceAlpha" operator="out" result="shadowOffsetOuter1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowOffsetOuter1"></feColorMatrix>
+        </filter>
+        <rect id="path-5" x="0" y="0" width="100" height="100" rx="8"></rect>
+        <filter x="-3.0%" y="-3.0%" width="110.0%" height="110.0%" filterUnits="objectBoundingBox" id="filter-6">
+            <feMorphology radius="1" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="4" dy="4" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feComposite in="shadowOffsetOuter1" in2="SourceAlpha" operator="out" result="shadowOffsetOuter1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowOffsetOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="Desktop" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect id="Rectangle" fill="#F76C2C" x="93" y="217" width="510" height="46"></rect>
+        <path d="M787,202 L787,544 L331,544 L331,343 L457,343 L457,202 L787,202 Z" id="Combined-Shape" stroke="#000000" stroke-width="2"></path>
+        <rect id="Rectangle" stroke="#000000" stroke-width="2" x="1" y="1" width="456" height="342"></rect>
+        <polygon id="Line" fill="#000000" fill-rule="nonzero" points="458.5 32 458.5 34 0.5 34 0.5 32"></polygon>
+        <polygon id="Line-Copy-11" fill="#000000" fill-rule="nonzero" points="788 236 788 238 456 238 456 236"></polygon>
+        <polygon id="Line-Copy-14" fill="#000000" fill-rule="nonzero" points="693 319 693 321 489 321 489 319"></polygon>
+        <polygon id="Line-Copy-18" fill="#000000" fill-rule="nonzero" points="693 285 693 287 489 287 489 285"></polygon>
+        <polygon id="Line-Copy-15" fill="#000000" fill-rule="nonzero" points="693 353 693 355 489 355 489 353"></polygon>
+        <polygon id="Line-Copy-16" fill="#000000" fill-rule="nonzero" points="695 395 695 397 363 397 363 395"></polygon>
+        <polygon id="Line-Copy-17" fill="#000000" fill-rule="nonzero" points="695 429 695 431 363 431 363 429"></polygon>
+        <polygon id="Line-Copy-20" fill="#000000" fill-rule="nonzero" points="695 461 695 463 363 463 363 461"></polygon>
+        <polygon id="Line-Copy-21" fill="#000000" fill-rule="nonzero" points="695 497 695 499 363 499 363 497"></polygon>
+        <g id="Group-2" transform="translate(1.000000, 64.000000)" fill="#000000" fill-rule="nonzero">
+            <polygon id="Line-Copy-2" points="64 0 64 2 0 2 0 0"></polygon>
+            <polygon id="Line-Copy-3" points="64 170 64 172 0 172 0 170"></polygon>
+            <polygon id="Line-Copy-7" points="64 204 64 206 0 206 0 204"></polygon>
+            <polygon id="Line-Copy-8" points="64 238 64 240 0 240 0 238"></polygon>
+            <polygon id="Line-Copy-9" points="64 136 64 138 0 138 0 136"></polygon>
+            <polygon id="Line-Copy-4" points="64 102 64 104 0 104 0 102"></polygon>
+            <polygon id="Line-Copy-5" points="64 68 64 70 0 70 0 68"></polygon>
+            <polygon id="Line-Copy-6" points="64 34 64 36 0 36 0 34"></polygon>
+        </g>
+        <polygon id="Line-Copy" fill="#000000" fill-rule="nonzero" transform="translate(66.000000, 188.000000) rotate(90.000000) translate(-66.000000, -188.000000) " points="221 187 221 189 -89 189 -89 187"></polygon>
+        <polygon id="Path-Copy-2" fill="#000000" fill-rule="nonzero" points="128 542 128 544 0 544 0 542"></polygon>
+        <polygon id="Line-Copy-12" fill="#000000" fill-rule="nonzero" transform="translate(723.000000, 390.500000) rotate(90.000000) translate(-723.000000, -390.500000) " points="877 389 877 391 570 391 570 389"></polygon>
+        <circle id="Oval" fill="#030303" cx="15" cy="17" r="6"></circle>
+        <circle id="Oval-Copy" fill="#030303" cx="35" cy="17" r="6"></circle>
+        <circle id="Oval-Copy-2" fill="#030303" cx="55" cy="17" r="6"></circle>
+        <polygon id="Path" stroke="#000000" stroke-width="2" fill-rule="nonzero" points="409 319 409 62 152 319"></polygon>
+        <path d="M167,58 C126.130929,58 93,91.1309285 93,132 C93,172.869071 126.130929,206 167,206 C207.869071,206 241,172.869071 241,132 C241,91.1309285 207.869071,58 167,58 Z" id="Path" stroke="#000000" stroke-width="2" fill-rule="nonzero"></path>
+        <g id="Group-2-Copy" transform="translate(724.000000, 268.000000)" fill="#000000" fill-rule="nonzero">
+            <polygon id="Line-Copy-2" points="64 0 64 2 0 2 0 0"></polygon>
+            <polygon id="Line-Copy-3" points="64 170 64 172 0 172 0 170"></polygon>
+            <polygon id="Line-Copy-7" points="64 204 64 206 0 206 0 204"></polygon>
+            <polygon id="Line-Copy-8" points="64 238 64 240 0 240 0 238"></polygon>
+            <polygon id="Line-Copy-9" points="64 136 64 138 0 138 0 136"></polygon>
+            <polygon id="Line-Copy-4" points="64 102 64 104 0 104 0 102"></polygon>
+            <polygon id="Line-Copy-5" points="64 68 64 70 0 70 0 68"></polygon>
+            <polygon id="Line-Copy-6" points="64 34 64 36 0 36 0 34"></polygon>
+        </g>
+        <g id="Group-3" transform="translate(537.000000, 24.000000)">
+            <g id="Rectangle">
+                <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+                <use stroke="#000000" stroke-width="4" fill="#F76C2C" fill-rule="evenodd" xlink:href="#path-1"></use>
+            </g>
+            <path d="M66.0429688,85.40625 C68.5976562,85.40625 70.953125,85.0957031 73.109375,84.4746094 C75.265625,83.8535156 77.1289062,82.9335938 78.6992188,81.7148438 C80.2695312,80.4960938 81.4941406,78.9785156 82.3730469,77.1621094 C83.2519531,75.3457031 83.6914062,73.2421875 83.6914062,70.8515625 C83.6914062,69.2578125 83.4746094,67.8457031 83.0410156,66.6152344 C82.6074219,65.3847656 82.0039062,64.2949219 81.2304688,63.3457031 C80.4570312,62.3964844 79.5488281,61.5644531 78.5058594,60.8496094 C77.4628906,60.1347656 76.3378906,59.4960938 75.1308594,58.9335938 C73.9238281,58.3710938 72.6582031,57.8730469 71.3339844,57.4394531 C70.0097656,57.0058594 68.6914062,56.578125 67.3789062,56.15625 C65.7148438,55.640625 64.0976562,55.1132812 62.5273438,54.5742188 C60.9570312,54.0351562 59.5625,53.390625 58.34375,52.640625 C57.125,51.890625 56.1523438,50.9941406 55.4257812,49.9511719 C54.6992188,48.9082031 54.3359375,47.6367188 54.3359375,46.1367188 C54.3359375,44.6835938 54.6582031,43.453125 55.3027344,42.4453125 C55.9472656,41.4375 56.7910156,40.6230469 57.8339844,40.0019531 C58.8769531,39.3808594 60.0605469,38.9296875 61.3847656,38.6484375 C62.7089844,38.3671875 64.0625,38.2265625 65.4453125,38.2265625 C66.9453125,38.2265625 68.3632812,38.4375 69.6992188,38.859375 C71.0351562,39.28125 72.2128906,39.9140625 73.2324219,40.7578125 C74.2519531,41.6015625 75.0898438,42.6445312 75.7460938,43.8867188 C76.4023438,45.1289062 76.8007812,46.5703125 76.9414062,48.2109375 L76.9414062,48.2109375 L82.25,48.2109375 C82.1796875,47.15625 82.015625,46.0546875 81.7578125,44.90625 C81.5,43.7578125 81.1015625,42.6445312 80.5625,41.5664062 C80.0234375,40.4882812 79.3320312,39.4628906 78.4882812,38.4902344 C77.6445312,37.5175781 76.6132812,36.6679688 75.3945312,35.9414062 C74.1757812,35.2148438 72.7460938,34.640625 71.1054688,34.21875 C69.4648438,33.796875 67.578125,33.5859375 65.4453125,33.5859375 C63.0546875,33.5859375 60.8574219,33.8613281 58.8535156,34.4121094 C56.8496094,34.9628906 55.1269531,35.765625 53.6855469,36.8203125 C52.2441406,37.875 51.125,39.1816406 50.328125,40.7402344 C49.53125,42.2988281 49.1328125,44.0976562 49.1328125,46.1367188 C49.1328125,47.7773438 49.3613281,49.2246094 49.8183594,50.4785156 C50.2753906,51.7324219 50.8964844,52.8515625 51.6816406,53.8359375 C52.4667969,54.8203125 53.3925781,55.6757812 54.4589844,56.4023438 C55.5253906,57.1289062 56.6738281,57.7734375 57.9042969,58.3359375 C59.1347656,58.8984375 60.4121094,59.4023438 61.7363281,59.8476562 C63.0605469,60.2929688 64.3789062,60.703125 65.6914062,61.078125 C67.2617188,61.546875 68.8144531,62.0507812 70.3496094,62.5898438 C71.8847656,63.1289062 73.2558594,63.7675781 74.4628906,64.5058594 C75.6699219,65.2441406 76.6425781,66.1230469 77.3808594,67.1425781 C78.1191406,68.1621094 78.4882812,69.3984375 78.4882812,70.8515625 C78.4882812,72.6328125 78.1484375,74.1503906 77.46875,75.4042969 C76.7890625,76.6582031 75.875,77.6777344 74.7265625,78.4628906 C73.578125,79.2480469 72.2539062,79.8222656 70.7539062,80.1855469 C69.2539062,80.5488281 67.6835938,80.7304688 66.0429688,80.7304688 C64.2148438,80.7304688 62.5332031,80.4316406 60.9980469,79.8339844 C59.4628906,79.2363281 58.1328125,78.3984375 57.0078125,77.3203125 C55.8828125,76.2421875 54.9863281,74.9707031 54.3183594,73.5058594 C53.6503906,72.0410156 53.2578125,70.4296875 53.140625,68.671875 L53.140625,68.671875 L47.7265625,68.671875 C47.796875,71.25 48.3535156,73.5703125 49.3964844,75.6328125 C50.4394531,77.6953125 51.8105469,79.4472656 53.5097656,80.8886719 C55.2089844,82.3300781 57.1484375,83.4433594 59.328125,84.2285156 C61.5078125,85.0136719 63.7460938,85.40625 66.0429688,85.40625 Z" id="S" fill="#000000" fill-rule="nonzero"></path>
+        </g>
+        <g id="Group-3-Copy" transform="translate(1.000000, 387.000000)">
+            <g id="Rectangle">
+                <use fill="black" fill-opacity="1" filter="url(#filter-4)" xlink:href="#path-3"></use>
+                <use stroke="#000000" stroke-width="2" fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-3"></use>
+            </g>
+            <polygon id="E" fill="#000000" fill-rule="nonzero" points="66.1601562 65 66.1601562 61.0449219 42.2246094 61.0449219 42.2246094 45.8691406 63.7871094 45.8691406 63.7871094 41.9140625 42.2246094 41.9140625 42.2246094 28.0859375 65.1347656 28.0859375 65.1347656 24.1308594 37.8886719 24.1308594 37.8886719 65"></polygon>
+        </g>
+        <g id="Group-3-Copy-2" transform="translate(144.000000, 387.000000)">
+            <g id="Rectangle">
+                <use fill="black" fill-opacity="1" filter="url(#filter-6)" xlink:href="#path-5"></use>
+                <use stroke="#000000" stroke-width="2" fill="#F76C2C" fill-rule="evenodd" xlink:href="#path-5"></use>
+            </g>
+            <path d="M53.0351562,65 C55.6328125,65 58.0107422,64.4775391 60.1689453,63.4326172 C62.3271484,62.3876953 64.1826172,60.9423828 65.7353516,59.0966797 C67.2880859,57.2509766 68.4941406,55.0830078 69.3535156,52.5927734 C70.2128906,50.1025391 70.6425781,47.4023438 70.6425781,44.4921875 C70.6425781,42.6367188 70.4570312,40.8447266 70.0859375,39.1162109 C69.7148438,37.3876953 69.1777344,35.7714844 68.4746094,34.2675781 C67.7714844,32.7636719 66.9072266,31.3867188 65.8818359,30.1367188 C64.8564453,28.8867188 63.6943359,27.8173828 62.3955078,26.9287109 C61.0966797,26.0400391 59.6611328,25.3515625 58.0888672,24.8632812 C56.5166016,24.375 54.8320312,24.1308594 53.0351562,24.1308594 L53.0351562,24.1308594 L37.8886719,24.1308594 L37.8886719,65 L53.0351562,65 Z M51.3066406,61.0449219 L42.2246094,61.0449219 L42.2246094,28.0859375 L51.3066406,28.0859375 C53.4355469,28.0859375 55.4130859,28.4130859 57.2392578,29.0673828 C59.0654297,29.7216797 60.6523438,30.7226562 62,32.0703125 C63.3476562,33.4179688 64.4023438,35.1318359 65.1640625,37.2119141 C65.9257812,39.2919922 66.3066406,41.7480469 66.3066406,44.5800781 C66.3066406,47.1777344 65.9306641,49.4970703 65.1787109,51.5380859 C64.4267578,53.5791016 63.3818359,55.3027344 62.0439453,56.7089844 C60.7060547,58.1152344 59.1191406,59.1894531 57.2832031,59.9316406 C55.4472656,60.6738281 53.4550781,61.0449219 51.3066406,61.0449219 L51.3066406,61.0449219 Z" id="D" fill="#000000" fill-rule="nonzero"></path>
+        </g>
+        <g id="Group" transform="translate(683.000000, 1.000000)" fill="#030303">
+            <g id="Group-4">
+                <circle id="Oval-Copy" cx="4" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-2" cx="28" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-5" cx="52" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-4" cx="76" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-3" cx="100" cy="4" r="4"></circle>
+            </g>
+            <g id="Group-4-Copy" transform="translate(0.000000, 24.000000)">
+                <circle id="Oval-Copy" cx="4" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-2" cx="28" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-5" cx="52" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-4" cx="76" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-3" cx="100" cy="4" r="4"></circle>
+            </g>
+            <g id="Group-4-Copy-2" transform="translate(0.000000, 48.000000)">
+                <circle id="Oval-Copy" cx="4" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-2" cx="28" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-5" cx="52" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-4" cx="76" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-3" cx="100" cy="4" r="4"></circle>
+            </g>
+            <g id="Group-4-Copy-3" transform="translate(0.000000, 72.000000)">
+                <circle id="Oval-Copy" cx="4" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-2" cx="28" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-5" cx="52" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-4" cx="76" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-3" cx="100" cy="4" r="4"></circle>
+            </g>
+            <g id="Group-4-Copy-4" transform="translate(0.000000, 96.000000)">
+                <circle id="Oval-Copy" cx="4" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-2" cx="28" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-5" cx="52" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-4" cx="76" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-3" cx="100" cy="4" r="4"></circle>
+            </g>
+            <g id="Group-4-Copy-5" transform="translate(0.000000, 120.000000)">
+                <circle id="Oval-Copy" cx="4" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-2" cx="28" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-5" cx="52" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-4" cx="76" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-3" cx="100" cy="4" r="4"></circle>
+            </g>
+            <g id="Group-4-Copy-6" transform="translate(0.000000, 120.000000)">
+                <circle id="Oval-Copy" cx="4" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-2" cx="28" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-5" cx="52" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-4" cx="76" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-3" cx="100" cy="4" r="4"></circle>
+            </g>
+        </g>
+        <g id="Group-Copy-2" transform="translate(470.000000, 128.000000)" fill="#030303">
+            <g id="Group-4">
+                <circle id="Oval-Copy" cx="4" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-2" cx="28" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-5" cx="52" cy="4" r="4"></circle>
+            </g>
+            <g id="Group-4-Copy" transform="translate(0.000000, 24.000000)">
+                <circle id="Oval-Copy" cx="4" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-2" cx="28" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-5" cx="52" cy="4" r="4"></circle>
+            </g>
+            <g id="Group-4-Copy-2" transform="translate(0.000000, 48.000000)">
+                <circle id="Oval-Copy" cx="4" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-2" cx="28" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-5" cx="52" cy="4" r="4"></circle>
+            </g>
+        </g>
+        <g id="Group-Copy" transform="translate(180.000000, 464.000000)" fill="#030303">
+            <g id="Group-4">
+                <circle id="Oval" cx="4" cy="4" r="4"></circle>
+                <circle id="Oval-Copy" cx="28" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-2" cx="52" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-5" cx="76" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-4" cx="100" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-3" cx="124" cy="4" r="4"></circle>
+            </g>
+            <g id="Group-4-Copy" transform="translate(0.000000, 24.000000)">
+                <circle id="Oval" cx="4" cy="4" r="4"></circle>
+                <circle id="Oval-Copy" cx="28" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-2" cx="52" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-5" cx="76" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-4" cx="100" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-3" cx="124" cy="4" r="4"></circle>
+            </g>
+            <g id="Group-4-Copy-2" transform="translate(0.000000, 48.000000)">
+                <circle id="Oval" cx="4" cy="4" r="4"></circle>
+                <circle id="Oval-Copy" cx="28" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-2" cx="52" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-5" cx="76" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-4" cx="100" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-3" cx="124" cy="4" r="4"></circle>
+            </g>
+            <g id="Group-4-Copy-3" transform="translate(0.000000, 72.000000)">
+                <circle id="Oval" cx="4" cy="4" r="4"></circle>
+                <circle id="Oval-Copy" cx="28" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-2" cx="52" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-5" cx="76" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-4" cx="100" cy="4" r="4"></circle>
+                <circle id="Oval-Copy-3" cx="124" cy="4" r="4"></circle>
+            </g>
+        </g>
+    </g>
+</svg>
