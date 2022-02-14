@@ -16,7 +16,9 @@
     "react-scripts": "4.0.3",
     "typescript": "^4.3.4",
     "web-vitals": "^1.1.2",
-    "yarn": "^1.22.17"
+    "yarn": "^1.22.17",
+    "rxjs": "8.0.0-alpha.2",
+    "fp-ts": "2.11.8"
   },
   "scripts": {
     "start": "react-scripts start",

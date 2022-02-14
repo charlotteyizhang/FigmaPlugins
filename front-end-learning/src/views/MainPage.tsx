@@ -1,12 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import { DesignCoding } from "../components/DesignCoding";
 import { css } from "@emotion/css";
 import { spacing, themeColors } from "../styles/styles";
+import BatteryIcon from "../images/icons/battery.png";
+import HomeIcon from "../images/icons/home.png";
+import * as RX from "rxjs";
+import { pipe } from "fp-ts/lib/function";
 
 export const MainPage = (): JSX.Element => {
   return (
     <div className={styles.main}>
-      <div className={styles.section}>
+      <div className={styles.sectionAlignRight}>
         <div className={styles.illustration}>
           <DesignCoding width={"100%"} />
         </div>
@@ -20,8 +24,22 @@ export const MainPage = (): JSX.Element => {
           <p>ReactJS | TypeScript | Functional Computing</p>
         </div>
       </div>
+      <div className={styles.sectionAlignLeft}>
+        <div className={styles.header}>
+          <h1>Icons</h1>
+        </div>
+        <div>
+          <img src={BatteryIcon} alt="batteryIcon" />
+          <img src={HomeIcon} alt="batteryIcon" />
+        </div>
+      </div>
     </div>
   );
+};
+
+interface GalleryProps {}
+const Gallery = ({}: GalleryProps): JSX.Element => {
+  return <div></div>;
 };
 const dotSize = 12;
 const styles = {
@@ -30,12 +48,18 @@ const styles = {
     flexDirection: "column",
     width: "100%",
   }),
-  section: css({
+  sectionAlignRight: css({
     display: "flex",
     width: "100%",
     margin: "auto",
     justifyContent: "center",
     alignItems: "flex-end",
+  }),
+  sectionAlignLeft: css({
+    display: "flex",
+    width: "100%",
+    margin: "auto",
+    justifyContent: "center",
   }),
   sectionText: css({
     display: "flex",
