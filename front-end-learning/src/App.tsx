@@ -3,19 +3,28 @@ import "./App.css";
 import { Logo } from "./components/Logo";
 import { MainPage } from "./views/MainPage";
 import { css } from "@emotion/css";
-import { screenMaxWidth } from "./styles/styles";
+import { screenMaxWidth, spacing, themeColors } from "./styles/styles";
 
 const App = (): JSX.Element => {
   return (
     <div className={styles.main}>
       <header className={styles.header}>
-        <Logo height="100%" />
-        <nav>
-          <a href="#1">1</a>
-          <a href="#2">2</a>
-          <a href="#3">3</a>
+        <div>
+          <Logo height="100%" width="100%" />
+        </div>
+        <nav className={styles.nav}>
+          <a className={styles.link} href="#1">
+            Skills
+          </a>
+          <a className={styles.link} href="#2">
+            Design
+          </a>
+          <a className={styles.link} href="#3">
+            Development
+          </a>
         </nav>
       </header>
+
       <body>
         <MainPage />
       </body>
@@ -49,10 +58,19 @@ const styles = {
   }),
   header: css({
     height: "3rem",
-    marginBottom: "1rem",
-    width: "100%",
-
+    marginBottom: spacing.large,
     justifyContent: "space-between",
+    padding: spacing.default,
+  }),
+  nav: css({
+    display: "flex",
+    justifyContent: "flex-end",
+    alignItems: "center",
+  }),
+  link: css({
+    textDecoration: "none",
+    color: themeColors.linkText,
+    margin: `0 ${spacing.default}`,
   }),
 };
 export default App;
