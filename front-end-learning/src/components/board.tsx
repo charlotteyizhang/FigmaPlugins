@@ -1,5 +1,5 @@
 import React, { Children, useEffect, useRef, useState } from "react";
-import { Item, Step } from "../attributes";
+import { GameState, Item, Step } from "../attributes";
 import {
   Calendar,
   Chest,
@@ -15,6 +15,7 @@ interface BoardProps {
   step: Step;
   items$: RX.BehaviorSubject<Array<Item>>;
   currentStep$: RX.BehaviorSubject<Step>;
+  gameState$: RX.BehaviorSubject<GameState>;
   children: React.ReactNode;
 }
 export const Board = ({
@@ -22,6 +23,7 @@ export const Board = ({
   step,
   items$,
   children,
+  gameState$,
 }: BoardProps): JSX.Element => {
   const [isSelected, setIsSelected] = useState(false);
 
@@ -32,11 +34,11 @@ export const Board = ({
   useEffect(() => {
     const sub = currentStep$.subscribe({
       next: (s) => {
-        console.log({ s, step });
         const isSelected = s === step;
         setIsSelected(isSelected);
 
         if (isSelected && specialThing !== null) {
+          gameState$.next({ kind: "SpecialThing" });
           const it = specialThing.item;
           if (it !== null && !collected) {
             setCollected(true);
@@ -49,6 +51,7 @@ export const Board = ({
             }
           }
         }
+        gameState$.next({ kind: "Rolling" });
       },
     });
     return () => sub.unsubscribe();

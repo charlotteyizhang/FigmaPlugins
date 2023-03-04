@@ -1,6 +1,13 @@
 import { css } from "@emotion/css";
 import React, { useEffect, useState } from "react";
-import { foldState, Item, Position, State, Step } from "../attributes";
+import {
+  foldState,
+  GameState,
+  Item,
+  Position,
+  State,
+  Step,
+} from "../attributes";
 import { Board } from "./board";
 import { pipe, absurd } from "fp-ts/function";
 import { End } from "./End";
@@ -21,11 +28,22 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
   };
   const svgHeight = windowDimensions.height * 0.8;
 
-  const [currentStep, setCurrentStep] = useState<Step>(Step.start);
+  const [gameState$] = useState(
+    () => new RX.BehaviorSubject<GameState>({ kind: "Rolling" })
+  );
+
+  const [gameState, setGameState] = useState<GameState>({ kind: "Rolling" });
+
+  useEffect(() => {
+    const sub = gameState$.subscribe({ next: setGameState });
+    return () => sub.unsubscribe();
+  }, []);
 
   const [currentStep$] = useState(
     () => new RX.BehaviorSubject<Step>(Step.start)
   );
+
+  const [currentStep, setCurrentStep] = useState<Step>(Step.start);
 
   useEffect(() => {
     const sub = currentStep$.subscribe({
@@ -61,19 +79,26 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
     >
       <button
         onClick={() => {
+          gameState$.next({ kind: "Walking" });
           if (currentStep >= Step.last) {
             state$.next({ kind: "end" });
           } else {
-            setCurrentStep(rollDice(currentStep));
+            currentStep$.next(rollDice(currentStep));
           }
         }}
+        disabled={gameState.kind !== "Rolling"}
       >
         Dice {currentStep}
       </button>
 
       <div className={css({ marginTop: "0.5rem" })}>
         <svg width="100%" height={svgHeight} viewBox="0 0 360 720">
-          <Board step={Step.start} items$={items$} currentStep$={currentStep$}>
+          <Board
+            step={Step.start}
+            items$={items$}
+            currentStep$={currentStep$}
+            gameState$={gameState$}
+          >
             <path
               id={Step.start.toFixed()}
               fillRule="evenodd"
@@ -82,7 +107,12 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
               fill="#FF7354"
             />
           </Board>
-          <Board step={Step.second} items$={items$} currentStep$={currentStep$}>
+          <Board
+            step={Step.second}
+            items$={items$}
+            currentStep$={currentStep$}
+            gameState$={gameState$}
+          >
             <rect
               id={Step.second.toFixed()}
               x="120"
@@ -96,6 +126,7 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
             step={Step.specialSilver}
             items$={items$}
             currentStep$={currentStep$}
+            gameState$={gameState$}
           >
             <path
               id={Step.specialSilver.toFixed()}
@@ -103,7 +134,12 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
               fill="#12184A"
             />
           </Board>
-          <Board step={Step.forth} items$={items$} currentStep$={currentStep$}>
+          <Board
+            step={Step.forth}
+            items$={items$}
+            currentStep$={currentStep$}
+            gameState$={gameState$}
+          >
             <rect
               id={Step.forth.toFixed()}
               y="180"
@@ -116,6 +152,7 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
             step={Step.unlockTime}
             items$={items$}
             currentStep$={currentStep$}
+            gameState$={gameState$}
           >
             <path
               id={Step.unlockTime.toFixed()}
@@ -123,7 +160,12 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
               fill="#12184A"
             />
           </Board>
-          <Board step={Step.fifth} items$={items$} currentStep$={currentStep$}>
+          <Board
+            step={Step.fifth}
+            items$={items$}
+            currentStep$={currentStep$}
+            gameState$={gameState$}
+          >
             <rect
               id={Step.fifth.toFixed()}
               x="120"
@@ -133,7 +175,12 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
               fill="#FF7354"
             />
           </Board>
-          <Board step={Step.sixth} items$={items$} currentStep$={currentStep$}>
+          <Board
+            step={Step.sixth}
+            items$={items$}
+            currentStep$={currentStep$}
+            gameState$={gameState$}
+          >
             <path
               id={Step.sixth.toFixed()}
               d="M240 270H310C337.614 270 360 292.386 360 320V360H240V270Z"
@@ -144,6 +191,7 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
             step={Step.goForward}
             items$={items$}
             currentStep$={currentStep$}
+            gameState$={gameState$}
           >
             <rect
               id={Step.goForward.toFixed()}
@@ -154,7 +202,12 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
               fill="#4A529C"
             />
           </Board>
-          <Board step={Step.goBack} items$={items$} currentStep$={currentStep$}>
+          <Board
+            step={Step.goBack}
+            items$={items$}
+            currentStep$={currentStep$}
+            gameState$={gameState$}
+          >
             <path
               id={Step.goBack.toFixed()}
               d="M240 450H360V490C360 517.614 337.614 540 310 540H240V450Z"
@@ -165,6 +218,7 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
             step={Step.unlockAddress}
             items$={items$}
             currentStep$={currentStep$}
+            gameState$={gameState$}
           >
             <path
               id={Step.unlockAddress.toFixed()}
@@ -174,7 +228,12 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
               fill="#12184A"
             />
           </Board>
-          <Board step={Step.tenth} items$={items$} currentStep$={currentStep$}>
+          <Board
+            step={Step.tenth}
+            items$={items$}
+            currentStep$={currentStep$}
+            gameState$={gameState$}
+          >
             <rect
               id={Step.tenth.toFixed()}
               y="540"
@@ -187,6 +246,7 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
             step={Step.specialGolden}
             items$={items$}
             currentStep$={currentStep$}
+            gameState$={gameState$}
           >
             <path
               id={Step.specialGolden.toFixed()}
@@ -196,7 +256,12 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
               fill="#B8AFAF"
             />
           </Board>
-          <Board step={Step.last} items$={items$} currentStep$={currentStep$}>
+          <Board
+            step={Step.last}
+            items$={items$}
+            currentStep$={currentStep$}
+            gameState$={gameState$}
+          >
             <rect
               id={Step.last.toFixed()}
               x="240"
