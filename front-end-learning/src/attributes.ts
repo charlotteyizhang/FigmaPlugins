@@ -1,0 +1,15 @@
+export enum Step {
+  start = 0,
+  second = 1,
+  specialSilver = 2,
+  forth = 3,
+  unlockTime = 4,
+  fifth = 5,
+  sixth = 6,
+  goDirectly = 7,
+  back4 = 8,
+  unlockAddress = 9,
+  tenth = 10,
+  specialGolden = 11,
+  last = 12,
+}

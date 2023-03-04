@@ -1,22 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import "./App.css";
+import { Step } from "./attributes";
 import { Board } from "./components/board";
+import { Head } from "./images/SVG";
 
-enum Step {
-  start = 0,
-  second = 1,
-  specialSilver = 2,
-  forth = 3,
-  unlockTime = 4,
-  fifth = 5,
-  sixth = 6,
-  goDirectly = 7,
-  back4 = 8,
-  unlockAddress = 9,
-  tenth = 10,
-  specialGolden = 11,
-  last = 12,
-}
 const App = () => {
   const windowDimensions = {
     height: window.innerHeight,
@@ -24,6 +11,17 @@ const App = () => {
   };
 
   const [currentStep, setCurrentStep] = useState<Step>(Step.start);
+
+  const el = document.getElementById(Step.start.toFixed());
+  const [playerPosition, setPlayerPosition] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const el = document.getElementById(currentStep.toFixed());
+    if (el) {
+      const position = el.getBoundingClientRect();
+      setPlayerPosition({ x: position.x + 20, y: position.y + 10 });
+    }
+  }, [currentStep]);
 
   return (
     <div className="App">
@@ -37,12 +35,13 @@ const App = () => {
         Dice
       </button>
       <svg
-        width={windowDimensions.width}
-        height={windowDimensions.height}
+        width="100%"
+        height={windowDimensions.height * 0.9}
         viewBox="0 0 360 720"
       >
         <Board
-          isSelected={currentStep === Step.start}
+          currentStep={currentStep}
+          step={Step.start}
           reward={false}
           rewarded={false}
         >
@@ -55,14 +54,16 @@ const App = () => {
           />
         </Board>
         <Board
-          isSelected={currentStep === Step.second}
+          currentStep={currentStep}
+          step={Step.second}
           reward={false}
           rewarded={false}
         >
           <rect id="2" x="120" y="90" width="120" height="90" fill="#4A529C" />
         </Board>
         <Board
-          isSelected={currentStep === Step.specialSilver}
+          currentStep={currentStep}
+          step={Step.specialSilver}
           reward={false}
           rewarded={false}
         >
@@ -73,14 +74,16 @@ const App = () => {
           />
         </Board>
         <Board
-          isSelected={currentStep === Step.forth}
+          currentStep={currentStep}
+          step={Step.forth}
           reward={false}
           rewarded={false}
         >
           <rect id="4" y="180" width="120" height="90" fill="#B8AFAF" />
         </Board>
         <Board
-          isSelected={currentStep === Step.unlockTime}
+          currentStep={currentStep}
+          step={Step.unlockTime}
           reward={false}
           rewarded={false}
         >
@@ -91,14 +94,16 @@ const App = () => {
           />
         </Board>
         <Board
-          isSelected={currentStep === Step.fifth}
+          currentStep={currentStep}
+          step={Step.fifth}
           reward={false}
           rewarded={false}
         >
           <rect id="6" x="120" y="270" width="120" height="90" fill="#FF7354" />
         </Board>
         <Board
-          isSelected={currentStep === Step.sixth}
+          currentStep={currentStep}
+          step={Step.sixth}
           reward={false}
           rewarded={false}
         >
@@ -109,14 +114,16 @@ const App = () => {
           />
         </Board>
         <Board
-          isSelected={currentStep === Step.goDirectly}
+          currentStep={currentStep}
+          step={Step.goDirectly}
           reward={false}
           rewarded={false}
         >
           <rect id="8" x="240" y="360" width="120" height="90" fill="#4A529C" />
         </Board>
         <Board
-          isSelected={currentStep === Step.back4}
+          currentStep={currentStep}
+          step={Step.back4}
           reward={false}
           rewarded={false}
         >
@@ -127,7 +134,8 @@ const App = () => {
           />
         </Board>
         <Board
-          isSelected={currentStep === Step.unlockAddress}
+          currentStep={currentStep}
+          step={Step.unlockAddress}
           reward={false}
           rewarded={false}
         >
@@ -140,14 +148,16 @@ const App = () => {
           />
         </Board>
         <Board
-          isSelected={currentStep === Step.tenth}
+          currentStep={currentStep}
+          step={Step.tenth}
           reward={false}
           rewarded={false}
         >
           <rect id="11" y="540" width="120" height="90" fill="#4A529C" />
         </Board>
         <Board
-          isSelected={currentStep === Step.specialGolden}
+          currentStep={currentStep}
+          step={Step.specialGolden}
           reward={false}
           rewarded={false}
         >
@@ -160,7 +170,8 @@ const App = () => {
           />
         </Board>
         <Board
-          isSelected={currentStep === Step.last}
+          currentStep={currentStep}
+          step={Step.last}
           reward={false}
           rewarded={false}
         >
@@ -174,6 +185,15 @@ const App = () => {
           />
         </Board>
       </svg>
+      <div
+        style={{
+          position: "absolute",
+          left: playerPosition.x,
+          top: playerPosition.y,
+        }}
+      >
+        <Head width={60} />
+      </div>
     </div>
   );
 };
