@@ -39,7 +39,7 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
     <div>
       <button
         onClick={() => {
-          if (currentStep === Step.last) {
+          if (currentStep >= Step.last) {
             state$.next({ kind: "end" });
           } else {
             setCurrentStep(rollDice(currentStep));
@@ -209,4 +209,4 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
 };
 
 const rollDice = (ct: Step) =>
-  Math.max(Math.round(ct + Math.random() * (Step.last - ct)));
+  Math.max(Math.round(ct + 1 + Math.random() * (Step.last - ct)));
