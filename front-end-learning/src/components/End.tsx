@@ -7,12 +7,6 @@ interface EndProps {
   state$: RX.BehaviorSubject<State>;
 }
 export const End = ({ state$ }: EndProps): JSX.Element => {
-  const [state, setState] = useState<State>({ kind: "playing" });
-
-  useEffect(() => {
-    const sub = state$.subscribe({ next: setState });
-    return () => sub.unsubscribe();
-  }, []);
   return (
     <div>
       yeah
