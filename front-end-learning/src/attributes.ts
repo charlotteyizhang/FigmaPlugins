@@ -8,8 +8,8 @@ export enum Step {
   unlockTime = 4,
   fifth = 5,
   sixth = 6,
-  goDirectly = 7,
-  back4 = 8,
+  goForward = 7,
+  goBack = 8,
   unlockAddress = 9,
   tenth = 10,
   specialGolden = 11,
@@ -43,6 +43,52 @@ export const foldState =
       case "end": {
         return fns.onEnd();
       }
+      default:
+        return absurd(s);
+    }
+  };
+
+export type Item = "golden" | "silver" | "time" | "address";
+
+interface Rolling {
+  kind: "Rolling";
+}
+interface Walking {
+  kind: "Walking";
+}
+
+interface Collecting {
+  kind: "Collecting";
+}
+
+interface SpecialThing {
+  kind: "SpecialThing";
+}
+
+export type GameState = Rolling | Walking | Collecting | SpecialThing;
+
+export const foldGameState =
+  <T>(fns: {
+    onRolling: () => T;
+    onWalking: () => T;
+    onCollecting: () => T;
+    onSpecialThing: () => T;
+  }) =>
+  (s: GameState): T => {
+    switch (s.kind) {
+      case "Rolling": {
+        return fns.onRolling();
+      }
+      case "Walking": {
+        return fns.onWalking();
+      }
+      case "Collecting": {
+        return fns.onCollecting();
+      }
+      case "SpecialThing": {
+        return fns.onSpecialThing();
+      }
+
       default:
         return absurd(s);
     }

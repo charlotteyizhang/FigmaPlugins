@@ -1,6 +1,6 @@
 import { css } from "@emotion/css";
 import React, { useEffect, useState } from "react";
-import { foldState, Position, State, Step } from "../attributes";
+import { foldState, Item, Position, State, Step } from "../attributes";
 import { Board } from "./board";
 import { pipe, absurd } from "fp-ts/function";
 import { End } from "./End";
@@ -23,11 +23,18 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
 
   const [currentStep, setCurrentStep] = useState<Step>(Step.start);
 
-  const [playerPosition, setPlayerPosition] = useState({
-    x:
-      windowDimensions.width - (svgHeight / svgViewBox.v) * svgViewBox.h * 0.33,
-    y: svgHeight / 8,
-  });
+  const [currentStep$] = useState(
+    () => new RX.BehaviorSubject<Step>(Step.start)
+  );
+
+  useEffect(() => {
+    const sub = currentStep$.subscribe({
+      next: (s) => {
+        setCurrentStep(s);
+      },
+    });
+    return () => sub.unsubscribe();
+  }, []);
 
   useEffect(() => {
     const el = document.getElementById(currentStep.toFixed());
@@ -36,6 +43,14 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
       setPlayerPosition({ x: position.x + 20, y: position.y + 10 });
     }
   }, [currentStep]);
+  const [items$] = useState(() => new RX.BehaviorSubject<Array<Item>>([]));
+
+  const [playerPosition, setPlayerPosition] = useState({
+    x:
+      windowDimensions.width - (svgHeight / svgViewBox.v) * svgViewBox.h * 0.33,
+    y: svgHeight / 8,
+  });
+
   return (
     <div
       className={css({
@@ -58,28 +73,18 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
 
       <div className={css({ marginTop: "0.5rem" })}>
         <svg width="100%" height={svgHeight} viewBox="0 0 360 720">
-          <Board
-            currentStep={currentStep}
-            step={Step.start}
-            reward={false}
-            rewarded={false}
-          >
+          <Board step={Step.start} items$={items$} currentStep$={currentStep$}>
             <path
-              id="1"
+              id={Step.start.toFixed()}
               fillRule="evenodd"
               clipRule="evenodd"
               d="M360 0H240V90V180H310C337.614 180 360 157.614 360 130V90V0Z"
               fill="#FF7354"
             />
           </Board>
-          <Board
-            currentStep={currentStep}
-            step={Step.second}
-            reward={false}
-            rewarded={false}
-          >
+          <Board step={Step.second} items$={items$} currentStep$={currentStep$}>
             <rect
-              id="2"
+              id={Step.second.toFixed()}
               x="120"
               y="90"
               width="120"
@@ -88,45 +93,39 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
             />
           </Board>
           <Board
-            currentStep={currentStep}
             step={Step.specialSilver}
-            reward={false}
-            rewarded={false}
+            items$={items$}
+            currentStep$={currentStep$}
           >
             <path
-              id="3"
+              id={Step.specialSilver.toFixed()}
               d="M0 140C0 112.386 22.3858 90 50 90H120V180H0V140Z"
               fill="#12184A"
             />
           </Board>
-          <Board
-            currentStep={currentStep}
-            step={Step.forth}
-            reward={false}
-            rewarded={false}
-          >
-            <rect id="4" y="180" width="120" height="90" fill="#B8AFAF" />
+          <Board step={Step.forth} items$={items$} currentStep$={currentStep$}>
+            <rect
+              id={Step.forth.toFixed()}
+              y="180"
+              width="120"
+              height="90"
+              fill="#B8AFAF"
+            />
           </Board>
           <Board
-            currentStep={currentStep}
             step={Step.unlockTime}
-            reward={false}
-            rewarded={false}
+            items$={items$}
+            currentStep$={currentStep$}
           >
             <path
-              id="5"
+              id={Step.unlockTime.toFixed()}
               d="M0 270H120V360H50C22.3858 360 0 337.614 0 310V270Z"
               fill="#12184A"
             />
           </Board>
-          <Board
-            currentStep={currentStep}
-            step={Step.fifth}
-            reward={false}
-            rewarded={false}
-          >
+          <Board step={Step.fifth} items$={items$} currentStep$={currentStep$}>
             <rect
-              id="6"
+              id={Step.fifth.toFixed()}
               x="120"
               y="270"
               width="120"
@@ -134,26 +133,20 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
               fill="#FF7354"
             />
           </Board>
-          <Board
-            currentStep={currentStep}
-            step={Step.sixth}
-            reward={false}
-            rewarded={false}
-          >
+          <Board step={Step.sixth} items$={items$} currentStep$={currentStep$}>
             <path
-              id="7"
+              id={Step.sixth.toFixed()}
               d="M240 270H310C337.614 270 360 292.386 360 320V360H240V270Z"
               fill="#12184A"
             />
           </Board>
           <Board
-            currentStep={currentStep}
-            step={Step.goDirectly}
-            reward={false}
-            rewarded={false}
+            step={Step.goForward}
+            items$={items$}
+            currentStep$={currentStep$}
           >
             <rect
-              id="8"
+              id={Step.goForward.toFixed()}
               x="240"
               y="360"
               width="120"
@@ -161,62 +154,51 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
               fill="#4A529C"
             />
           </Board>
-          <Board
-            currentStep={currentStep}
-            step={Step.back4}
-            reward={false}
-            rewarded={false}
-          >
+          <Board step={Step.goBack} items$={items$} currentStep$={currentStep$}>
             <path
-              id="9"
+              id={Step.goBack.toFixed()}
               d="M240 450H360V490C360 517.614 337.614 540 310 540H240V450Z"
               fill="#B8AFAF"
             />
           </Board>
           <Board
-            currentStep={currentStep}
             step={Step.unlockAddress}
-            reward={false}
-            rewarded={false}
+            items$={items$}
+            currentStep$={currentStep$}
           >
             <path
-              id="10"
+              id={Step.unlockAddress.toFixed()}
               fillRule="evenodd"
               clipRule="evenodd"
               d="M50 450C22.3858 450 0 472.386 0 500V540H120H240V450H120H50Z"
               fill="#12184A"
             />
           </Board>
-          <Board
-            currentStep={currentStep}
-            step={Step.tenth}
-            reward={false}
-            rewarded={false}
-          >
-            <rect id="11" y="540" width="120" height="90" fill="#4A529C" />
+          <Board step={Step.tenth} items$={items$} currentStep$={currentStep$}>
+            <rect
+              id={Step.tenth.toFixed()}
+              y="540"
+              width="120"
+              height="90"
+              fill="#4A529C"
+            />
           </Board>
           <Board
-            currentStep={currentStep}
             step={Step.specialGolden}
-            reward={false}
-            rewarded={false}
+            items$={items$}
+            currentStep$={currentStep$}
           >
             <path
-              id="12"
+              id={Step.specialGolden.toFixed()}
               fillRule="evenodd"
               clipRule="evenodd"
               d="M120 630H0V670C0 697.614 22.3858 720 50 720H120H240V630H120Z"
               fill="#B8AFAF"
             />
           </Board>
-          <Board
-            currentStep={currentStep}
-            step={Step.last}
-            reward={false}
-            rewarded={false}
-          >
+          <Board step={Step.last} items$={items$} currentStep$={currentStep$}>
             <rect
-              id="13"
+              id={Step.last.toFixed()}
               x="240"
               y="630"
               width="120"
@@ -239,4 +221,5 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
   );
 };
 
-const rollDice = (ct: Step) => Math.max(Math.round(ct + 1 + Math.random() * 5));
+const rollDice = (ct: Step) =>
+  Math.min(Step.last, Math.round(ct + 1 + Math.random() * 5));

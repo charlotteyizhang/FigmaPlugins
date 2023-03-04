@@ -45,6 +45,7 @@ const App = () => {
               border: "#9A7F1E",
             })
           )}
+          onClick={() => setState({ kind: "playing" })}
         >
           再来一次
         </button>
@@ -56,6 +57,7 @@ const App = () => {
               border: "#285537",
             })
           )}
+          onClick={() => setState({ kind: "end" })}
         >
           直接看请帖
         </button>

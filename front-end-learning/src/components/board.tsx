@@ -1,5 +1,5 @@
 import React, { Children, useEffect, useRef, useState } from "react";
-import { Step } from "../attributes";
+import { Item, Step } from "../attributes";
 import {
   Calendar,
   Chest,
@@ -9,54 +9,107 @@ import {
   Rocket,
   Silver,
 } from "../images/SVG";
+import * as RX from "rxjs";
 
 interface BoardProps {
-  currentStep: Step;
   step: Step;
-  reward: boolean;
-  rewarded: boolean;
+  items$: RX.BehaviorSubject<Array<Item>>;
+  currentStep$: RX.BehaviorSubject<Step>;
   children: React.ReactNode;
 }
 export const Board = ({
-  currentStep,
+  currentStep$,
   step,
-  reward,
-  rewarded,
+  items$,
   children,
 }: BoardProps): JSX.Element => {
-  const isSelected = currentStep === step;
+  const [isSelected, setIsSelected] = useState(false);
 
   const specialThing = getSpecialThing(step);
+
+  const [collected, setCollected] = useState(false);
+
+  useEffect(() => {
+    const sub = currentStep$.subscribe({
+      next: (s) => {
+        console.log({ s, step });
+        const isSelected = s === step;
+        setIsSelected(isSelected);
+
+        if (isSelected && specialThing !== null) {
+          const it = specialThing.item;
+          if (it !== null && !collected) {
+            setCollected(true);
+            items$.next([...items$.getValue(), it]);
+          } else if (it === null) {
+            if (step === Step.goBack) {
+              currentStep$.next(step - 6);
+            } else if (step === Step.goForward) {
+              currentStep$.next(step + 4);
+            }
+          }
+        }
+      },
+    });
+    return () => sub.unsubscribe();
+  }, []);
+
   return (
     <g style={{ opacity: isSelected ? 1 : 0.8 }}>
       {children}
-      {specialThing}
+      {!collected && specialThing?.pic}
     </g>
   );
 };
 
-const getSpecialThing = (step: Step) => {
+interface SpecialThing {
+  item: Item | null;
+  pic: JSX.Element;
+}
+
+const getSpecialThing = (step: Step): SpecialThing | null => {
   switch (step) {
     case Step.specialSilver: {
-      return <Silver scale={1} translateX={0} translateY={0} />;
+      return {
+        item: "silver",
+        pic: <Silver scale={1} translateX={0} translateY={0} />,
+      };
     }
-    case Step.goDirectly: {
-      return <Rocket scale={1} translateX={0} translateY={0} />;
+    case Step.goForward: {
+      return {
+        item: null,
+        pic: <Rocket scale={1} translateX={0} translateY={0} />,
+      };
     }
     case Step.specialGolden: {
-      return <Golden scale={1} translateX={0} translateY={0} />;
+      return {
+        item: "golden",
+        pic: <Golden scale={1} translateX={0} translateY={0} />,
+      };
     }
     case Step.unlockAddress: {
-      return <Resort scale={1} translateX={0} translateY={0} />;
+      return {
+        item: "address",
+        pic: <Resort scale={1} translateX={0} translateY={0} />,
+      };
     }
-    case Step.back4: {
-      return <GoBack scale={1} translateX={0} translateY={0} />;
+    case Step.goBack: {
+      return {
+        item: null,
+        pic: <GoBack scale={1} translateX={0} translateY={0} />,
+      };
     }
     case Step.unlockTime: {
-      return <Calendar scale={1} translateX={0} translateY={0} />;
+      return {
+        item: "time",
+        pic: <Calendar scale={1} translateX={0} translateY={0} />,
+      };
     }
     case Step.last: {
-      return <Chest scale={1} translateX={0} translateY={0} />;
+      return {
+        item: null,
+        pic: <Chest scale={1} translateX={0} translateY={0} />,
+      };
     }
     default: {
       return null;
