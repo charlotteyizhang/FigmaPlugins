@@ -13,10 +13,32 @@ import { pipe, absurd } from "fp-ts/function";
 import { End } from "./End";
 import { Head } from "../images/SVG";
 import * as RX from "rxjs";
+import { motion } from "framer-motion";
 
 const svgViewBox = {
   h: 360,
   v: 720,
+};
+
+const stepBoxVariant = {
+  open: {
+    opacity: 1,
+    scale: 1,
+    transition: {
+      type: "bounce",
+      bounce: 0.4,
+      duration: 0.8,
+    },
+  },
+  closed: {
+    opacity: 0,
+    scale: 0,
+    transition: {
+      type: "spring",
+      bounce: 0.4,
+      duration: 0.8,
+    },
+  },
 };
 interface GameProps {
   state$: RX.BehaviorSubject<State>;
@@ -45,10 +67,13 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
 
   const [currentStep, setCurrentStep] = useState<Step>(Step.start);
 
+  const [showStep, setShowStep] = useState<Step | undefined>(undefined);
+
   useEffect(() => {
     const sub = currentStep$.subscribe({
       next: (s) => {
-        setCurrentStep(s);
+        setShowStep(s);
+        // setCurrentStep(s);
       },
     });
     return () => sub.unsubscribe();
@@ -78,6 +103,11 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
       })}
     >
       <button
+        style={{
+          padding: "0.5rem 0",
+          backgroundColor: "#F9D03E",
+          border: "transparent",
+        }}
         onClick={() => {
           gameState$.next({ kind: "Walking" });
           if (currentStep >= Step.last) {
@@ -88,9 +118,34 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
         }}
         disabled={gameState.kind !== "Rolling"}
       >
-        Dice {currentStep}
+        点击骰子 {currentStep}
       </button>
-
+      <motion.div
+        className={css({
+          position: "absolute",
+          pointerEvents: "none",
+          padding: "1rem",
+          backgroundColor: "#AD2D1F",
+          borderRadius: "50%",
+          width: "50px",
+          height: "50px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          opacity: 0,
+        })}
+        animate={showStep !== undefined ? "open" : "closed"}
+        variants={stepBoxVariant}
+        onAnimationComplete={(v) => {
+          console.log("end", { v });
+          v === "open" && showStep !== undefined && setCurrentStep(showStep);
+          setShowStep(undefined);
+        }}
+      >
+        <p className={css({ fontSize: "2rem", color: "#C08D73" })}>
+          {showStep}
+        </p>
+      </motion.div>
       <div className={css({ marginTop: "0.5rem" })}>
         <svg width="100%" height={svgHeight} viewBox="0 0 360 720">
           <Board
