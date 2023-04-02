@@ -61,31 +61,49 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
     return () => sub.unsubscribe();
   }, []);
 
+  const [targetStep$] = useState(() => new RX.Subject<Step | undefined>());
   const [currentStep$] = useState(
     () => new RX.BehaviorSubject<Step>(Step.start)
   );
 
   const [currentStep, setCurrentStep] = useState<Step>(Step.start);
 
-  const [showStep, setShowStep] = useState<Step | undefined>(undefined);
+  const [targetStep, setTargetStep] = useState<Step | undefined>(undefined);
 
   useEffect(() => {
-    const sub = currentStep$.subscribe({
+    const sub = targetStep$.subscribe({
       next: (s) => {
-        setShowStep(s);
-        // setCurrentStep(s);
+        s !== Step.start && setTargetStep(s);
+      },
+    });
+    return () => sub.unsubscribe();
+  }, []);
+  const [playerFinished, setPlayerFinished] = useState(false);
+
+  useEffect(() => {
+    const sub = RX.combineLatest([targetStep$, currentStep$]).subscribe({
+      next: ([target, current]) => {
+        if (target !== undefined) {
+          console.log({ currentStep, showStep: targetStep });
+          if (current <= target) {
+            const el = document.getElementById(current.toFixed(0));
+            if (el) {
+              const position = el.getBoundingClientRect();
+              setPlayerPosition({ x: position.x + 20, y: position.y + 10 });
+              // if (playerFinished) {
+              //   state$.next({ kind: "end" });
+              // }
+            }
+          } else {
+            setCurrentStep(target);
+            setTargetStep(undefined);
+          }
+        }
       },
     });
     return () => sub.unsubscribe();
   }, []);
 
-  useEffect(() => {
-    const el = document.getElementById(currentStep.toFixed());
-    if (el) {
-      const position = el.getBoundingClientRect();
-      setPlayerPosition({ x: position.x + 20, y: position.y + 10 });
-    }
-  }, [currentStep]);
   const [items$] = useState(() => new RX.BehaviorSubject<Array<Item>>([]));
 
   const [playerPosition, setPlayerPosition] = useState({
@@ -110,10 +128,10 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
         }}
         onClick={() => {
           gameState$.next({ kind: "Walking" });
-          if (currentStep >= Step.last) {
-            state$.next({ kind: "end" });
+          if (currentStep >= Step.last - 1) {
+            setPlayerFinished(true);
           } else {
-            currentStep$.next(rollDice(currentStep));
+            targetStep$.next(rollDice(currentStep));
           }
         }}
         disabled={gameState.kind !== "Rolling"}
@@ -134,16 +152,16 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
           justifyContent: "center",
           opacity: 0,
         })}
-        animate={showStep !== undefined ? "open" : "closed"}
+        animate={targetStep !== undefined ? "open" : "closed"}
         variants={stepBoxVariant}
         onAnimationComplete={(v) => {
-          console.log("end", { v });
-          v === "open" && showStep !== undefined && setCurrentStep(showStep);
-          setShowStep(undefined);
+          v === "open" &&
+            targetStep !== undefined &&
+            setCurrentStep((s) => s + 1);
         }}
       >
         <p className={css({ fontSize: "2rem", color: "#C08D73" })}>
-          {showStep}
+          {targetStep}
         </p>
       </motion.div>
       <div className={css({ marginTop: "0.5rem" })}>
@@ -328,15 +346,24 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
           </Board>
         </svg>
       </div>
-      <div
-        style={{
+      <motion.div
+        className={css({
           position: "absolute",
-          left: playerPosition.x,
-          top: playerPosition.y,
+        })}
+        animate={{
+          x: playerPosition.x,
+          y: playerPosition.y,
+          transition: {
+            type: "linear",
+            duration: 0.3,
+          },
         }}
+        onAnimationComplete={() =>
+          currentStep$.next(currentStep$.getValue() + 1)
+        }
       >
         <Head width={40} />
-      </div>
+      </motion.div>
     </div>
   );
 };
