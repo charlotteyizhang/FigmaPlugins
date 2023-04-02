@@ -61,19 +61,20 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
     return () => sub.unsubscribe();
   }, []);
 
-  const [targetStep$] = useState(() => new RX.Subject<Step | undefined>());
+  const [diceValue$] = useState(() => new RX.Subject<Step | undefined>());
+  const [moveStep$] = useState(() => new RX.BehaviorSubject<number>(1));
   const [currentStep$] = useState(
     () => new RX.BehaviorSubject<Step>(Step.start)
   );
 
   const [currentStep, setCurrentStep] = useState<Step>(Step.start);
 
-  const [targetStep, setTargetStep] = useState<Step | undefined>(undefined);
+  const [diceValue, setDiceValue] = useState<Step | undefined>(undefined);
 
   useEffect(() => {
-    const sub = targetStep$.subscribe({
+    const sub = diceValue$.subscribe({
       next: (s) => {
-        s !== Step.start && setTargetStep(s);
+        s !== Step.start && setDiceValue(s);
       },
     });
     return () => sub.unsubscribe();
@@ -81,22 +82,25 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
   const [playerFinished, setPlayerFinished] = useState(false);
 
   useEffect(() => {
-    const sub = RX.combineLatest([targetStep$, currentStep$]).subscribe({
-      next: ([target, current]) => {
-        if (target !== undefined) {
-          console.log({ currentStep, showStep: targetStep });
-          if (current <= target) {
-            const el = document.getElementById(current.toFixed(0));
+    const sub = pipe(
+      RX.combineLatest([diceValue$, moveStep$]),
+      RX.withLatestFrom(currentStep$)
+    ).subscribe({
+      next: ([[dice, move], current]) => {
+        console.log({ dice, move, current });
+
+        if (dice !== undefined && move !== 0) {
+          const target = Math.min(Step.last, dice + current);
+          if (move <= target) {
+            const el = document.getElementById(move.toFixed(0));
             if (el) {
               const position = el.getBoundingClientRect();
               setPlayerPosition({ x: position.x + 20, y: position.y + 10 });
-              // if (playerFinished) {
-              //   state$.next({ kind: "end" });
-              // }
             }
-          } else {
-            setCurrentStep(target);
-            setTargetStep(undefined);
+          }
+          if (move === target) {
+            setDiceValue(undefined);
+            currentStep$.next(target);
           }
         }
       },
@@ -120,24 +124,27 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
         justifyContent: "space-between",
       })}
     >
-      <button
+      <motion.button
         style={{
           padding: "0.5rem 0",
           backgroundColor: "#F9D03E",
           border: "transparent",
         }}
+        animate={gameState.kind === "Rolling" ? "open" : "closed"}
+        variants={stepBoxVariant}
         onClick={() => {
           gameState$.next({ kind: "Walking" });
-          if (currentStep >= Step.last - 1) {
-            setPlayerFinished(true);
-          } else {
-            targetStep$.next(rollDice(currentStep));
+          console.log({ roll: currentStep$.getValue() });
+
+          if (currentStep$.getValue() < Step.last - 1) {
+            diceValue$.next(rollDice());
+            moveStep$.next(currentStep$.getValue() + 1);
           }
         }}
         disabled={gameState.kind !== "Rolling"}
       >
         点击骰子 {currentStep}
-      </button>
+      </motion.button>
       <motion.div
         className={css({
           position: "absolute",
@@ -152,16 +159,16 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
           justifyContent: "center",
           opacity: 0,
         })}
-        animate={targetStep !== undefined ? "open" : "closed"}
+        animate={diceValue !== undefined ? "open" : "closed"}
         variants={stepBoxVariant}
         onAnimationComplete={(v) => {
           v === "open" &&
-            targetStep !== undefined &&
+            diceValue !== undefined &&
             setCurrentStep((s) => s + 1);
         }}
       >
         <p className={css({ fontSize: "2rem", color: "#C08D73" })}>
-          {targetStep}
+          {diceValue}
         </p>
       </motion.div>
       <div className={css({ marginTop: "0.5rem" })}>
@@ -170,6 +177,7 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
             step={Step.start}
             items$={items$}
             currentStep$={currentStep$}
+            diceValue$={diceValue$}
             gameState$={gameState$}
           >
             <path
@@ -184,6 +192,7 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
             step={Step.second}
             items$={items$}
             currentStep$={currentStep$}
+            diceValue$={diceValue$}
             gameState$={gameState$}
           >
             <rect
@@ -199,6 +208,7 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
             step={Step.specialSilver}
             items$={items$}
             currentStep$={currentStep$}
+            diceValue$={diceValue$}
             gameState$={gameState$}
           >
             <path
@@ -211,6 +221,7 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
             step={Step.forth}
             items$={items$}
             currentStep$={currentStep$}
+            diceValue$={diceValue$}
             gameState$={gameState$}
           >
             <rect
@@ -225,6 +236,7 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
             step={Step.unlockTime}
             items$={items$}
             currentStep$={currentStep$}
+            diceValue$={diceValue$}
             gameState$={gameState$}
           >
             <path
@@ -237,6 +249,7 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
             step={Step.fifth}
             items$={items$}
             currentStep$={currentStep$}
+            diceValue$={diceValue$}
             gameState$={gameState$}
           >
             <rect
@@ -252,6 +265,7 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
             step={Step.sixth}
             items$={items$}
             currentStep$={currentStep$}
+            diceValue$={diceValue$}
             gameState$={gameState$}
           >
             <path
@@ -264,6 +278,7 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
             step={Step.goForward}
             items$={items$}
             currentStep$={currentStep$}
+            diceValue$={diceValue$}
             gameState$={gameState$}
           >
             <rect
@@ -279,6 +294,7 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
             step={Step.goBack}
             items$={items$}
             currentStep$={currentStep$}
+            diceValue$={diceValue$}
             gameState$={gameState$}
           >
             <path
@@ -291,6 +307,7 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
             step={Step.unlockAddress}
             items$={items$}
             currentStep$={currentStep$}
+            diceValue$={diceValue$}
             gameState$={gameState$}
           >
             <path
@@ -305,6 +322,7 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
             step={Step.tenth}
             items$={items$}
             currentStep$={currentStep$}
+            diceValue$={diceValue$}
             gameState$={gameState$}
           >
             <rect
@@ -319,6 +337,7 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
             step={Step.specialGolden}
             items$={items$}
             currentStep$={currentStep$}
+            diceValue$={diceValue$}
             gameState$={gameState$}
           >
             <path
@@ -333,6 +352,7 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
             step={Step.last}
             items$={items$}
             currentStep$={currentStep$}
+            diceValue$={diceValue$}
             gameState$={gameState$}
           >
             <rect
@@ -358,9 +378,11 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
             duration: 0.3,
           },
         }}
-        onAnimationComplete={() =>
-          currentStep$.next(currentStep$.getValue() + 1)
-        }
+        onAnimationComplete={() => {
+          if (diceValue !== undefined) {
+            moveStep$.next(moveStep$.getValue() + 1);
+          }
+        }}
       >
         <Head width={40} />
       </motion.div>
@@ -368,5 +390,7 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
   );
 };
 
-const rollDice = (ct: Step) =>
-  Math.min(Step.last, Math.round(ct + 1 + Math.random() * 5));
+// const rollDice = (ct: Step) =>
+//   Math.min(Step.last, Math.round(ct + 1 + Math.random() * 5)) - ct;
+
+const rollDice = () => Math.round(1 + Math.random() * 5);
