@@ -16,6 +16,12 @@ import * as RX from "rxjs";
 import { motion } from "framer-motion";
 import photo1 from "../images/photos/1.jpg";
 import photo2 from "../images/photos/2.jpg";
+import photo3 from "../images/photos/3.jpg";
+import photo4 from "../images/photos/4.jpg";
+import photo5 from "../images/photos/5.jpg";
+import photo6 from "../images/photos/6.jpg";
+import photoTime from "../images/photos/time.jpg";
+import photoAddress from "../images/photos/address.jpg";
 
 const svgViewBox = {
   h: 360,
@@ -110,23 +116,22 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
     return () => sub.unsubscribe();
   }, []);
 
-  const [ToDisplay, setToDisplay] = useState<"golden" | "silver" | undefined>(
-    undefined
-  );
+  const [ToDisplay, setToDisplay] = useState<
+    "golden" | "silver" | "time" | "address" | undefined
+  >(undefined);
 
   const [items$] = useState(() => new RX.BehaviorSubject<Array<Item>>([]));
+  const [newItem$] = useState(() => new RX.Subject<Item>());
 
   useEffect(() => {
-    const sub = items$.subscribe({
+    const sub = newItem$.subscribe({
       next: (item) => {
-        if (item.length > 0) {
-          const it = item.pop();
-          if (it === "silver") {
-            setToDisplay("golden");
-          } else {
-            setToDisplay("silver");
-          }
-        }
+        setToDisplay(item);
+        // if (it === "silver") {
+        //   setToDisplay("silver");
+        // } else if (it === "golden") {
+        //   setToDisplay("golden");
+        // }else if)
       },
     });
     return () => sub.unsubscribe();
@@ -144,6 +149,7 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
+        overflow: "hidden",
       })}
     >
       <motion.button
@@ -197,7 +203,7 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
         <svg width="100%" height={svgHeight} viewBox="0 0 360 720">
           <Board
             step={Step.start}
-            items$={items$}
+            newItem$={newItem$}
             currentStep$={currentStep$}
             diceValue$={diceValue$}
             gameState$={gameState$}
@@ -212,7 +218,7 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
           </Board>
           <Board
             step={Step.second}
-            items$={items$}
+            newItem$={newItem$}
             currentStep$={currentStep$}
             diceValue$={diceValue$}
             gameState$={gameState$}
@@ -228,7 +234,7 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
           </Board>
           <Board
             step={Step.specialSilver}
-            items$={items$}
+            newItem$={newItem$}
             currentStep$={currentStep$}
             diceValue$={diceValue$}
             gameState$={gameState$}
@@ -241,7 +247,7 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
           </Board>
           <Board
             step={Step.forth}
-            items$={items$}
+            newItem$={newItem$}
             currentStep$={currentStep$}
             diceValue$={diceValue$}
             gameState$={gameState$}
@@ -256,7 +262,7 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
           </Board>
           <Board
             step={Step.unlockTime}
-            items$={items$}
+            newItem$={newItem$}
             currentStep$={currentStep$}
             diceValue$={diceValue$}
             gameState$={gameState$}
@@ -269,7 +275,7 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
           </Board>
           <Board
             step={Step.fifth}
-            items$={items$}
+            newItem$={newItem$}
             currentStep$={currentStep$}
             diceValue$={diceValue$}
             gameState$={gameState$}
@@ -285,7 +291,7 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
           </Board>
           <Board
             step={Step.sixth}
-            items$={items$}
+            newItem$={newItem$}
             currentStep$={currentStep$}
             diceValue$={diceValue$}
             gameState$={gameState$}
@@ -298,7 +304,7 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
           </Board>
           <Board
             step={Step.goForward}
-            items$={items$}
+            newItem$={newItem$}
             currentStep$={currentStep$}
             diceValue$={diceValue$}
             gameState$={gameState$}
@@ -314,7 +320,7 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
           </Board>
           <Board
             step={Step.goBack}
-            items$={items$}
+            newItem$={newItem$}
             currentStep$={currentStep$}
             diceValue$={diceValue$}
             gameState$={gameState$}
@@ -327,7 +333,7 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
           </Board>
           <Board
             step={Step.unlockAddress}
-            items$={items$}
+            newItem$={newItem$}
             currentStep$={currentStep$}
             diceValue$={diceValue$}
             gameState$={gameState$}
@@ -342,7 +348,7 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
           </Board>
           <Board
             step={Step.tenth}
-            items$={items$}
+            newItem$={newItem$}
             currentStep$={currentStep$}
             diceValue$={diceValue$}
             gameState$={gameState$}
@@ -357,7 +363,7 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
           </Board>
           <Board
             step={Step.specialGolden}
-            items$={items$}
+            newItem$={newItem$}
             currentStep$={currentStep$}
             diceValue$={diceValue$}
             gameState$={gameState$}
@@ -372,7 +378,7 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
           </Board>
           <Board
             step={Step.last}
-            items$={items$}
+            newItem$={newItem$}
             currentStep$={currentStep$}
             diceValue$={diceValue$}
             gameState$={gameState$}
@@ -420,39 +426,106 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
         animate={ToDisplay === "silver" ? "open" : "closed"}
         variants={openClosedVariant}
         onAnimationComplete={() => {
-          if (diceValue !== undefined) {
-            moveStep$.next(moveStep$.getValue() + 1);
-          }
+          gameState$.next({ kind: "Rolling" });
         }}
       >
         <p className={css({ fontSize: "2rem", color: "white" })}>
           恭喜你获得一个礼券，可以浏览两张婚纱照
         </p>
-        <button onClick={() => setToDisplay(undefined)}>回到游戏</button>
+        <Button text="回到游戏" onClick={() => setToDisplay(undefined)} />
         <img src={photo1} width="100%" alt="pic1" />
         <img src={photo2} width="100%" alt="pic2" />
+        <Button text="回到游戏" onClick={() => setToDisplay(undefined)} />
       </motion.div>
       <motion.div
         className={css({
           position: "absolute",
-          overflow: "auto",
+          overflow: "scroll",
+          backgroundColor: "#12184A",
+          height: "100%",
+          padding: "1rem  ",
+          pointerEvents: ToDisplay === "golden" ? "all" : "none",
         })}
         animate={ToDisplay === "golden" ? "open" : "closed"}
         variants={openClosedVariant}
         onAnimationComplete={() => {
-          if (diceValue !== undefined) {
-            moveStep$.next(moveStep$.getValue() + 1);
-          }
+          gameState$.next({ kind: "Rolling" });
         }}
       >
-        <img src="../images/photos/1.jpg" />
-        <img src="images/photos/2.jpg" />
+        <p className={css({ fontSize: "2rem", color: "white" })}>
+          恭喜你获得一个礼券，可以浏览四张婚纱照
+        </p>
+        <Button text="回到游戏" onClick={() => setToDisplay(undefined)} />
+        <img src={photo3} width="100%" alt="pic3" />
+        <img src={photo4} width="100%" alt="pic4" />
+        <img src={photo5} width="100%" alt="pic5" />
+        <img src={photo6} width="100%" alt="pic6" />
+        <Button text="回到游戏" onClick={() => setToDisplay(undefined)} />
+      </motion.div>
+      <motion.div
+        className={css({
+          position: "absolute",
+          overflow: "scroll",
+          backgroundColor: "#12184A",
+          height: "100%",
+          padding: "1rem  ",
+          pointerEvents: ToDisplay === "time" ? "all" : "none",
+        })}
+        animate={ToDisplay === "time" ? "open" : "closed"}
+        variants={openClosedVariant}
+        onAnimationComplete={() => {
+          gameState$.next({ kind: "Rolling" });
+        }}
+      >
+        <p className={css({ fontSize: "2rem", color: "white" })}>
+          恭喜解锁时间
+        </p>
+        <Button text="回到游戏" onClick={() => setToDisplay(undefined)} />
+        <img src={photoTime} width="100%" alt="pic7" />
+        <Button text="回到游戏" onClick={() => setToDisplay(undefined)} />
+      </motion.div>
+      <motion.div
+        className={css({
+          position: "absolute",
+          overflow: "scroll",
+          backgroundColor: "#12184A",
+          height: "100%",
+          padding: "1rem  ",
+          pointerEvents: ToDisplay === "address" ? "all" : "none",
+        })}
+        animate={ToDisplay === "address" ? "open" : "closed"}
+        variants={openClosedVariant}
+        onAnimationComplete={() => {
+          gameState$.next({ kind: "Rolling" });
+        }}
+      >
+        <p className={css({ fontSize: "2rem", color: "white" })}>
+          恭喜解锁地点
+        </p>
+        <Button text="回到游戏" onClick={() => setToDisplay(undefined)} />
+        <img src={photoAddress} width="100%" alt="pic7" />
+        <Button text="回到游戏" onClick={() => setToDisplay(undefined)} />
       </motion.div>
     </div>
   );
 };
 
-// const rollDice = (ct: Step) =>
-//   Math.min(Step.last, Math.round(ct + 1 + Math.random() * 5)) - ct;
-
 const rollDice = () => Math.round(1 + Math.random() * 5);
+
+interface ButtonProps {
+  onClick: () => void;
+  text: string;
+}
+const Button = ({ onClick, text }: ButtonProps): JSX.Element => (
+  <button
+    style={{
+      padding: "0.5rem 0",
+      backgroundColor: "#F9D03E",
+      border: "transparent",
+      width: "100%",
+    }}
+    onClick={onClick}
+  >
+    {text}
+  </button>
+);

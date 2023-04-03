@@ -14,7 +14,9 @@ import { pipe } from "fp-ts/lib/function";
 
 interface BoardProps {
   step: Step;
-  items$: RX.BehaviorSubject<Array<Item>>;
+  // items$: RX.BehaviorSubject<Array<Item>>;
+
+  newItem$: RX.Subject<Item>;
   currentStep$: RX.BehaviorSubject<Step>;
   diceValue$: RX.Subject<Step | undefined>;
   gameState$: RX.BehaviorSubject<GameState>;
@@ -24,7 +26,7 @@ export const Board = ({
   currentStep$,
   diceValue$,
   step,
-  items$,
+  newItem$,
   children,
   gameState$,
 }: BoardProps): JSX.Element => {
@@ -40,10 +42,12 @@ export const Board = ({
         const isSelected = currentStep === step;
         setIsSelected(isSelected);
 
+        console.log({ currentStep });
         if (specialThing !== null) {
           const collectItem = (_it: Item) => {
             setCollected(true);
-            items$.next([...items$.getValue(), _it]);
+            newItem$.next(_it);
+            // items$.next([...items$.getValue(), _it]);
           };
           if (isSelected && specialThing !== null) {
             gameState$.next({ kind: "SpecialThing" });
@@ -98,7 +102,8 @@ const getSpecialThing = (step: Step): SpecialThing | null => {
     case Step.goForward: {
       return {
         item: null,
-        pic: <Rocket scale={1} translateX={0} translateY={0} />,
+        pic: <></>,
+        // pic: <Rocket scale={1} translateX={0} translateY={0} />,
       };
     }
     case Step.specialGolden: {
@@ -116,7 +121,8 @@ const getSpecialThing = (step: Step): SpecialThing | null => {
     case Step.goBack: {
       return {
         item: null,
-        pic: <GoBack scale={1} translateX={0} translateY={0} />,
+        pic: <></>,
+        // pic: <GoBack scale={1} translateX={0} translateY={0} />,
       };
     }
     case Step.unlockTime: {
