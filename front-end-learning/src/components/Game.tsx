@@ -11,16 +11,18 @@ import {
 import { Board } from "./board";
 import { pipe, absurd } from "fp-ts/function";
 import { End } from "./End";
-import { Head } from "../images/SVG";
+import { Head, Silver } from "../images/SVG";
 import * as RX from "rxjs";
 import { motion } from "framer-motion";
+import photo1 from "../images/photos/1.jpg";
+import photo2 from "../images/photos/2.jpg";
 
 const svgViewBox = {
   h: 360,
   v: 720,
 };
 
-const stepBoxVariant = {
+const openClosedVariant = {
   open: {
     opacity: 1,
     scale: 1,
@@ -108,7 +110,27 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
     return () => sub.unsubscribe();
   }, []);
 
+  const [ToDisplay, setToDisplay] = useState<"golden" | "silver" | undefined>(
+    undefined
+  );
+
   const [items$] = useState(() => new RX.BehaviorSubject<Array<Item>>([]));
+
+  useEffect(() => {
+    const sub = items$.subscribe({
+      next: (item) => {
+        if (item.length > 0) {
+          const it = item.pop();
+          if (it === "silver") {
+            setToDisplay("golden");
+          } else {
+            setToDisplay("silver");
+          }
+        }
+      },
+    });
+    return () => sub.unsubscribe();
+  }, []);
 
   const [playerPosition, setPlayerPosition] = useState({
     x:
@@ -131,7 +153,7 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
           border: "transparent",
         }}
         animate={gameState.kind === "Rolling" ? "open" : "closed"}
-        variants={stepBoxVariant}
+        variants={openClosedVariant}
         onClick={() => {
           gameState$.next({ kind: "Walking" });
           console.log({ roll: currentStep$.getValue() });
@@ -160,7 +182,7 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
           opacity: 0,
         })}
         animate={diceValue !== undefined ? "open" : "closed"}
-        variants={stepBoxVariant}
+        variants={openClosedVariant}
         onAnimationComplete={(v) => {
           v === "open" &&
             diceValue !== undefined &&
@@ -385,6 +407,46 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
         }}
       >
         <Head width={40} />
+      </motion.div>
+      <motion.div
+        className={css({
+          position: "absolute",
+          overflow: "auto",
+          backgroundColor: "#12184A",
+          height: "100%",
+          padding: "1rem  ",
+          pointerEvents: ToDisplay === "silver" ? "all" : "none",
+        })}
+        animate={ToDisplay === "silver" ? "open" : "closed"}
+        variants={openClosedVariant}
+        onAnimationComplete={() => {
+          if (diceValue !== undefined) {
+            moveStep$.next(moveStep$.getValue() + 1);
+          }
+        }}
+      >
+        <p className={css({ fontSize: "2rem", color: "white" })}>
+          恭喜你获得一个礼券，可以浏览两张婚纱照
+        </p>
+        <button onClick={() => setToDisplay(undefined)}>回到游戏</button>
+        <img src={photo1} width="100%" alt="pic1" />
+        <img src={photo2} width="100%" alt="pic2" />
+      </motion.div>
+      <motion.div
+        className={css({
+          position: "absolute",
+          overflow: "auto",
+        })}
+        animate={ToDisplay === "golden" ? "open" : "closed"}
+        variants={openClosedVariant}
+        onAnimationComplete={() => {
+          if (diceValue !== undefined) {
+            moveStep$.next(moveStep$.getValue() + 1);
+          }
+        }}
+      >
+        <img src="../images/photos/1.jpg" />
+        <img src="images/photos/2.jpg" />
       </motion.div>
     </div>
   );

@@ -49,8 +49,6 @@ export const Board = ({
             gameState$.next({ kind: "SpecialThing" });
             const it = specialThing.item;
             if (it !== null && !collected) {
-              // setCollected(true);
-              // items$.next([...items$.getValue(), it]);
               collectItem(it);
             }
 
