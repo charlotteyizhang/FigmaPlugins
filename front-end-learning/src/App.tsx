@@ -5,13 +5,14 @@ import * as RX from "rxjs";
 import { foldState, State } from "./attributes";
 import { End } from "./components/End";
 import { Game } from "./components/Game";
+import photoTooltip from "./images/photos/startGame.jpg";
 
 const App = () => {
   const [state$] = useState(
-    () => new RX.BehaviorSubject<State>({ kind: "playing" })
+    () => new RX.BehaviorSubject<State>({ kind: "tooltip" })
   );
 
-  const [state, setState] = useState<State>({ kind: "playing" });
+  const [state, setState] = useState<State>({ kind: "tooltip" });
 
   useEffect(() => {
     const sub = state$.subscribe({ next: setState });
@@ -31,37 +32,87 @@ const App = () => {
       {pipe(
         state,
         foldState({
-          onPlaying: () => <Game state$={state$} />,
+          onTooltip: () => (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                alignItems: "center",
+                height: "100vh",
+                padding: "1rem",
+              }}
+            >
+              <div>
+                <p style={{ fontSize: "1rem" }}>掷骰子，走过棋盘解锁婚礼请帖</p>
+              </div>
+              <div style={{ flex: 1, alignItems: "center" }}>
+                <img src={photoTooltip} width="100%" alt="picTooltip" />
+              </div>
+              <div
+                className={cx(styles.buttonContainer, css({ width: "100%" }))}
+              >
+                <button
+                  className={cx(
+                    styles.buttons,
+                    css({
+                      backgroundColor: "#F9D03E",
+                      border: "#9A7F1E",
+                    })
+                  )}
+                  onClick={() => setState({ kind: "playing" })}
+                >
+                  开始游戏
+                </button>
+                <button
+                  className={cx(
+                    styles.buttons,
+                    css({
+                      backgroundColor: "#6DB284",
+                      border: "#285537",
+                    })
+                  )}
+                  onClick={() => setState({ kind: "end" })}
+                >
+                  直接看请帖
+                </button>
+              </div>
+            </div>
+          ),
+          onPlaying: () => (
+            <>
+              <Game state$={state$} />
+              <div className={styles.buttonContainer}>
+                <button
+                  className={cx(
+                    styles.buttons,
+                    css({
+                      backgroundColor: "#F9D03E",
+                      border: "#9A7F1E",
+                    })
+                  )}
+                  onClick={() => setState({ kind: "playing" })}
+                >
+                  再来一次
+                </button>
+                <button
+                  className={cx(
+                    styles.buttons,
+                    css({
+                      backgroundColor: "#6DB284",
+                      border: "#285537",
+                    })
+                  )}
+                  onClick={() => setState({ kind: "end" })}
+                >
+                  直接看请帖
+                </button>
+              </div>
+            </>
+          ),
           onEnd: () => <End state$={state$} />,
         })
       )}
-
-      <div className={styles.buttonContainer}>
-        <button
-          className={cx(
-            styles.buttons,
-            css({
-              backgroundColor: "#F9D03E",
-              border: "#9A7F1E",
-            })
-          )}
-          onClick={() => setState({ kind: "playing" })}
-        >
-          再来一次
-        </button>
-        <button
-          className={cx(
-            styles.buttons,
-            css({
-              backgroundColor: "#6DB284",
-              border: "#285537",
-            })
-          )}
-          onClick={() => setState({ kind: "end" })}
-        >
-          直接看请帖
-        </button>
-      </div>
     </div>
   );
 };

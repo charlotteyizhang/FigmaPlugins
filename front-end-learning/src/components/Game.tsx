@@ -22,6 +22,7 @@ import photo5 from "../images/photos/5.jpg";
 import photo6 from "../images/photos/6.jpg";
 import photoTime from "../images/photos/time.jpg";
 import photoAddress from "../images/photos/address.jpg";
+import { Button } from "./GoBackButton";
 
 const svgViewBox = {
   h: 360,
@@ -120,8 +121,15 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
     "golden" | "silver" | "time" | "address" | undefined
   >(undefined);
 
-  const [items$] = useState(() => new RX.BehaviorSubject<Array<Item>>([]));
   const [newItem$] = useState(() => new RX.Subject<Item>());
+  useEffect(() => {
+    const sub = currentStep$.subscribe({
+      next: (s) => {
+        s === Step.last && state$.next({ kind: "end" });
+      },
+    });
+    return () => sub.unsubscribe();
+  }, []);
 
   useEffect(() => {
     const sub = newItem$.subscribe({
@@ -205,7 +213,6 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
             step={Step.start}
             newItem$={newItem$}
             currentStep$={currentStep$}
-            diceValue$={diceValue$}
             gameState$={gameState$}
           >
             <path
@@ -220,7 +227,6 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
             step={Step.second}
             newItem$={newItem$}
             currentStep$={currentStep$}
-            diceValue$={diceValue$}
             gameState$={gameState$}
           >
             <rect
@@ -236,7 +242,6 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
             step={Step.specialSilver}
             newItem$={newItem$}
             currentStep$={currentStep$}
-            diceValue$={diceValue$}
             gameState$={gameState$}
           >
             <path
@@ -249,7 +254,6 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
             step={Step.forth}
             newItem$={newItem$}
             currentStep$={currentStep$}
-            diceValue$={diceValue$}
             gameState$={gameState$}
           >
             <rect
@@ -264,7 +268,6 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
             step={Step.unlockTime}
             newItem$={newItem$}
             currentStep$={currentStep$}
-            diceValue$={diceValue$}
             gameState$={gameState$}
           >
             <path
@@ -277,7 +280,6 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
             step={Step.fifth}
             newItem$={newItem$}
             currentStep$={currentStep$}
-            diceValue$={diceValue$}
             gameState$={gameState$}
           >
             <rect
@@ -293,7 +295,6 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
             step={Step.sixth}
             newItem$={newItem$}
             currentStep$={currentStep$}
-            diceValue$={diceValue$}
             gameState$={gameState$}
           >
             <path
@@ -306,7 +307,6 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
             step={Step.goForward}
             newItem$={newItem$}
             currentStep$={currentStep$}
-            diceValue$={diceValue$}
             gameState$={gameState$}
           >
             <rect
@@ -322,7 +322,6 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
             step={Step.goBack}
             newItem$={newItem$}
             currentStep$={currentStep$}
-            diceValue$={diceValue$}
             gameState$={gameState$}
           >
             <path
@@ -335,7 +334,6 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
             step={Step.unlockAddress}
             newItem$={newItem$}
             currentStep$={currentStep$}
-            diceValue$={diceValue$}
             gameState$={gameState$}
           >
             <path
@@ -350,7 +348,6 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
             step={Step.tenth}
             newItem$={newItem$}
             currentStep$={currentStep$}
-            diceValue$={diceValue$}
             gameState$={gameState$}
           >
             <rect
@@ -365,7 +362,6 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
             step={Step.specialGolden}
             newItem$={newItem$}
             currentStep$={currentStep$}
-            diceValue$={diceValue$}
             gameState$={gameState$}
           >
             <path
@@ -380,7 +376,6 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
             step={Step.last}
             newItem$={newItem$}
             currentStep$={currentStep$}
-            diceValue$={diceValue$}
             gameState$={gameState$}
           >
             <rect
@@ -511,21 +506,3 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
 };
 
 const rollDice = () => Math.round(1 + Math.random() * 5);
-
-interface ButtonProps {
-  onClick: () => void;
-  text: string;
-}
-const Button = ({ onClick, text }: ButtonProps): JSX.Element => (
-  <button
-    style={{
-      padding: "0.5rem 0",
-      backgroundColor: "#F9D03E",
-      border: "transparent",
-      width: "100%",
-    }}
-    onClick={onClick}
-  >
-    {text}
-  </button>
-);

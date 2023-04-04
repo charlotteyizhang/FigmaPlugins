@@ -14,17 +14,13 @@ import { pipe } from "fp-ts/lib/function";
 
 interface BoardProps {
   step: Step;
-  // items$: RX.BehaviorSubject<Array<Item>>;
-
   newItem$: RX.Subject<Item>;
   currentStep$: RX.BehaviorSubject<Step>;
-  diceValue$: RX.Subject<Step | undefined>;
   gameState$: RX.BehaviorSubject<GameState>;
   children: React.ReactNode;
 }
 export const Board = ({
   currentStep$,
-  diceValue$,
   step,
   newItem$,
   children,
@@ -42,7 +38,6 @@ export const Board = ({
         const isSelected = currentStep === step;
         setIsSelected(isSelected);
 
-        console.log({ currentStep });
         if (specialThing !== null) {
           const collectItem = (_it: Item) => {
             setCollected(true);

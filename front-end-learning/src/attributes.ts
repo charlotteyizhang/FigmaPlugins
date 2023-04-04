@@ -30,11 +30,14 @@ interface Playing {
 interface End {
   kind: "end";
 }
+interface Tooltip {
+  kind: "tooltip";
+}
 
-export type State = Playing | End;
+export type State = Tooltip | Playing | End;
 
 export const foldState =
-  <T>(fns: { onPlaying: () => T; onEnd: () => T }) =>
+  <T>(fns: { onPlaying: () => T; onEnd: () => T; onTooltip: () => T }) =>
   (s: State): T => {
     switch (s.kind) {
       case "playing": {
@@ -42,6 +45,9 @@ export const foldState =
       }
       case "end": {
         return fns.onEnd();
+      }
+      case "tooltip": {
+        return fns.onTooltip();
       }
       default:
         return absurd(s);
