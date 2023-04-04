@@ -1,28 +1,20 @@
 import { css } from "@emotion/css";
-import React, { useEffect, useState } from "react";
-import {
-  foldState,
-  GameState,
-  Item,
-  Position,
-  State,
-  Step,
-} from "../attributes";
-import { Board } from "./board";
-import { pipe, absurd } from "fp-ts/function";
-import { End } from "./End";
-import { Head, Silver } from "../images/SVG";
-import * as RX from "rxjs";
+import { pipe } from "fp-ts/function";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import * as RX from "rxjs";
+import { GameState, Item, State, Step } from "../attributes";
+import { Head } from "../images/SVG";
 import photo1 from "../images/photos/1.jpg";
 import photo2 from "../images/photos/2.jpg";
 import photo3 from "../images/photos/3.jpg";
 import photo4 from "../images/photos/4.jpg";
 import photo5 from "../images/photos/5.jpg";
 import photo6 from "../images/photos/6.jpg";
-import photoTime from "../images/photos/time.jpg";
 import photoAddress from "../images/photos/address.jpg";
+import photoTime from "../images/photos/time.jpg";
 import { Button } from "./GoBackButton";
+import { Board } from "./board";
 
 const svgViewBox = {
   h: 360,
@@ -472,10 +464,14 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
           gameState$.next({ kind: "Rolling" });
         }}
       >
-        <p className={css({ fontSize: "2rem", color: "white" })}>
-          恭喜解锁时间
-        </p>
-        <Button text="回到游戏" onClick={() => setToDisplay(undefined)} />
+        <div style={{ display: "flex" }}>
+          <p className={css({ fontSize: "1rem", color: "white" })}>
+            恭喜你解锁时间！
+          </p>
+          <p className={css({ fontSize: "1rem", color: "white" })}>
+            2023年5月03号 17时38分。
+          </p>
+        </div>
         <img src={photoTime} width="100%" alt="pic7" />
         <Button text="回到游戏" onClick={() => setToDisplay(undefined)} />
       </motion.div>
@@ -494,10 +490,12 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
           gameState$.next({ kind: "Rolling" });
         }}
       >
-        <p className={css({ fontSize: "2rem", color: "white" })}>
-          恭喜解锁地点
+        <p className={css({ fontSize: "1rem", color: "white" })}>
+          恭喜你解锁地点！
         </p>
-        <Button text="回到游戏" onClick={() => setToDisplay(undefined)} />
+        <p className={css({ fontSize: "1rem", color: "white" })}>
+          衢州国际大酒店（中华厅）
+        </p>
         <img src={photoAddress} width="100%" alt="pic7" />
         <Button text="回到游戏" onClick={() => setToDisplay(undefined)} />
       </motion.div>
