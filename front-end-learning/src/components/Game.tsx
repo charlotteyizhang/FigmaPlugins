@@ -28,7 +28,7 @@ const openClosedVariant = {
     transition: {
       type: "bounce",
       bounce: 0.4,
-      duration: 0.8,
+      duration: 0.4,
     },
   },
   closed: {
@@ -37,7 +37,7 @@ const openClosedVariant = {
     transition: {
       type: "spring",
       bounce: 0.4,
-      duration: 0.8,
+      duration: 0.4,
     },
   },
 };
@@ -62,7 +62,7 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
     return () => sub.unsubscribe();
   }, []);
 
-  const [diceValue$] = useState(() => new RX.Subject<Step | undefined>());
+  const [diceValue$] = useState(() => new RX.Subject<number | undefined>());
   const [moveStep$] = useState(() => new RX.BehaviorSubject<number>(1));
   const [currentStep$] = useState(
     () => new RX.BehaviorSubject<Step>(Step.start)
@@ -80,7 +80,6 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
     });
     return () => sub.unsubscribe();
   }, []);
-  const [playerFinished, setPlayerFinished] = useState(false);
 
   useEffect(() => {
     const sub = pipe(
@@ -96,7 +95,10 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
             const el = document.getElementById(move.toFixed(0));
             if (el) {
               const position = el.getBoundingClientRect();
-              setPlayerPosition({ x: position.x + 20, y: position.y + 10 });
+              setPlayerPosition({
+                x: position.x + position.width * 0.25,
+                y: position.y + position.height * 0.25,
+              });
             }
           }
           if (move === target) {
@@ -109,6 +111,17 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
     return () => sub.unsubscribe();
   }, []);
 
+  useEffect(() => {
+    const el = document.getElementById(Step.start.toFixed(0));
+    if (el) {
+      const position = el.getBoundingClientRect();
+      setPlayerPosition({
+        x: position.x + position.width * 0.25,
+        y: position.y + position.height * 0.25,
+      });
+    }
+  }, []);
+
   const [ToDisplay, setToDisplay] = useState<
     "golden" | "silver" | "time" | "address" | undefined
   >(undefined);
@@ -117,7 +130,7 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
   useEffect(() => {
     const sub = currentStep$.subscribe({
       next: (s) => {
-        s === Step.last && state$.next({ kind: "end" });
+        setCurrentStep(s);
       },
     });
     return () => sub.unsubscribe();
@@ -127,11 +140,6 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
     const sub = newItem$.subscribe({
       next: (item) => {
         setToDisplay(item);
-        // if (it === "silver") {
-        //   setToDisplay("silver");
-        // } else if (it === "golden") {
-        //   setToDisplay("golden");
-        // }else if)
       },
     });
     return () => sub.unsubscribe();
@@ -157,31 +165,46 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
           padding: "0.5rem 0",
           backgroundColor: "#F9D03E",
           border: "transparent",
+          position: "absolute",
+          margin: "auto",
+          top: 0,
+          bottom: 0,
+          left: 0,
+          right: 0,
+          width: "160px",
+          height: "160px",
+          borderRadius: "50%",
+          fontSize: "2rem",
         }}
         animate={gameState.kind === "Rolling" ? "open" : "closed"}
         variants={openClosedVariant}
         onClick={() => {
           gameState$.next({ kind: "Walking" });
-          console.log({ roll: currentStep$.getValue() });
 
-          if (currentStep$.getValue() < Step.last - 1) {
+          if (currentStep$.getValue() <= Step.last - 1) {
             diceValue$.next(rollDice());
             moveStep$.next(currentStep$.getValue() + 1);
           }
         }}
         disabled={gameState.kind !== "Rolling"}
       >
-        点击骰子 {currentStep}
+        点击骰子
       </motion.button>
       <motion.div
         className={css({
           position: "absolute",
+          margin: "auto",
+          top: 0,
+          bottom: 0,
+          left: 0,
+          right: 0,
+          width: "160px",
+          height: "160px",
+          borderRadius: "50%",
+          fontSize: "2rem",
           pointerEvents: "none",
           padding: "1rem",
           backgroundColor: "#AD2D1F",
-          borderRadius: "50%",
-          width: "50px",
-          height: "50px",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -390,12 +413,19 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
           y: playerPosition.y,
           transition: {
             type: "linear",
-            duration: 0.3,
+            duration: 0.6,
           },
         }}
         onAnimationComplete={() => {
           if (diceValue !== undefined) {
             moveStep$.next(moveStep$.getValue() + 1);
+          } else {
+            if (currentStep >= Step.last) {
+              state$.next({ kind: "end" });
+            } else if (currentStep === Step.goForward) {
+              diceValue$.next(4);
+              moveStep$.next(currentStep$.getValue() + 1);
+            }
           }
         }}
       >
@@ -417,9 +447,8 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
         }}
       >
         <p className={css({ fontSize: "2rem", color: "white" })}>
-          恭喜你获得一个礼券，可以浏览两张婚纱照
+          恭喜你获得一个礼券，可以浏览两张婚纱照。
         </p>
-        <Button text="回到游戏" onClick={() => setToDisplay(undefined)} />
         <img src={photo1} width="100%" alt="pic1" />
         <img src={photo2} width="100%" alt="pic2" />
         <Button text="回到游戏" onClick={() => setToDisplay(undefined)} />
@@ -440,9 +469,8 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
         }}
       >
         <p className={css({ fontSize: "2rem", color: "white" })}>
-          恭喜你获得一个礼券，可以浏览四张婚纱照
+          恭喜你获得一个礼券，可以浏览四张婚纱照。
         </p>
-        <Button text="回到游戏" onClick={() => setToDisplay(undefined)} />
         <img src={photo3} width="100%" alt="pic3" />
         <img src={photo4} width="100%" alt="pic4" />
         <img src={photo5} width="100%" alt="pic5" />
@@ -466,10 +494,7 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
       >
         <div style={{ display: "flex" }}>
           <p className={css({ fontSize: "1rem", color: "white" })}>
-            恭喜你解锁时间！
-          </p>
-          <p className={css({ fontSize: "1rem", color: "white" })}>
-            2023年5月03号 17时38分。
+            恭喜你解锁时间！2023年5月03号 17时38分。
           </p>
         </div>
         <img src={photoTime} width="100%" alt="pic7" />
@@ -491,10 +516,7 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
         }}
       >
         <p className={css({ fontSize: "1rem", color: "white" })}>
-          恭喜你解锁地点！
-        </p>
-        <p className={css({ fontSize: "1rem", color: "white" })}>
-          衢州国际大酒店（中华厅）
+          恭喜你解锁地点！衢州国际大酒店（中华厅）。
         </p>
         <img src={photoAddress} width="100%" alt="pic7" />
         <Button text="回到游戏" onClick={() => setToDisplay(undefined)} />

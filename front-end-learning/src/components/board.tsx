@@ -50,14 +50,6 @@ export const Board = ({
             if (it !== null && !collected) {
               collectItem(it);
             }
-
-            // else if (it === null && gameState.kind === "Rolling") {
-            //   if (step === Step.goBack) {
-            //     diceValue$.next(step - 6);
-            //   } else if (step === Step.goForward) {
-            //     diceValue$.next(step + 4);
-            //   }
-            // }
           } else if (
             specialThing.item === "time" ||
             specialThing.item === "address"
@@ -97,8 +89,7 @@ const getSpecialThing = (step: Step): SpecialThing | null => {
     case Step.goForward: {
       return {
         item: null,
-        pic: <></>,
-        // pic: <Rocket scale={1} translateX={0} translateY={0} />,
+        pic: <Rocket scale={1} translateX={0} translateY={0} />,
       };
     }
     case Step.specialGolden: {
