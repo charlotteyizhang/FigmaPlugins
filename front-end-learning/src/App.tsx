@@ -43,8 +43,11 @@ const App = () => {
                 padding: "1rem",
               }}
             >
-              <div>
+              <div style={{ display: "flex", flexDirection: "column" }}>
                 <p style={{ fontSize: "1rem" }}>掷骰子，走过棋盘解锁婚礼请帖</p>
+                <p style={{ fontSize: "1rem" }}>
+                  如果走到奖券地点，还可以有额外奖励哦！
+                </p>
               </div>
               <div style={{ flex: 1, alignItems: "center" }}>
                 <img src={photoTooltip} width="100%" alt="picTooltip" />
