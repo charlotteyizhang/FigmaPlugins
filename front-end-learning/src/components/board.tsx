@@ -11,6 +11,7 @@ import {
 } from "../images/SVG";
 import * as RX from "rxjs";
 import { pipe } from "fp-ts/lib/function";
+import { playAudio } from "./audio";
 
 interface BoardProps {
   step: Step;
@@ -33,8 +34,8 @@ export const Board = ({
   const [collected, setCollected] = useState(false);
 
   useEffect(() => {
-    const sub = pipe(currentStep$, RX.withLatestFrom(gameState$)).subscribe({
-      next: ([currentStep, gameState]) => {
+    const sub = currentStep$.subscribe({
+      next: (currentStep) => {
         const isSelected = currentStep === step;
         setIsSelected(isSelected);
 
@@ -42,7 +43,7 @@ export const Board = ({
           const collectItem = (_it: Item) => {
             setCollected(true);
             newItem$.next(_it);
-            // items$.next([...items$.getValue(), _it]);
+            playAudio("unlock");
           };
           if (isSelected && specialThing !== null) {
             gameState$.next({ kind: "SpecialThing" });

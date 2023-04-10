@@ -1,3 +1,5 @@
+import { playAudio } from "./audio";
+
 interface ButtonProps {
   onClick: () => void;
   text: string;
@@ -11,7 +13,10 @@ export const Button = ({ onClick, text }: ButtonProps): JSX.Element => (
       width: "100%",
       minHeight: "60px",
     }}
-    onClick={onClick}
+    onClick={() => {
+      onClick();
+      playAudio("click");
+    }}
   >
     {text}
   </button>

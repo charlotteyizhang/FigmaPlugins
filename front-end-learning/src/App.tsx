@@ -6,6 +6,7 @@ import { foldState, State } from "./attributes";
 import { End } from "./components/End";
 import { Game } from "./components/Game";
 import photoTooltip from "./images/photos/startGame.jpg";
+import { playAudio } from "./components/audio";
 
 const App = () => {
   const [state$] = useState(
@@ -63,7 +64,10 @@ const App = () => {
                       border: "#9A7F1E",
                     })
                   )}
-                  onClick={() => setState({ kind: "playing" })}
+                  onClick={() => {
+                    setState({ kind: "playing" });
+                    playAudio("click");
+                  }}
                 >
                   开始游戏
                 </button>
@@ -75,7 +79,10 @@ const App = () => {
                       border: "#285537",
                     })
                   )}
-                  onClick={() => setState({ kind: "end" })}
+                  onClick={() => {
+                    setState({ kind: "end" });
+                    playAudio("click");
+                  }}
                 >
                   直接看请帖
                 </button>

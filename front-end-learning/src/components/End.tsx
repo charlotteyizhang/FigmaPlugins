@@ -5,11 +5,15 @@ import * as RX from "rxjs";
 import photoInvite from "../images/photos/invitation.png";
 import { Button } from "./GoBackButton";
 import { motion } from "framer-motion";
+import { playAudio } from "./audio";
 
 interface EndProps {
   state$: RX.BehaviorSubject<State>;
 }
 export const End = ({ state$ }: EndProps): JSX.Element => {
+  useEffect(() => {
+    playAudio("final");
+  }, []);
   return (
     <motion.div
       style={{

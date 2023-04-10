@@ -15,6 +15,7 @@ import photoAddress from "../images/photos/address.jpg";
 import photoTime from "../images/photos/time.jpg";
 import { Button } from "./GoBackButton";
 import { Board } from "./board";
+import { playAudio } from "./audio";
 
 const svgViewBox = {
   h: 360,
@@ -391,6 +392,7 @@ export const Game = ({ state$ }: GameProps): JSX.Element => {
           animate={gameState.kind === "Rolling" ? "open" : "closed"}
           variants={openClosedVariant}
           onClick={() => {
+            playAudio("click");
             gameState$.next({ kind: "Walking" });
 
             if (currentStep$.getValue() <= Step.last - 1) {
