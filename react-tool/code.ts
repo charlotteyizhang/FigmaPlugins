@@ -41,32 +41,47 @@ const getChildrenView = (
         : "marginLeft:spacing.small,"
       : undefined;
 
-  const isComponent = node.type === "INSTANCE" || node.type === "COMPONENT";
-
-  if (!isComponent && node.type === "FRAME" && "children" in node) {
-    console.log("fram", node.name, node.type);
-
+  if (node.type === "FRAME" && "children" in node) {
     const isHorizontal = node.layoutMode === "HORIZONTAL";
-    const containerStyle = isHorizontal
+    const containerStyle = parentLayout
       ? `flexDirection: "row", justifyContent: "space-between", alignItems: "center",`
       : undefined;
 
+    const firstChild = node.children[0];
+    const firstElementIsCard =
+      hasCardTitleWord(firstChild.name) && firstChild.type === "INSTANCE";
+
     const content = node.children.reduce(
       (_acc, v, idx) =>
-        getChildrenView(
-          v,
-          _acc,
-          idx === 0 ? undefined : isHorizontal ? "horizontal" : "vertical"
-        ),
+        firstElementIsCard && idx === 0
+          ? _acc
+          : getChildrenView(
+              v,
+              _acc,
+              idx === 0 || (idx === 1 && firstElementIsCard)
+                ? undefined
+                : isHorizontal
+                ? "horizontal"
+                : "vertical"
+            ),
       ""
     );
 
-    const style =
+    const el =
       marginStyle === undefined && containerStyle === undefined
-        ? ""
-        : `style={{${containerStyle ?? ""} ${marginStyle ?? ""}}}`;
+        ? content
+        : `<View style={{${containerStyle ?? ""} ${
+            marginStyle ?? ""
+          }}}>${content}</View>`;
 
-    return acc + `<View ${style}>${content}</View>`;
+    return firstElementIsCard
+      ? acc +
+          `<Card theme={theme} title={{text:translations[userLocale.userLanguage].${toCamelCase(
+            firstChild.componentProperties["Text#3945:0"].value.toString() ?? ""
+          )}, showRightIcon:${
+            firstChild.componentProperties["isLink"].value
+          }}}>${content}</Card>`
+      : acc + el;
   } else {
     let content = "";
     if (node.type === "TEXT") {
@@ -75,12 +90,10 @@ const getChildrenView = (
       }</P>`;
     } else if (node.type === "INSTANCE" || node.type === "COMPONENT") {
       if (hasIconWord(node.name)) {
-        console.log("icon", node.name, node.type);
         content = `<Icon color={textColors[theme].default} icon="${replaceIconWord(
           node.name
         )}" size={${getIconSizeByWidth(node.width)}}/>`;
       } else {
-        console.log("component", node.name, node.type);
         content = `<${toCamelCase(node.name)} theme={theme} />`;
       }
     } else {
@@ -88,10 +101,12 @@ const getChildrenView = (
       content = `<></>`;
     }
 
-    const style =
-      marginStyle === undefined ? "" : `style={{${marginStyle ?? ""}}}`;
+    const el =
+      marginStyle === undefined
+        ? content
+        : `<View style={{${marginStyle ?? ""}}}>${content}</View>`;
 
-    return acc + `<View ${style}>${content}</View>`;
+    return acc + el;
   }
 };
 
@@ -109,6 +124,10 @@ const toCamelCase = (text: string): string => {
 const hasIconWord = (text: string): boolean => {
   const regex = /\bicon\b/i;
   return regex.test(text);
+};
+const hasCardTitleWord = (text: string): boolean => {
+  const lowercaseText = text.toLowerCase();
+  return lowercaseText.includes("card title");
 };
 const replaceIconWord = (text: string): string => {
   const regex = /icon\//gi;
