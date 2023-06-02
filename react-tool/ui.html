@@ -1,17 +1,29 @@
-<h2>Rectangle Creator</h2>
-<p>Count: <input id="count" value="5"></p>
+<h2>Code Creator</h2>
 <button id="create">Create</button>
-<button id="cancel">Cancel</button>
+<p id="code"></p>
+<input type="text" id="copy"></input>
+
+
+
 <script>
 
 document.getElementById('create').onclick = () => {
-  const textbox = document.getElementById('count');
-  const count = parseInt(textbox.value, 10);
-  parent.postMessage({ pluginMessage: { type: 'create-rectangles', count } }, '*')
-}
 
-document.getElementById('cancel').onclick = () => {
-  parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*')
+  parent.postMessage({ pluginMessage: { type: "generate", } }, '*')
+}
+const codebox = document.getElementById('code');
+const sign = document.getElementById('sign')
+
+onmessage = (event)=>{
+  const reactStr =  event.data.pluginMessage
+  codebox.innerText=reactStr
+
+  const copyInput = document.getElementById("copy")
+  copyInput.value = reactStr
+  copyInput.select()
+  document.execCommand("copy")
+  
 }
 
 </script>
+
