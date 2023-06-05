@@ -85,9 +85,7 @@ const getChildrenView = (
   } else {
     let content = "";
     if (node.type === "TEXT") {
-      content = `<P color="${node.getStyledTextSegments(["fills"])}">${
-        node.name
-      }</P>`;
+      content = `<P kind="" color={textColors[theme].default}>${node.name}</P>`;
     } else if (node.type === "INSTANCE" || node.type === "COMPONENT") {
       if (hasIconWord(node.name)) {
         content = `<Icon color={textColors[theme].default} icon="${replaceIconWord(
