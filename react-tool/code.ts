@@ -22,6 +22,16 @@ figma.ui.onmessage = (msg) => {
     }
 
     figma.ui.postMessage(str);
+  } else if (msg.type === "generateTextEN" || msg.type === "generateTextTODO") {
+    const isEn = msg.type === "generateTextEN";
+    let str = "";
+    for (const node of figma.currentPage.selection) {
+      if (node.type === "TEXT") {
+        str += getText(node, str, isEn);
+      }
+    }
+
+    figma.ui.postMessage(str);
   }
 
   // Make sure to close the plugin when you're done. Otherwise the plugin will
@@ -37,12 +47,13 @@ const getChildrenView = (
   const marginStyle =
     parentLayout !== undefined
       ? parentLayout === "horizontal"
-        ? "marginTop:spacing.small,"
-        : "marginLeft:spacing.small,"
+        ? "marginLeft:spacing.small,"
+        : "marginTop:spacing.small,"
       : undefined;
 
   if (node.type === "FRAME" && "children" in node) {
     const isHorizontal = node.layoutMode === "HORIZONTAL";
+
     const containerStyle = parentLayout
       ? `flexDirection: "row", justifyContent: "space-between", alignItems: "center",`
       : undefined;
@@ -76,7 +87,7 @@ const getChildrenView = (
 
     return firstElementIsCard
       ? acc +
-          `<Card theme={theme} title={{text:translations[userLocale.userLanguage].${toCamelCase(
+          `<Card theme={theme} title={{text:translations[userLocale.userLanguage].${toLowercaseFirstLetterCamelCase(
             firstChild.componentProperties["Text#3945:0"].value.toString() ?? ""
           )}, showRightIcon:${
             firstChild.componentProperties["isLink"].value
@@ -85,14 +96,31 @@ const getChildrenView = (
   } else {
     let content = "";
     if (node.type === "TEXT") {
-      content = `<P kind="" color={textColors[theme].default}>${node.name}</P>`;
+      content = getTextKind(node) ?? "";
     } else if (node.type === "INSTANCE" || node.type === "COMPONENT") {
       if (hasIconWord(node.name)) {
         content = `<Icon color={textColors[theme].default} icon="${replaceIconWord(
           node.name
         )}" size={${getIconSizeByWidth(node.width)}}/>`;
+      } else if (node.name.includes("Button")) {
+        const buttonKind = node.variantProperties?.["Type"] ?? "";
+
+        /**eslint ignore */
+        const text = node.componentProperties?.["Text#2643:0"].value ?? "";
+
+        content = `<${toCapitalFirstLetterCamelCase(node.name)} theme={theme} ${
+          buttonKind === undefined ? "" : `kind="${buttonKind}"`
+        } text={${
+          text !== undefined
+            ? `translations[userLocale.userLanguage].${toLowercaseFirstLetterCamelCase(
+                text
+              )}`
+            : ""
+        }}/>`;
       } else {
-        content = `<${toCamelCase(node.name)} theme={theme} />`;
+        content = `<${toCapitalFirstLetterCamelCase(
+          node.name
+        )} theme={theme} />`;
       }
     } else {
       console.log("others", node.name, node.type);
@@ -108,11 +136,49 @@ const getChildrenView = (
   }
 };
 
-const toCamelCase = (text: string): string => {
+const getTextKind = (node: TextNode): string | undefined => {
+  const styleId = node.textStyleId;
+
+  const textKind = figma.getStyleById(`${styleId as string}`)?.name;
+
+  if (textKind === undefined) {
+    return undefined;
+  } else {
+    const text = textKind.replace("/", "");
+    if (text.includes("Heading")) {
+      return `<${toCapitalFirstLetterCamelCase(
+        text.replace("Heading", "")
+      )}  color={textColors[theme].default}>${node.characters}</H4>`;
+    } else {
+      const kind =
+        text === "Body/Medium"
+          ? undefined
+          : text.charAt(0).toLowerCase() + text.slice(1);
+      return `<P ${
+        kind === undefined ? "" : `kind="${kind}"`
+      } color={textColors[theme].default}>${node.characters}</P>`;
+    }
+  }
+};
+
+const toCapitalFirstLetterCamelCase = (text: string): string => {
   const words = text.replace(/[^a-zA-Z0-9]/g, " ").split(" ");
 
   const camelCaseWords = words.map(
     (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+  );
+
+  const camelCaseText = camelCaseWords.join("");
+
+  return camelCaseText;
+};
+const toLowercaseFirstLetterCamelCase = (text: string): string => {
+  const words = text.replace(/[^a-zA-Z0-9]/g, " ").split(" ");
+
+  const camelCaseWords = words.map((word, idx) =>
+    idx === 0
+      ? word.toLowerCase()
+      : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
   );
 
   const camelCaseText = camelCaseWords.join("");
@@ -133,4 +199,14 @@ const replaceIconWord = (text: string): string => {
 };
 const getIconSizeByWidth = (w: number): string => {
   return `fontSize[${w === 24 ? 6 : w === 20 ? 5 : w === 16 ? 4 : 0}]`;
+};
+
+const getText = (node: TextNode, str: string, isEn: boolean): string => {
+  const content = node.characters;
+
+  const text = `${toLowercaseFirstLetterCamelCase(content)}: "${
+    isEn ? content : "TODO translate"
+  }",`;
+
+  return str + text;
 };
