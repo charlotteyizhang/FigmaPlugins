@@ -6,7 +6,7 @@
 // full browser environment (see documentation).
 
 // This shows the HTML page in "ui.html".
-figma.showUI(__html__, { height: 600 });
+figma.showUI(__html__, { width: 400, height: 600 });
 
 // Calls to "parent.postMessage" from within the HTML page will trigger this
 // callback. The callback will be passed the "pluginMessage" property of the
@@ -42,21 +42,24 @@ figma.ui.onmessage = (msg) => {
 const getChildrenView = (
   node: SceneNode,
   acc: string,
-  parentLayout?: "horizontal" | "vertical"
+  parentLayout?: "firstElement" | "horizontal" | "vertical"
 ): string => {
   const marginStyle =
     parentLayout !== undefined
       ? parentLayout === "horizontal"
         ? "marginLeft:spacing.small,"
-        : "marginTop:spacing.small,"
+        : parentLayout === "vertical"
+        ? "marginTop:spacing.small,"
+        : undefined
       : undefined;
 
   if (node.type === "FRAME" && "children" in node) {
     const isHorizontal = node.layoutMode === "HORIZONTAL";
 
-    const containerStyle = parentLayout
-      ? `flexDirection: "row", justifyContent: "space-between", alignItems: "center",`
-      : undefined;
+    const containerStyle =
+      parentLayout === "horizontal"
+        ? `flexDirection: "row", justifyContent: "space-between", alignItems: "center",`
+        : undefined;
 
     const firstChild = node.children[0];
     const firstElementIsCard =
@@ -69,7 +72,9 @@ const getChildrenView = (
           : getChildrenView(
               v,
               _acc,
-              idx === 0 || (idx === 1 && firstElementIsCard)
+              idx === 0
+                ? "firstElement"
+                : idx === 1 && firstElementIsCard
                 ? undefined
                 : isHorizontal
                 ? "horizontal"
@@ -80,11 +85,12 @@ const getChildrenView = (
 
     const el =
       marginStyle === undefined && containerStyle === undefined
-        ? content
+        ? parentLayout === "firstElement"
+          ? `<View>${content}</View>`
+          : content
         : `<View style={{${containerStyle ?? ""} ${
             marginStyle ?? ""
           }}}>${content}</View>`;
-
     return firstElementIsCard
       ? acc +
           `<Card theme={theme} title={{text:translations[userLocale.userLanguage].${toLowercaseFirstLetterCamelCase(
@@ -118,9 +124,12 @@ const getChildrenView = (
             : ""
         }}/>`;
       } else {
-        content = `<${toCapitalFirstLetterCamelCase(
-          node.name
-        )} theme={theme} />`;
+        console.log("component", node.name);
+
+        const nodeName = node.name;
+        content = `<${
+          nodeName.charAt(0).toUpperCase() + nodeName.slice(1)
+        } theme={theme} />`;
       }
     } else {
       console.log("others", node.name, node.type);
@@ -145,18 +154,24 @@ const getTextKind = (node: TextNode): string | undefined => {
     return undefined;
   } else {
     const text = textKind.replace("/", "");
+
+    const translation = `translations[userLocale.userLanguage].${toLowercaseFirstLetterCamelCase(
+      node.characters
+    )}`;
+
     if (text.includes("Heading")) {
-      return `<${toCapitalFirstLetterCamelCase(
+      const heading = toCapitalFirstLetterCamelCase(
         text.replace("Heading", "")
-      )}  color={textColors[theme].default}>${node.characters}</H4>`;
+      );
+      return `<${heading}  color={textColors[theme].default}>{${translation}}</${heading}>`;
     } else {
       const kind =
-        text === "Body/Medium"
+        text === "BodyMedium"
           ? undefined
           : text.charAt(0).toLowerCase() + text.slice(1);
       return `<P ${
         kind === undefined ? "" : `kind="${kind}"`
-      } color={textColors[theme].default}>${node.characters}</P>`;
+      } color={textColors[theme].default}>{${translation}}</P>`;
     }
   }
 };
@@ -181,10 +196,11 @@ const toLowercaseFirstLetterCamelCase = (text: string): string => {
       : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
   );
 
-  const camelCaseText = camelCaseWords.join("");
+  const camelCaseText = camelCaseWords.join("").slice(0, 18);
 
   return camelCaseText;
 };
+
 const hasIconWord = (text: string): boolean => {
   const regex = /\bicon\b/i;
   return regex.test(text);
