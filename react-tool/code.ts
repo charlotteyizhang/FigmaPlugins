@@ -91,12 +91,14 @@ const getChildrenView = (
         : `<View style={{${containerStyle ?? ""} ${
             marginStyle ?? ""
           }}}>${content}</View>`;
+
     return firstElementIsCard
       ? acc +
           `<Card theme={theme} title={{text:translations[userLocale.userLanguage].${toLowercaseFirstLetterCamelCase(
-            firstChild.componentProperties["Text#3945:0"].value.toString() ?? ""
-          )}, showRightIcon:${
-            firstChild.componentProperties["isLink"].value
+            firstChild.componentProperties?.["Text#3945:0"]?.value.toString() ??
+              ""
+          )}, showIconRight:${
+            firstChild.componentProperties?.["isLink"]?.value
           }}}>${content}</Card>`
       : acc + el;
   } else {
@@ -112,12 +114,13 @@ const getChildrenView = (
         const buttonKind = node.variantProperties?.["Type"] ?? "";
 
         /**eslint ignore */
-        const text = node.componentProperties?.["Text#2643:0"].value ?? "";
+        // const text = node.componentProperties?.["Text#2643:0"].value ?? "";
+        const text = node.componentProperties?.["Text#2643:0"]?.value ?? "";
 
-        content = `<${toCapitalFirstLetterCamelCase(node.name)} theme={theme} ${
+        content = `<${node.name} theme={theme} ${
           buttonKind === undefined ? "" : `kind="${buttonKind}"`
         } text={${
-          text !== undefined
+          text !== undefined && text !== ""
             ? `translations[userLocale.userLanguage].${toLowercaseFirstLetterCamelCase(
                 text
               )}`
