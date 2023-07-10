@@ -17,8 +17,10 @@ figma.ui.onmessage = (msg) => {
   // your HTML page is to use an object with a "type" property like this.
   if (msg.type === "generate") {
     let str = "";
+    const localCollections = figma.variables.getLocalVariableCollections();
+
     for (const node of figma.currentPage.selection) {
-      str += getChildrenView(node, str);
+      str += getChildrenView(node, str, localCollections);
     }
 
     figma.ui.postMessage(str);
@@ -42,6 +44,7 @@ figma.ui.onmessage = (msg) => {
 const getChildrenView = (
   node: SceneNode,
   acc: string,
+  localCollections: Array<VariableCollection>,
   parentLayout?: "firstElement" | "horizontal" | "vertical"
 ): string => {
   const marginStyle =
@@ -72,6 +75,7 @@ const getChildrenView = (
           : getChildrenView(
               v,
               _acc,
+              localCollections,
               idx === 0
                 ? "firstElement"
                 : idx === 1 && firstElementIsCard
@@ -94,7 +98,7 @@ const getChildrenView = (
 
     return firstElementIsCard
       ? acc +
-          `<Card theme={theme} title={{text:translations[userLocale.userLanguage].${toLowercaseFirstLetterCamelCase(
+          `<Card theme={appCtx.theme} title={{text:translations[appCtx.userLocale.userLanguage].${toLowercaseFirstLetterCamelCase(
             firstChild.componentProperties?.["Text#3945:0"]?.value.toString() ??
               ""
           )}, showIconRight:${
@@ -107,21 +111,24 @@ const getChildrenView = (
       content = getTextKind(node) ?? "";
     } else if (node.type === "INSTANCE" || node.type === "COMPONENT") {
       if (hasIconWord(node.name)) {
-        content = `<Icon color={textColors[theme].default} icon="${replaceIconWord(
+        content = `<Icon color={textColors[appCtx.theme].default} icon="${replaceIconWord(
           node.name
-        )}" size={${getIconSizeByWidth(node.width)}}/>`;
+        )}" size={${getIconSize(node)}}/>`;
       } else if (node.name.includes("Button")) {
         const buttonKind = node.variantProperties?.["Type"] ?? "";
 
-        /**eslint ignore */
-        // const text = node.componentProperties?.["Text#2643:0"].value ?? "";
-        const text = node.componentProperties?.["Text#2643:0"]?.value ?? "";
+        const text = node
+          .findChildren((n) => n.type === "TEXT")
+          .reduce(
+            (acc, v) => (v.type === "TEXT" ? acc + v.characters : acc),
+            ""
+          );
 
-        content = `<${node.name} theme={theme} ${
+        content = `<${node.name} theme={appCtx.theme} ${
           buttonKind === undefined ? "" : `kind="${buttonKind}"`
         } text={${
           text !== undefined && text !== ""
-            ? `translations[userLocale.userLanguage].${toLowercaseFirstLetterCamelCase(
+            ? `translations[appCtx.userLocale.userLanguage].${toLowercaseFirstLetterCamelCase(
                 text
               )}`
             : ""
@@ -132,11 +139,11 @@ const getChildrenView = (
         const nodeName = node.name;
         content = `<${
           nodeName.charAt(0).toUpperCase() + nodeName.slice(1)
-        } theme={theme} />`;
+        } theme={appCtx.theme} />`;
       }
     } else {
       console.log("others", node.name, node.type);
-      content = `<></>`;
+      content = `<>${node.name}, ${node.type}</>`;
     }
 
     const el =
@@ -152,13 +159,24 @@ const getTextKind = (node: TextNode): string | undefined => {
   const styleId = node.textStyleId;
 
   const textKind = figma.getStyleById(`${styleId as string}`)?.name;
+  const nodeColorIds = node.boundVariables?.fills;
+
+  const colorName =
+    nodeColorIds !== undefined && nodeColorIds.length > 0
+      ? figma.variables.getVariableById(nodeColorIds[0].id)?.name ?? undefined
+      : undefined;
 
   if (textKind === undefined) {
-    return undefined;
+    console.warn("textKind===undefined");
+    return "<P kind={undefined} />";
+  } else if (colorName === undefined) {
+    console.warn("colorName===undefined");
+    return "<P color={undefined} />";
   } else {
     const text = textKind.replace("/", "");
+    const color = colorName.split("/");
 
-    const translation = `translations[userLocale.userLanguage].${toLowercaseFirstLetterCamelCase(
+    const translation = `translations[appCtx.userLocale.userLanguage].${toLowercaseFirstLetterCamelCase(
       node.characters
     )}`;
 
@@ -166,15 +184,15 @@ const getTextKind = (node: TextNode): string | undefined => {
       const heading = toCapitalFirstLetterCamelCase(
         text.replace("Heading", "")
       );
-      return `<${heading}  color={textColors[theme].default}>{${translation}}</${heading}>`;
+      return `<${heading}  color={${color[0]}[appCtx.theme].${color[1]}}>{${translation}}</${heading}>`;
     } else {
       const kind =
         text === "BodyMedium"
           ? undefined
           : text.charAt(0).toLowerCase() + text.slice(1);
-      return `<P ${
-        kind === undefined ? "" : `kind="${kind}"`
-      } color={textColors[theme].default}>{${translation}}</P>`;
+      return `<P ${kind === undefined ? "" : `kind="${kind}"`} color={${
+        color[0]
+      }[appCtx.theme].${color[1]}}>{${translation}}</P>`;
     }
   }
 };
@@ -216,8 +234,15 @@ const replaceIconWord = (text: string): string => {
   const regex = /icon\//gi;
   return text.replace(regex, "");
 };
-const getIconSizeByWidth = (w: number): string => {
-  return `fontSize[${w === 24 ? 6 : w === 20 ? 5 : w === 16 ? 4 : 0}]`;
+const getIconSize = (node: SceneNode): string => {
+  const nodeWidthId = node.boundVariables?.width?.id;
+
+  const size =
+    nodeWidthId !== undefined
+      ? figma.variables.getVariableById(nodeWidthId)?.name
+      : undefined;
+
+  return `fontSize[${size}]`;
 };
 
 const getText = (node: TextNode, str: string, isEn: boolean): string => {
