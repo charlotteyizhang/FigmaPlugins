@@ -20,7 +20,7 @@ figma.ui.onmessage = (msg) => {
     const localCollections = figma.variables.getLocalVariableCollections();
 
     for (const node of figma.currentPage.selection) {
-      str += getChildrenView(node, str, localCollections);
+      str += getChildrenView(node, str, localCollections, null, true);
     }
 
     figma.ui.postMessage(str);
@@ -45,23 +45,30 @@ const getChildrenView = (
   node: SceneNode,
   acc: string,
   localCollections: Array<VariableCollection>,
-  parentLayout?: "firstElement" | "horizontal" | "vertical"
+  parentLayout: {
+    layout: InferredAutoLayoutResult | null;
+    itemSpacingId: string | undefined;
+  } | null,
+  firstElement: boolean
 ): string => {
-  const marginStyle =
-    parentLayout !== undefined
-      ? parentLayout === "horizontal"
-        ? "marginLeft:spacing.small,"
-        : parentLayout === "vertical"
-        ? "marginTop:spacing.small,"
-        : undefined
-      : undefined;
+  const marginStyle = firstElement
+    ? undefined
+    : parentLayout?.layout !== null && parentLayout?.layout !== undefined
+    ? parentLayout.layout.layoutMode === "HORIZONTAL"
+      ? `marginLeft:${findSpacingSize(parentLayout.itemSpacingId)},`
+      : parentLayout.layout.layoutMode === "VERTICAL"
+      ? `marginTop:${findSpacingSize(parentLayout.itemSpacingId)},`
+      : undefined
+    : undefined;
 
   if (node.type === "FRAME" && "children" in node) {
-    const isHorizontal = node.layoutMode === "HORIZONTAL";
-
     const containerStyle =
-      parentLayout === "horizontal"
-        ? `flexDirection: "row", justifyContent: "space-between", alignItems: "center",`
+      parentLayout?.layout?.layoutMode === "HORIZONTAL"
+        ? `flexDirection: "row",${
+            parentLayout.layout.primaryAxisAlignItems === "SPACE_BETWEEN"
+              ? `justifyContent: "space-between"`
+              : ""
+          }, alignItems: "center",`
         : undefined;
 
     const firstChild = node.children[0];
@@ -76,20 +83,20 @@ const getChildrenView = (
               v,
               _acc,
               localCollections,
+              idx === 1 && firstElementIsCard
+                ? null
+                : {
+                    layout: node.inferredAutoLayout,
+                    itemSpacingId: node.boundVariables?.itemSpacing?.id,
+                  },
               idx === 0
-                ? "firstElement"
-                : idx === 1 && firstElementIsCard
-                ? undefined
-                : isHorizontal
-                ? "horizontal"
-                : "vertical"
             ),
       ""
     );
 
     const el =
       marginStyle === undefined && containerStyle === undefined
-        ? parentLayout === "firstElement"
+        ? firstElement
           ? `<View>${content}</View>`
           : content
         : `<View style={{${containerStyle ?? ""} ${
@@ -198,7 +205,10 @@ const getTextKind = (node: TextNode): string | undefined => {
 };
 
 const toCapitalFirstLetterCamelCase = (text: string): string => {
-  const words = text.replace(/[^a-zA-Z0-9]/g, " ").split(" ");
+  const words = text
+    .replace(/^[\d:]+/, "") // replace numbers and special symbols
+    .replace(/[^a-zA-Z0-9]/g, " ")
+    .split(" ");
 
   const camelCaseWords = words.map(
     (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
@@ -209,7 +219,10 @@ const toCapitalFirstLetterCamelCase = (text: string): string => {
   return camelCaseText;
 };
 const toLowercaseFirstLetterCamelCase = (text: string): string => {
-  const words = text.replace(/[^a-zA-Z0-9]/g, " ").split(" ");
+  const words = text
+    .replace(/^[\d:]+/, "") // replace numbers and special symbols
+    .replace(/[^a-zA-Z0-9]/g, " ")
+    .split(" ");
 
   const camelCaseWords = words.map((word, idx) =>
     idx === 0
@@ -253,4 +266,13 @@ const getText = (node: TextNode, str: string, isEn: boolean): string => {
   }",`;
 
   return str + text;
+};
+
+const findSpacingSize = (spacingId: string | undefined): string => {
+  const spacing =
+    spacingId !== undefined
+      ? figma.variables.getVariableById(spacingId)
+      : undefined;
+
+  return `spacing.${spacing?.name.split("/")[1]}`;
 };
