@@ -139,14 +139,14 @@ const getChildrenView = (
                 text
               )}`
             : ""
-        }}/>`;
+        }} onPress={()=>undefined}/>`;
       } else {
         console.log("component", node.name);
 
         const nodeName = node.name;
         content = `<${
           nodeName.charAt(0).toUpperCase() + nodeName.slice(1)
-        } theme={appCtx.theme} />`;
+        } appCtx={appCtx} />`;
       }
     } else {
       console.log("others", node.name, node.type);
