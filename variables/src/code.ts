@@ -1,8 +1,8 @@
 // This plugin will open a window to prompt the user to enter a number, and
 // it will then create that many rectangles on the screen.
 
-import { createColor } from "./colorCodeToFigma";
-
+import { createColor } from "./colorsToVariables";
+import { colorsVisualDisplay } from "./colorsVisualDisplay";
 // This file holds the main code for plugins. Code in this file has access to
 // the *figma document* via the figma global object.
 // You can access browser APIs in the <script> tag inside "ui.html" which has a
@@ -18,7 +18,8 @@ figma.showUI(__html__);
 figma.ui.onmessage = (msg) => {
   if (msg.type === "designTokenToVariables") {
     const localCollections = figma.variables.getLocalVariableCollections();
-    console.log({ localCollections });
     createColor(localCollections);
+  } else if (msg.type === "drawBaseColor") {
+    colorsVisualDisplay();
   }
 };

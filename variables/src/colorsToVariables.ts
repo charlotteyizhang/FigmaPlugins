@@ -1,4 +1,5 @@
 import * as Colors from "./colors";
+import { flattenObjKey } from "./common";
 
 export const createColor = (localCollections: Array<VariableCollection>) => {
   const targetName = "Colors";
@@ -20,9 +21,9 @@ export const createColor = (localCollections: Array<VariableCollection>) => {
       for (const key in Colors) {
         if (Object.prototype.hasOwnProperty.call(Colors, key)) {
           //@ts-expect-error
-          if (typeof Colors[key] === "object" && /color|colour/i.test(key)) {
-            //@ts-expect-error
-            createColorToken(key, Colors[key], c, mode.name, mode.modeId);
+          const colorName = Colors[key];
+          if (typeof colorName === "object" && /color|colour/i.test(key)) {
+            createColorToken(key, colorName, c, mode.name, mode.modeId);
           }
         }
       }
@@ -96,33 +97,6 @@ const getColorToken = (
       acc[key] = newKey;
     }
     return acc;
-  }, init);
-
-  return x;
-};
-
-interface ReturnType {
-  name: string;
-  value: string;
-}
-const flattenObjKey = (
-  prefix: string,
-  value: NestedObject<string>
-): Array<ReturnType> => {
-  const init: Array<ReturnType> = [];
-  const x = Object.entries(value).reduce((acc, [key2, value]) => {
-    if (typeof value === "string") {
-      acc.push({ name: prefix === "" ? key2 : `${prefix}/${key2}`, value });
-      return acc;
-    } else {
-      const x = flattenObjKey(
-        prefix === "" ? key2 : `${prefix}/${key2}`,
-        value
-      );
-
-      const newArray = acc.concat(x);
-      return newArray;
-    }
   }, init);
 
   return x;

@@ -123,6 +123,7 @@
     <div class="container">
       
       <button class="button marginTop" id="codeToFigma">Code to Figma</button>
+      <button class="button marginTop" id="drawBaseColor">Draw base color</button>
       
     </div>
   
@@ -132,6 +133,9 @@
 <script>
 document.getElementById('codeToFigma').onclick = (e)=> {
   parent.postMessage({ pluginMessage: { type: 'designTokenToVariables' } }, '*');
+};
+document.getElementById('drawBaseColor').onclick = (e)=> {
+  parent.postMessage({ pluginMessage: { type: 'drawBaseColor' } }, '*');
 };
 
 </script>
