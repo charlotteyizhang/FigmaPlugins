@@ -46,3 +46,42 @@ export const flattenObjKey = (
 
   return x;
 };
+
+export const findOrCreateCollection = (
+  localCollections: Array<VariableCollection>,
+  targetName: string
+) => {
+  const collection = localCollections.find((v) => {
+    return v.name.match(targetName);
+  });
+  if (collection === undefined) {
+    return figma.variables.createVariableCollection(targetName);
+  } else {
+    return collection;
+  }
+};
+
+export const createNumberToken = (
+  obj: Record<string, number>,
+  targetName: string,
+  localCollections: Array<VariableCollection>
+) => {
+  const c = findOrCreateCollection(localCollections, targetName);
+
+  const variables = figma.variables.getLocalVariables();
+
+  Object.entries(obj).forEach(([key, value]) => {
+    // const tokenName = `${targetName}/${key}`;
+    const tokenName = key;
+    let token = variables.find(
+      (v) => v.variableCollectionId === c.id && v.name === tokenName
+    );
+    if (token === undefined) {
+      token = figma.variables.createVariable(tokenName, c.id, "FLOAT");
+    }
+
+    if (c.modes[0].modeId !== undefined) {
+      token.setValueForMode(c.modes[0].modeId, value);
+    }
+  });
+};

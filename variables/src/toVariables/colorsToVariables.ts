@@ -1,19 +1,17 @@
-import * as Colors from "./colors";
-import { flattenObjKey } from "./common";
+import * as Colors from "../codebase/colors";
+import { findOrCreateCollection, flattenObjKey } from "../common";
 
-export const createColor = (localCollections: Array<VariableCollection>) => {
-  const targetName = "Colors";
+export const colorsToVariables = (
+  localCollections: Array<VariableCollection>
+) => {
+  const targetName = "colors";
 
-  const colorCollection = localCollections.find((v) => {
-    return v.name.match(targetName);
-  });
-  if (colorCollection !== undefined) {
-    colorCollection.remove();
+  const c = findOrCreateCollection(localCollections, targetName);
+  // creating a collection will have 1 default mode therefore we are checking this
+  if (c.modes.length === 1) {
+    c.renameMode(c.modes[0].modeId, modeName.light);
+    c.addMode(modeName.dark);
   }
-
-  const c = figma.variables.createVariableCollection(targetName);
-  c.renameMode(c.modes[0].modeId, modeName.light);
-  c.addMode(modeName.dark);
 
   c.modes.map((mode) => {
     if (mode.name === modeName.light || mode.name === modeName.dark) {
@@ -67,6 +65,7 @@ const createColorToken = (
           !Number.isNaN(rgb.b)
         ) {
           let token = variables.find((v) => v.name === key);
+
           if (token === undefined) {
             token = figma.variables.createVariable(key, collection.id, "COLOR");
           }

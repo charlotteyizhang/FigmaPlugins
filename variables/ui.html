@@ -122,8 +122,11 @@
   
     <div class="container">
       
-      <button class="button marginTop" id="codeToFigma">Code to Figma</button>
       <button class="button marginTop" id="drawBaseColor">Draw base color</button>
+      <button class="button marginTop" id="drawSpacing">Draw spacing</button>
+      <button class="button marginTop" id="colorVariable">Colors.ts to variables</button>
+      <button class="button marginTop" id="spacingVariable">Spacing.ts to variables</button>
+      <button class="button marginTop" id="borderRadiusVariable">Border.ts to variables</button>
       
     </div>
   
@@ -131,11 +134,20 @@
 
 
 <script>
-document.getElementById('codeToFigma').onclick = (e)=> {
-  parent.postMessage({ pluginMessage: { type: 'designTokenToVariables' } }, '*');
+document.getElementById('colorVariable').onclick = (e)=> {
+  parent.postMessage({ pluginMessage: { type: 'colorToVariables' } }, '*');
 };
 document.getElementById('drawBaseColor').onclick = (e)=> {
   parent.postMessage({ pluginMessage: { type: 'drawBaseColor' } }, '*');
+};
+document.getElementById('drawSpacing').onclick = (e)=> {
+  parent.postMessage({ pluginMessage: { type: 'drawSpacing' } }, '*');
+};
+document.getElementById('spacingVariable').onclick = (e)=> {
+  parent.postMessage({ pluginMessage: { type: 'spacingToVariables' } }, '*');
+};
+document.getElementById('borderRadiusVariable').onclick = (e)=> {
+  parent.postMessage({ pluginMessage: { type: 'borderRadiusVariable' } }, '*');
 };
 
 </script>

@@ -1,6 +1,6 @@
-import * as Colors from "./colors";
+import * as Colors from "../codebase/colors";
 
-import { flattenObjKey, getContrastRGB } from "./common";
+import { flattenObjKey, getContrastRGB } from "../common";
 
 export const colorsVisualDisplay = () => {
   const visibleArea = figma.viewport.bounds;
