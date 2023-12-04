@@ -1,0 +1,19 @@
+{
+  "name": "variables",
+  "version": "1.0.0",
+  "description": "designVariables",
+  "main": "code.js",
+  "scripts": {
+    "watch": "npm run build -- --watch",
+    "typecheck": "tsc -p tsconfig.json",
+    "typecheck--watch": "npm run typecheck -- --watch",
+    "build": "esbuild ./src/code.ts --bundle --outfile=./target/code.js"
+  },
+  "author": "",
+  "license": "",
+  "devDependencies": {
+    "@figma/plugin-typings": "1.81.0",
+    "typescript": "5.2.2",
+    "esbuild": "0.19.6"
+  }
+}

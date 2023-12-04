@@ -1,0 +1,13 @@
+{
+  "name": "variables",
+  "id": "1307321293421447324",
+  "api": "1.0.0",
+  "main": "./target/code.js",
+  "capabilities": [],
+  "enableProposedApi": false,
+  "editorType": ["figma"],
+  "ui": "ui.html",
+  "networkAccess": {
+    "allowedDomains": ["https://developer.mozilla.org/"]
+  }
+}
