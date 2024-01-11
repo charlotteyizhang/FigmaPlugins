@@ -180,7 +180,9 @@ const getTextKind = (node: TextNode): string | undefined => {
     console.warn("colorName===undefined");
     return "<P color={undefined} />";
   } else {
-    const text = textKind.replace("/", "");
+    // const text = textKind.replace("/", "");
+    const texts = textKind.split("/");
+    const text = texts[0];
     const color = colorName.split("/");
 
     const translation = `translations[appCtx.userLocale.userLanguage].${toLowercaseFirstLetterCamelCase(
@@ -196,7 +198,9 @@ const getTextKind = (node: TextNode): string | undefined => {
       const kind =
         text === "BodyMedium"
           ? undefined
-          : text.charAt(0).toLowerCase() + text.slice(1);
+          : text.charAt(0).toLowerCase() +
+            text.slice(1) +
+            toCapitalFirstLetterCamelCase(texts[1]);
       return `<P ${kind === undefined ? "" : `kind="${kind}"`} color={${
         color[0]
       }[appCtx.theme].${color[1]}}>{${translation}}</P>`;
