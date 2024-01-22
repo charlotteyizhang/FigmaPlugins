@@ -180,7 +180,6 @@ const getTextKind = (node: TextNode): string | undefined => {
     console.warn("colorName===undefined");
     return "<P color={undefined} />";
   } else {
-    // const text = textKind.replace("/", "");
     const texts = textKind.split("/");
     const text = texts[0];
     const color = colorName.split("/");
@@ -278,5 +277,12 @@ const findSpacingSize = (spacingId: string | undefined): string => {
       ? figma.variables.getVariableById(spacingId)
       : undefined;
 
-  return `spacing.${spacing?.name.split("/")[1]}`;
+  const name = spacing?.name;
+  if (name !== undefined) {
+    return name.includes("/")
+      ? `spacing.${spacing?.name.split("/")[1]}`
+      : `spacing.${name}`;
+  } else {
+    return "spacing.";
+  }
 };
