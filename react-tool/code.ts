@@ -63,9 +63,9 @@ const getChildrenView = (
 
   if (node.type === "FRAME" && "children" in node) {
     const containerStyle =
-      parentLayout?.layout?.layoutMode === "HORIZONTAL"
+      node.inferredAutoLayout?.layoutMode === "HORIZONTAL"
         ? `flexDirection: "row",${
-            parentLayout.layout.primaryAxisAlignItems === "SPACE_BETWEEN"
+            node.inferredAutoLayout?.primaryAxisAlignItems === "SPACE_BETWEEN"
               ? `justifyContent: "space-between"`
               : ""
           }, alignItems: "center",`
@@ -105,7 +105,7 @@ const getChildrenView = (
 
     return firstElementIsCard
       ? acc +
-          `<Card theme={appCtx.theme} title={{text:translations[appCtx.userLocale.userLanguage].${toLowercaseFirstLetterCamelCase(
+          `<Card theme={theme} title={{text:translations[userLocale.userLanguage].${toLowercaseFirstLetterCamelCase(
             firstChild.componentProperties?.["Text#3945:0"]?.value.toString() ??
               ""
           )}, showIconRight:${
@@ -118,7 +118,7 @@ const getChildrenView = (
       content = getTextKind(node) ?? "";
     } else if (node.type === "INSTANCE" || node.type === "COMPONENT") {
       if (hasIconWord(node.name)) {
-        content = `<Icon color={textColors[appCtx.theme].default} icon="${replaceIconWord(
+        content = `<Icon color={textColors[theme].default} icon="${replaceIconWord(
           node.name
         )}" size={${getIconSize(node)}}/>`;
       } else if (node.name.includes("Button")) {
@@ -131,11 +131,11 @@ const getChildrenView = (
             ""
           );
 
-        content = `<${node.name} theme={appCtx.theme} ${
+        content = `<${node.name} theme={theme} ${
           buttonKind === undefined ? "" : `kind="${buttonKind}"`
         } text={${
           text !== undefined && text !== ""
-            ? `translations[appCtx.userLocale.userLanguage].${toLowercaseFirstLetterCamelCase(
+            ? `translations[userLocale.userLanguage].${toLowercaseFirstLetterCamelCase(
                 text
               )}`
             : ""
@@ -182,9 +182,10 @@ const getTextKind = (node: TextNode): string | undefined => {
   } else {
     const texts = textKind.split("/");
     const text = texts[0];
+    const text2 = texts[1];
     const color = colorName.split("/");
 
-    const translation = `translations[appCtx.userLocale.userLanguage].${toLowercaseFirstLetterCamelCase(
+    const translation = `translations[userLocale.userLanguage].${toLowercaseFirstLetterCamelCase(
       node.characters
     )}`;
 
@@ -192,17 +193,19 @@ const getTextKind = (node: TextNode): string | undefined => {
       const heading = toCapitalFirstLetterCamelCase(
         text.replace("Heading", "")
       );
-      return `<${heading}  color={${color[0]}[appCtx.theme].${color[1]}}>{${translation}}</${heading}>`;
+      return `<${heading}  color={${color[0]}[theme].${color[1]}}>{${translation}}</${heading}>`;
     } else {
+      console.log({ text });
+
       const kind =
-        text === "BodyMedium"
+        text2.toLowerCase() === "medium"
           ? undefined
           : text.charAt(0).toLowerCase() +
             text.slice(1) +
             toCapitalFirstLetterCamelCase(texts[1]);
       return `<P ${kind === undefined ? "" : `kind="${kind}"`} color={${
         color[0]
-      }[appCtx.theme].${color[1]}}>{${translation}}</P>`;
+      }[theme].${color[1]}}>{${translation}}</P>`;
     }
   }
 };
@@ -256,16 +259,16 @@ const getIconSize = (node: SceneNode): string => {
   const size =
     nodeWidthId !== undefined
       ? figma.variables.getVariableById(nodeWidthId)?.name
-      : undefined;
+      : "default";
 
-  return `fontSize[${size}]`;
+  return `iconSizes.${size}`;
 };
 
 const getText = (node: TextNode, str: string, isEn: boolean): string => {
   const content = node.characters;
 
   const text = `${toLowercaseFirstLetterCamelCase(content)}: "${
-    isEn ? content : "TODO translate"
+    isEn ? content : "TODO_TRANSLATE"
   }",`;
 
   return str + text;

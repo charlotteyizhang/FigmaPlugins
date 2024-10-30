@@ -10,10 +10,10 @@
   "author": "",
   "license": "",
   "dependencies": {
-    "@emotion/css": "11.11.2",
-    "typescript": "5.2.2"
+    "@emotion/css": "11.13.4",
+    "typescript": "5.6.3"
   },
   "devDependencies": {
-    "@figma/plugin-typings": "1.81.0"
+    "@figma/plugin-typings": "1.100.2"
   }
 }
