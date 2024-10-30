@@ -66,9 +66,9 @@ const getChildrenView = (
       node.inferredAutoLayout?.layoutMode === "HORIZONTAL"
         ? `flexDirection: "row",${
             node.inferredAutoLayout?.primaryAxisAlignItems === "SPACE_BETWEEN"
-              ? `justifyContent: "space-between"`
+              ? `justifyContent: "space-between",`
               : ""
-          }, alignItems: "center",`
+          } alignItems: "center",`
         : undefined;
 
     const firstChild = node.children[0];
