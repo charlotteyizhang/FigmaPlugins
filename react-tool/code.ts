@@ -267,9 +267,9 @@ const getIconSize = (node: SceneNode): string => {
 const getText = (node: TextNode, str: string, isEn: boolean): string => {
   const content = node.characters;
 
-  const text = `${toLowercaseFirstLetterCamelCase(content)}: "${
-    isEn ? content : "TODO_TRANSLATE"
-  }",`;
+  const text = `${toLowercaseFirstLetterCamelCase(content)}: ${
+    isEn ? `"${content}"` : "i18n.TODO_TRANSLATE"
+  },`;
 
   return str + text;
 };
@@ -286,6 +286,6 @@ const findSpacingSize = (spacingId: string | undefined): string => {
       ? `spacing.${spacing?.name.split("/")[1]}`
       : `spacing.${name}`;
   } else {
-    return "spacing.";
+    return "spacing.xxxxlarge";
   }
 };
