@@ -20,7 +20,7 @@ figma.ui.onmessage = (msg) => {
     const localCollections = figma.variables.getLocalVariableCollections();
 
     for (const node of figma.currentPage.selection) {
-      str += getChildrenView(node, str, localCollections, null, true);
+      str += getChildrenView(node, str, localCollections, true);
     }
 
     figma.ui.postMessage(str);
@@ -45,30 +45,36 @@ const getChildrenView = (
   node: SceneNode,
   acc: string,
   localCollections: Array<VariableCollection>,
-  parentLayout: {
-    layout: InferredAutoLayoutResult | null;
-    itemSpacingId: string | undefined;
-  } | null,
   firstElement: boolean
 ): string => {
-  const marginStyle = firstElement
-    ? undefined
-    : parentLayout?.layout !== null && parentLayout?.layout !== undefined
-    ? parentLayout.layout.layoutMode === "HORIZONTAL"
-      ? `marginLeft:${findSpacingSize(parentLayout.itemSpacingId)},`
-      : parentLayout.layout.layoutMode === "VERTICAL"
-      ? `marginTop:${findSpacingSize(parentLayout.itemSpacingId)},`
-      : undefined
-    : undefined;
-
+  if (!node.visible) {
+    return acc;
+  }
   if (node.type === "FRAME" && "children" in node) {
+    console.log({
+      gap:
+        node.boundVariables?.itemSpacing?.id !== undefined
+          ? figma.variables.getVariableById(
+              node.boundVariables?.itemSpacing?.id
+            )?.name
+          : undefined,
+    });
+
+    const spacingId = node.boundVariables?.itemSpacing?.id;
+
     const containerStyle =
       node.inferredAutoLayout?.layoutMode === "HORIZONTAL"
         ? `flexDirection: "row",${
             node.inferredAutoLayout?.primaryAxisAlignItems === "SPACE_BETWEEN"
               ? `justifyContent: "space-between",`
               : ""
-          } alignItems: "center",`
+          } alignItems: "center", ${
+            spacingId !== undefined
+              ? `gap: ${figma.variables
+                  .getVariableById(spacingId)
+                  ?.name.replace("/", ".")},`
+              : ""
+          }`
         : undefined;
 
     const firstChild = node.children[0];
@@ -79,29 +85,16 @@ const getChildrenView = (
       (_acc, v, idx) =>
         firstElementIsCard && idx === 0
           ? _acc
-          : getChildrenView(
-              v,
-              _acc,
-              localCollections,
-              idx === 1 && firstElementIsCard
-                ? null
-                : {
-                    layout: node.inferredAutoLayout,
-                    itemSpacingId: node.boundVariables?.itemSpacing?.id,
-                  },
-              idx === 0
-            ),
+          : getChildrenView(v, _acc, localCollections, idx === 0),
       ""
     );
 
     const el =
-      marginStyle === undefined && containerStyle === undefined
+      containerStyle === undefined
         ? firstElement
           ? `<View>${content}</View>`
           : content
-        : `<View style={{${containerStyle ?? ""} ${
-            marginStyle ?? ""
-          }}}>${content}</View>`;
+        : `<View style={{${containerStyle ?? ""}}}>${content}</View>`;
 
     return firstElementIsCard
       ? acc +
@@ -146,19 +139,14 @@ const getChildrenView = (
         const nodeName = node.name;
         content = `<${
           nodeName.charAt(0).toUpperCase() + nodeName.slice(1)
-        } appCtx={appCtx} />`;
+        } appAppearanceCtx={appAppearanceCtx} />`;
       }
     } else {
       console.log("others", node.name, node.type);
       content = `<>${node.name}, ${node.type}</>`;
     }
 
-    const el =
-      marginStyle === undefined
-        ? content
-        : `<View style={{${marginStyle ?? ""}}}>${content}</View>`;
-
-    return acc + el;
+    return acc + content;
   }
 };
 
@@ -175,10 +163,10 @@ const getTextKind = (node: TextNode): string | undefined => {
 
   if (textKind === undefined) {
     console.warn("textKind===undefined");
-    return "<P kind={undefined} />";
+    return "<P responsive={responsive} kind={undefined} />";
   } else if (colorName === undefined) {
     console.warn("colorName===undefined");
-    return "<P color={undefined} />";
+    return "<P responsive={responsive} color={undefined} />";
   } else {
     const texts = textKind.split("/");
     const text = texts[0];
@@ -193,7 +181,7 @@ const getTextKind = (node: TextNode): string | undefined => {
       const heading = toCapitalFirstLetterCamelCase(
         text.replace("Heading", "")
       );
-      return `<${heading}  color={${color[0]}[theme].${color[1]}}>{${translation}}</${heading}>`;
+      return `<${heading} responsive={responsive} color={${color[0]}[theme].${color[1]}}>{${translation}}</${heading}>`;
     } else {
       console.log({ text });
 
@@ -203,9 +191,9 @@ const getTextKind = (node: TextNode): string | undefined => {
           : text.charAt(0).toLowerCase() +
             text.slice(1) +
             toCapitalFirstLetterCamelCase(texts[1]);
-      return `<P ${kind === undefined ? "" : `kind="${kind}"`} color={${
-        color[0]
-      }[theme].${color[1]}}>{${translation}}</P>`;
+      return `<P responsive={responsive} ${
+        kind === undefined ? "" : `kind="${kind}"`
+      } color={${color[0]}[theme].${color[1]}}>{${translation}}</P>`;
     }
   }
 };
