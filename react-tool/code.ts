@@ -75,8 +75,11 @@ const getChildrenView = (
                   ?.name.replace("/", ".")},`
               : ""
           }`
-        : undefined;
-
+        : spacingId !== undefined
+        ? `gap: ${figma.variables
+            .getVariableById(spacingId)
+            ?.name.replace("/", ".")},`
+        : "";
     const firstChild = node.children[0];
     const firstElementIsCard =
       hasCardTitleWord(firstChild.name) && firstChild.type === "INSTANCE";
