@@ -11,9 +11,9 @@
   "license": "",
   "dependencies": {
     "@emotion/css": "11.13.5",
-    "typescript": "5.7.3"
+    "typescript": "5.8.3"
   },
   "devDependencies": {
-    "@figma/plugin-typings": "1.107.0"
+    "@figma/plugin-typings": "1.113.0"
   }
 }

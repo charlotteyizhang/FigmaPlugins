@@ -17,13 +17,15 @@ figma.ui.onmessage = (msg) => {
   // your HTML page is to use an object with a "type" property like this.
   if (msg.type === "generate") {
     let str = "";
-    const localCollections = figma.variables.getLocalVariableCollections();
+    figma.variables
+      .getLocalVariableCollectionsAsync()
+      .then((localCollections) => {
+        for (const node of figma.currentPage.selection) {
+          str += getChildrenView(node, str, localCollections, true);
+        }
 
-    for (const node of figma.currentPage.selection) {
-      str += getChildrenView(node, str, localCollections, true);
-    }
-
-    figma.ui.postMessage(str);
+        figma.ui.postMessage(str);
+      });
   } else if (msg.type === "generateTextEN" || msg.type === "generateTextTODO") {
     const isEn = msg.type === "generateTextEN";
     let str = "";
@@ -51,14 +53,14 @@ const getChildrenView = (
     return acc;
   }
   if (node.type === "FRAME" && "children" in node) {
-    console.log({
-      gap:
-        node.boundVariables?.itemSpacing?.id !== undefined
-          ? figma.variables.getVariableById(
-              node.boundVariables?.itemSpacing?.id
-            )?.name
-          : undefined,
-    });
+    const gap =
+      node.boundVariables?.itemSpacing?.id !== undefined
+        ? figma.variables
+            .getVariableById(node.boundVariables?.itemSpacing?.id)
+            ?.name.replace("/", ".")
+        : undefined;
+
+    console.log({ gap });
 
     const spacingId = node.boundVariables?.itemSpacing?.id;
 
@@ -69,16 +71,10 @@ const getChildrenView = (
               ? `justifyContent: "space-between",`
               : ""
           } alignItems: "center", ${
-            spacingId !== undefined
-              ? `gap: ${figma.variables
-                  .getVariableById(spacingId)
-                  ?.name.replace("/", ".")},`
-              : ""
+            spacingId !== undefined ? `gap: ${gap},` : ""
           }`
         : spacingId !== undefined
-        ? `gap: ${figma.variables
-            .getVariableById(spacingId)
-            ?.name.replace("/", ".")},`
+        ? `gap: ${gap},`
         : "";
     const firstChild = node.children[0];
     const firstElementIsCard =
@@ -263,20 +259,4 @@ const getText = (node: TextNode, str: string, isEn: boolean): string => {
   },`;
 
   return str + text;
-};
-
-const findSpacingSize = (spacingId: string | undefined): string => {
-  const spacing =
-    spacingId !== undefined
-      ? figma.variables.getVariableById(spacingId)
-      : undefined;
-
-  const name = spacing?.name;
-  if (name !== undefined) {
-    return name.includes("/")
-      ? `spacing.${spacing?.name.split("/")[1]}`
-      : `spacing.${name}`;
-  } else {
-    return "spacing.xxxxlarge";
-  }
 };
