@@ -120,6 +120,8 @@
     <button class="button marginTop" id="create">Create</button>
     <button class="button marginTop" id="generateTextEN">Generate text EN</button>
     <button class="button marginTop" id="generateTextTODO">Generate text TODO</button>
+    <button class="button marginTop" id="generateTranslationVariables">Generate translation variables</button>
+    <button class="button marginTop" id="assignTranslationVariables">Assign translation variables</button>
   </div>
   <p class="marginTop" id="code"></p>
   <input style="opacity: 0;" type="text" id="copy"></input>
@@ -139,6 +141,13 @@ document.getElementById('generateTextEN').onclick = () => {
 document.getElementById('generateTextTODO').onclick = () => {
   parent.postMessage({ pluginMessage: { type: "generateTextTODO", } }, '*')
 }
+document.getElementById('generateTranslationVariables').onclick = () => {
+  parent.postMessage({ pluginMessage: { type: "generateTranslationVariables", } }, '*')
+}
+document.getElementById('assignTranslationVariables').onclick = () => {
+  parent.postMessage({ pluginMessage: { type: "assignTranslationVariables", } }, '*')
+}
+
 document.getElementById('clear').onclick = () => {
   codebox.innerText=""
 }
