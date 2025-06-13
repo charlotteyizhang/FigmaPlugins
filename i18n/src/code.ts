@@ -1,6 +1,8 @@
 // This plugin will open a window to prompt the user to enter a number, and
 // it will then create that many rectangles on the screen.
 
+import { findOrCreateCollection, modeName } from "./helper";
+
 // This file holds the main code for plugins. Code in this file has access to
 // the *figma document* via the figma global object.
 // You can access browser APIs in the <script> tag inside "ui.html" which has a
@@ -12,7 +14,20 @@ figma.showUI(__html__, { width: 500, height: 600 });
 // Calls to "parent.postMessage" from within the HTML page will trigger this
 // callback. The callback will be passed the "pluginMessage" property of the
 // posted message.
-figma.ui.onmessage = async (msg: { type: string; count: number }) => {
+
+interface Generate {
+  type: "generateTranslationVariables";
+}
+interface Assign {
+  type: "assignTranslationVariables";
+}
+interface Create {
+  type: "createVariables";
+  language: "en" | "ja";
+}
+
+type Message = Generate | Assign | Create;
+figma.ui.onmessage = async (msg: Message) => {
   // One way of distinguishing between different types of messages sent from
   // your HTML page is to use an object with a "type" property like this.
   if (msg.type === "generateTranslationVariables") {
@@ -64,9 +79,8 @@ figma.ui.onmessage = async (msg: { type: string; count: number }) => {
       return figma.ui.postMessage("No i18nCollection found.");
     } else {
       for (const node of figma.currentPage.selection) {
-        if (node.type === "TEXT") {
-          const layerName = node.name;
-
+        if (node.type === "TEXT" && node.name.startsWith("#")) {
+          const layerName = node.name.substring(1); // Remove the leading '#'
           let variable: Variable | undefined = undefined;
 
           for (const variableId of i18nCollection.variableIds) {
@@ -86,6 +100,76 @@ figma.ui.onmessage = async (msg: { type: string; count: number }) => {
             node.setBoundVariable("characters", variable);
             console.log({ nodeAfter: node, variable });
             figma.ui.postMessage("successfully assigned translation variables");
+          }
+        }
+      }
+    }
+  } else if (msg.type === "createVariables") {
+    const targetName = "i18n";
+    const localCollections =
+      await figma.variables.getLocalVariableCollectionsAsync();
+
+    const i18nCollection = findOrCreateCollection(localCollections, targetName);
+    // creating a collection will have 1 default mode therefore we are checking this
+    if (i18nCollection.modes.length === 1) {
+      i18nCollection.renameMode(i18nCollection.modes[0].modeId, modeName.en);
+      i18nCollection.addMode(modeName.ja);
+    }
+
+    const targetModeId =
+      msg.language === "en"
+        ? i18nCollection.modes[0].modeId
+        : i18nCollection.modes[1].modeId;
+
+    for (const node of figma.currentPage.selection) {
+      if (node.type === "TEXT" && node.name.startsWith("#")) {
+        const layerName = node.name.substring(1); // Remove the leading '#'
+        const nodeText = node.characters;
+
+        let variable: Variable | undefined = undefined;
+
+        for (const variableId of i18nCollection.variableIds) {
+          const v = await figma.variables.getVariableByIdAsync(variableId);
+          if (v?.name === layerName) {
+            variable = v;
+            break;
+          }
+        }
+
+        if (variable === undefined) {
+          variable = await figma.variables.createVariable(
+            layerName,
+            i18nCollection,
+            "STRING"
+          );
+          if (variable !== undefined) {
+            console.log({ node: nodeText });
+
+            variable.setValueForMode(targetModeId, nodeText);
+            variable.setValueForMode(
+              i18nCollection.modes[1].modeId,
+              "TODO_TRANSLATE"
+            );
+            node.setBoundVariable("characters", variable);
+            figma.ui.postMessage("successfully created translation variables");
+          } else {
+            figma.ui.postMessage(
+              `error generate variable layer name: ${layerName}`
+            );
+          }
+        } else {
+          const variableValue = variable.valuesByMode[targetModeId];
+
+          if (variableValue !== undefined && nodeText !== variableValue) {
+            variable.setValueForMode(targetModeId, nodeText);
+            node.setBoundVariable("characters", variable);
+            figma.ui.postMessage(
+              `layer name already exists in i18n collection, replace with: ${variableValue}`
+            );
+          } else {
+            figma.ui.postMessage(
+              `layer name already exists in i18n collection, no changes made: ${layerName}`
+            );
           }
         }
       }
