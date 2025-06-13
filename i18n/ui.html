@@ -58,9 +58,9 @@
 
     color: #000000;
 
-    min-width: 368;
+    min-width: 300;
     min-height: 100;
-    max-width: 368;
+    max-width: 300;
     display: flex;
     flex-direction: "wrap";
     white-space: pre-wrap;
@@ -114,12 +114,11 @@
     flex-direction: column;
   }
 </style>
-<h2 class="intro_cell_title">React native code creator</h2>
+<h2 class="intro_cell_title">i18n translation</h2>
 <body>
   <div class="container">
-    <button class="button marginTop" id="create">Create</button>
-    <button class="button marginTop" id="generateTextEN">Generate text EN</button>
-    <button class="button marginTop" id="generateTextTODO">Generate text TODO</button>
+    <button class="button marginTop" id="generateTranslationVariables">Generate translation variables</button>
+    <button class="button marginTop" id="assignTranslationVariables">Assign translation variables</button>
   </div>
   <p class="marginTop" id="code"></p>
   <input style="opacity: 0;" type="text" id="copy"></input>
@@ -130,14 +129,11 @@
 
 <script>
 
-document.getElementById('create').onclick = () => {
-  parent.postMessage({ pluginMessage: { type: "generate", } }, '*')
+document.getElementById('generateTranslationVariables').onclick = () => {
+  parent.postMessage({ pluginMessage: { type: "generateTranslationVariables", } }, '*')
 }
-document.getElementById('generateTextEN').onclick = () => {
-  parent.postMessage({ pluginMessage: { type: "generateTextEN", } }, '*')
-}
-document.getElementById('generateTextTODO').onclick = () => {
-  parent.postMessage({ pluginMessage: { type: "generateTextTODO", } }, '*')
+document.getElementById('assignTranslationVariables').onclick = () => {
+  parent.postMessage({ pluginMessage: { type: "assignTranslationVariables", } }, '*')
 }
 
 document.getElementById('clear').onclick = () => {
