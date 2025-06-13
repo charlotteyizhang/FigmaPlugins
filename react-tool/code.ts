@@ -12,20 +12,20 @@ figma.showUI(__html__, { width: 400, height: 600 });
 // callback. The callback will be passed the "pluginMessage" property of the
 // posted message.
 
-figma.ui.onmessage = (msg) => {
+figma.ui.onmessage = async (msg) => {
   // One way of distinguishing between different types of messages sent from
   // your HTML page is to use an object with a "type" property like this.
   if (msg.type === "generate") {
     let str = "";
-    figma.variables
-      .getLocalVariableCollectionsAsync()
-      .then((localCollections) => {
-        for (const node of figma.currentPage.selection) {
-          str += getChildrenView(node, str, localCollections, true);
-        }
 
-        figma.ui.postMessage(str);
-      });
+    const localCollections =
+      await figma.variables.getLocalVariableCollectionsAsync();
+
+    for (const node of figma.currentPage.selection) {
+      str += await getChildrenView(node, str, localCollections, true);
+    }
+
+    figma.ui.postMessage(str);
   } else if (msg.type === "generateTextEN" || msg.type === "generateTextTODO") {
     const isEn = msg.type === "generateTextEN";
     let str = "";
@@ -47,105 +47,117 @@ const getChildrenView = (
   acc: string,
   localCollections: Array<VariableCollection>,
   firstElement: boolean
-): string => {
-  if (!node.visible) {
-    return acc;
-  }
-  if (node.type === "FRAME" && "children" in node) {
-    const gap =
-      node.boundVariables?.itemSpacing?.id !== undefined
-        ? figma.variables
-            .getVariableById(node.boundVariables?.itemSpacing?.id)
-            ?.name.replace("/", ".")
-        : undefined;
-
-    console.log({ gap });
-
-    const spacingId = node.boundVariables?.itemSpacing?.id;
-
-    const containerStyle =
-      node.inferredAutoLayout?.layoutMode === "HORIZONTAL"
-        ? `flexDirection: "row",${
-            node.inferredAutoLayout?.primaryAxisAlignItems === "SPACE_BETWEEN"
-              ? `justifyContent: "space-between",`
-              : ""
-          } alignItems: "center", ${
-            spacingId !== undefined ? `gap: ${gap},` : ""
-          }`
-        : spacingId !== undefined
-        ? `gap: ${gap},`
-        : "";
-    const firstChild = node.children[0];
-    const firstElementIsCard =
-      hasCardTitleWord(firstChild.name) && firstChild.type === "INSTANCE";
-
-    const content = node.children.reduce(
-      (_acc, v, idx) =>
-        firstElementIsCard && idx === 0
-          ? _acc
-          : getChildrenView(v, _acc, localCollections, idx === 0),
-      ""
-    );
-
-    const el =
-      containerStyle === undefined
-        ? firstElement
-          ? `<View>${content}</View>`
-          : content
-        : `<View style={{${containerStyle ?? ""}}}>${content}</View>`;
-
-    return firstElementIsCard
-      ? acc +
-          `<Card theme={theme} title={{text:translations[userLocale.userLanguage].${toLowercaseFirstLetterCamelCase(
-            firstChild.componentProperties?.["Text#3945:0"]?.value.toString() ??
-              ""
-          )}, showIconRight:${
-            firstChild.componentProperties?.["isLink"]?.value
-          }}}>${content}</Card>`
-      : acc + el;
-  } else {
-    let content = "";
-    if (node.type === "TEXT") {
-      content = getTextKind(node) ?? "";
-    } else if (node.type === "INSTANCE" || node.type === "COMPONENT") {
-      if (hasIconWord(node.name)) {
-        content = `<Icon color={textColors[theme].default} icon="${replaceIconWord(
-          node.name
-        )}" size={${getIconSize(node)}}/>`;
-      } else if (node.name.includes("Button")) {
-        const buttonKind = node.variantProperties?.["Type"] ?? "";
-
-        const text = node
-          .findChildren((n) => n.type === "TEXT")
-          .reduce(
-            (acc, v) => (v.type === "TEXT" ? acc + v.characters : acc),
-            ""
-          );
-
-        content = `<${node.name} theme={theme} ${
-          buttonKind === undefined ? "" : `kind="${buttonKind}"`
-        } text={${
-          text !== undefined && text !== ""
-            ? `translations[userLocale.userLanguage].${toLowercaseFirstLetterCamelCase(
-                text
-              )}`
-            : ""
-        }} onPress={()=>undefined}/>`;
-      } else {
-        console.log("component", node.name);
-
-        const nodeName = node.name;
-        content = `<${
-          nodeName.charAt(0).toUpperCase() + nodeName.slice(1)
-        } appAppearanceCtx={appAppearanceCtx} />`;
-      }
-    } else {
-      console.log("others", node.name, node.type);
-      content = `<>${node.name}, ${node.type}</>`;
+): Promise<string> => {
+  const recurse = async (
+    node: SceneNode,
+    acc: string,
+    localCollections: Array<VariableCollection>,
+    firstElement: boolean
+  ) => {
+    if (!node.visible) {
+      return acc;
     }
+    if (node.type === "FRAME" && "children" in node) {
+      const variableId = await figma.variables.getVariableByIdAsync(
+        node.boundVariables?.itemSpacing?.id ?? ""
+      );
+      const spacingId = node.boundVariables?.itemSpacing?.id;
 
-    return acc + content;
-  }
+      const gapStr =
+        spacingId !== undefined
+          ? `gap: ${variableId?.name.replace("/", ".")},`
+          : "";
+
+      const containerStyle =
+        node.inferredAutoLayout?.layoutMode === "HORIZONTAL"
+          ? `flexDirection: "row",${
+              node.inferredAutoLayout?.primaryAxisAlignItems === "SPACE_BETWEEN"
+                ? `justifyContent: "space-between",`
+                : ""
+            } alignItems: "center", ${gapStr}`
+          : gapStr;
+
+      const firstChild = node.children[0];
+      const firstElementIsCard =
+        hasCardTitleWord(firstChild.name) && firstChild.type === "INSTANCE";
+
+      let content = "";
+      for (
+        let idx = firstElementIsCard ? 1 : 0;
+        idx < node.children.length;
+        idx++
+      ) {
+        content = await recurse(
+          node.children[idx],
+          content,
+          localCollections,
+          idx === 0
+        );
+      }
+
+      const el =
+        containerStyle === undefined
+          ? firstElement
+            ? `<View>${content}</View>`
+            : content
+          : `<View style={{${containerStyle ?? ""}}}>${content}</View>`;
+
+      return firstElementIsCard
+        ? acc +
+            `<Card theme={theme} title={{text:translations[userLocale.userLanguage].${toLowercaseFirstLetterCamelCase(
+              firstChild.componentProperties?.[
+                "Text#3945:0"
+              ]?.value.toString() ?? ""
+            )}, showIconRight:${
+              firstChild.componentProperties?.["isLink"]?.value
+            }}}>${content}</Card>`
+        : acc + el;
+    } else {
+      let content = "";
+      if (node.type === "TEXT") {
+        content = getTextKind(node) ?? "";
+      } else if (node.type === "INSTANCE" || node.type === "COMPONENT") {
+        if (hasIconWord(node.name)) {
+          content = `<Icon color={textColors[theme].default} icon="${replaceIconWord(
+            node.name
+          )}" size={${getIconSize(node)}}/>`;
+        } else if (node.name.includes("Button")) {
+          const buttonKind = node.variantProperties?.["Type"] ?? "";
+
+          const text = node
+            .findChildren((n) => n.type === "TEXT")
+            .reduce(
+              (acc, v) => (v.type === "TEXT" ? acc + v.characters : acc),
+              ""
+            );
+
+          content = `<${node.name} theme={theme} ${
+            buttonKind === undefined ? "" : `kind="${buttonKind}"`
+          } text={${
+            text !== undefined && text !== ""
+              ? `translations[userLocale.userLanguage].${toLowercaseFirstLetterCamelCase(
+                  text
+                )}`
+              : ""
+          }} onPress={()=>undefined}/>`;
+        } else {
+          console.log("component", node.name);
+
+          const nodeName = node.name;
+          content = `<${
+            nodeName.charAt(0).toUpperCase() + nodeName.slice(1)
+          } appAppearanceCtx={appAppearanceCtx} />`;
+        }
+      } else {
+        console.log("others", node.name, node.type);
+        content = `<>${node.name}, ${node.type}</>`;
+      }
+
+      return acc + content;
+    }
+  };
+
+  return recurse(node, acc, localCollections, firstElement);
 };
 
 const getTextKind = (node: TextNode): string | undefined => {

@@ -31,8 +31,10 @@ figma.ui.onmessage = async (msg: { type: string; count: number }) => {
         const modeName = modes[i].name;
         str += `const i18n_${modeName} = {`;
 
-        i18nCollection.variableIds.map((translationKey) => {
-          const variable = figma.variables.getVariableById(translationKey);
+        for (const translationKey of i18nCollection.variableIds) {
+          const variable = await figma.variables.getVariableByIdAsync(
+            translationKey
+          );
           if (variable === null) {
             console.warn(`Variable with id ${translationKey} not found.`);
             return;
@@ -44,55 +46,49 @@ figma.ui.onmessage = async (msg: { type: string; count: number }) => {
               variable.valuesByMode[modes[i].modeId] ?? "i18n.TODO_TRANSLATE"
             }",`;
           }
-        });
+        }
+
         str += "};\n";
       }
     }
 
     figma.ui.postMessage(str);
   } else if (msg.type === "assignTranslationVariables") {
-    figma.variables
-      .getLocalVariableCollectionsAsync()
-      .then((localCollections) => {
-        const i18nCollection = localCollections.find((c) => c.name === "i18n");
-        console.log({ i18nCollection });
+    const localCollections =
+      await figma.variables.getLocalVariableCollectionsAsync();
 
-        if (i18nCollection === undefined) {
-          return figma.ui.postMessage("No i18nCollection found.");
-        } else {
-          for (const node of figma.currentPage.selection) {
-            if (node.type === "TEXT") {
-              const layerName = node.name;
+    const i18nCollection = localCollections.find((c) => c.name === "i18n");
+    console.log({ i18nCollection });
 
-              let variable: Variable | undefined = undefined;
+    if (i18nCollection === undefined) {
+      return figma.ui.postMessage("No i18nCollection found.");
+    } else {
+      for (const node of figma.currentPage.selection) {
+        if (node.type === "TEXT") {
+          const layerName = node.name;
 
-              for (const variableId of i18nCollection.variableIds) {
-                const v = figma.variables.getVariableById(variableId);
-                if (v?.name === layerName) {
-                  variable = v;
-                  break;
-                }
-              }
+          let variable: Variable | undefined = undefined;
 
-              if (variable === undefined) {
-                figma.ui.postMessage(
-                  `layer name does not match any variable in i18n collection, please check the layer name: ${layerName}`
-                );
-              } else {
-                console.log({ variable });
-                node.setBoundVariable("characters", variable);
-                console.log({ nodeAfter: node, variable });
-                figma.ui.postMessage(
-                  "successfully assigned translation variables"
-                );
-              }
+          for (const variableId of i18nCollection.variableIds) {
+            const v = await figma.variables.getVariableByIdAsync(variableId);
+            if (v?.name === layerName) {
+              variable = v;
+              break;
             }
           }
+
+          if (variable === undefined) {
+            figma.ui.postMessage(
+              `layer name does not match any variable in i18n collection, please check the layer name: ${layerName}`
+            );
+          } else {
+            console.log({ variable });
+            node.setBoundVariable("characters", variable);
+            console.log({ nodeAfter: node, variable });
+            figma.ui.postMessage("successfully assigned translation variables");
+          }
         }
-      })
-      .catch((error) => {
-        console.error("Error assigning translation variables:", error);
-        figma.ui.postMessage("Error assigning translation variables");
-      });
+      }
+    }
   }
 };
