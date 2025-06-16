@@ -1,7 +1,7 @@
 // This plugin will open a window to prompt the user to enter a number, and
 // it will then create that many rectangles on the screen.
 
-import { findOrCreateCollection, modeName } from "./helper";
+import { findOrCreateCollection, generateTemplateFn, modeName } from "./helper";
 
 // This file holds the main code for plugins. Code in this file has access to
 // the *figma document* via the figma global object.
@@ -56,10 +56,10 @@ figma.ui.onmessage = async (msg: Message) => {
           } else {
             const name = variable.name;
 
-            // const value = variable.valuesByMode;
-            str += `"${name}": "${
-              variable.valuesByMode[modes[i].modeId] ?? "i18n.TODO_TRANSLATE"
-            }",`;
+            const value =
+              variable.valuesByMode[modes[i].modeId] ?? "i18n.TODO_TRANSLATE";
+
+            str += `"${name}": "${generateTemplateFn(value.toString())}",`;
           }
         }
 
@@ -122,7 +122,7 @@ figma.ui.onmessage = async (msg: Message) => {
         : i18nCollection.modes[1].modeId;
 
     for (const node of figma.currentPage.selection) {
-      if (node.type === "TEXT" && node.name.startsWith("#")) {
+      if (node.type === "TEXT" && node.visible && node.name.startsWith("#")) {
         const layerName = node.name.substring(1); // Remove the leading '#'
         const nodeText = node.characters;
 
@@ -167,6 +167,7 @@ figma.ui.onmessage = async (msg: Message) => {
               `layer name already exists in i18n collection, replace with: ${variableValue}`
             );
           } else {
+            node.setBoundVariable("characters", variable);
             figma.ui.postMessage(
               `layer name already exists in i18n collection, no changes made: ${layerName}`
             );
