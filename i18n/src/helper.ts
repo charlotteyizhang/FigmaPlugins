@@ -50,5 +50,5 @@ export const generateTemplateFn = (input: string): string => {
 
   return matchStr !== input
     ? "(" + params.join(",") + ")=>" + "`" + matchStr + "`"
-    : input;
+    : `"${input}"`;
 };

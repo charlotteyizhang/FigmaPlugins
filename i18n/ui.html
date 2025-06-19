@@ -131,7 +131,6 @@
 <body>
   <div class="container">
     <button class="button marginTop" id="generateTranslationVariables">Generate i18n and Copy to code</button>
-    <button class="button marginTop" id="assignTranslationVariables">Assign variables to renamed layers</button>
     <div class="divider"></div>
     <form id="createVariables" class="container marginTop">
       <label>
@@ -158,9 +157,7 @@
 document.getElementById('generateTranslationVariables').onclick = () => {
   parent.postMessage({ pluginMessage: { type: "generateTranslationVariables", } }, '*')
 }
-document.getElementById('assignTranslationVariables').onclick = () => {
-  parent.postMessage({ pluginMessage: { type: "assignTranslationVariables", } }, '*')
-}
+
 
 document.getElementById('createVariables').onsubmit = (el) => {
   el.preventDefault();

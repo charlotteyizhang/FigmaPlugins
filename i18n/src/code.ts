@@ -54,12 +54,12 @@ figma.ui.onmessage = async (msg: Message) => {
             console.warn(`Variable with id ${translationKey} not found.`);
             return;
           } else {
-            const name = variable.name;
+            const name = variable.name.replace(/\//g, "_");
 
             const value =
               variable.valuesByMode[modes[i].modeId] ?? "i18n.TODO_TRANSLATE";
 
-            str += `"${name}": "${generateTemplateFn(value.toString())}",`;
+            str += `"${name}": ${generateTemplateFn(value.toString())},`;
           }
         }
 
@@ -68,42 +68,6 @@ figma.ui.onmessage = async (msg: Message) => {
     }
 
     figma.ui.postMessage(str);
-  } else if (msg.type === "assignTranslationVariables") {
-    const localCollections =
-      await figma.variables.getLocalVariableCollectionsAsync();
-
-    const i18nCollection = localCollections.find((c) => c.name === "i18n");
-    console.log({ i18nCollection });
-
-    if (i18nCollection === undefined) {
-      return figma.ui.postMessage("No i18nCollection found.");
-    } else {
-      for (const node of figma.currentPage.selection) {
-        if (node.type === "TEXT" && node.name.startsWith("#")) {
-          const layerName = node.name.substring(1); // Remove the leading '#'
-          let variable: Variable | undefined = undefined;
-
-          for (const variableId of i18nCollection.variableIds) {
-            const v = await figma.variables.getVariableByIdAsync(variableId);
-            if (v?.name === layerName) {
-              variable = v;
-              break;
-            }
-          }
-
-          if (variable === undefined) {
-            figma.ui.postMessage(
-              `layer name does not match any variable in i18n collection, please check the layer name: ${layerName}`
-            );
-          } else {
-            console.log({ variable });
-            node.setBoundVariable("characters", variable);
-            console.log({ nodeAfter: node, variable });
-            figma.ui.postMessage("successfully assigned translation variables");
-          }
-        }
-      }
-    }
   } else if (msg.type === "createVariables") {
     const targetName = "i18n";
     const localCollections =
@@ -164,12 +128,12 @@ figma.ui.onmessage = async (msg: Message) => {
             variable.setValueForMode(targetModeId, nodeText);
             node.setBoundVariable("characters", variable);
             figma.ui.postMessage(
-              `layer name already exists in i18n collection, replace with: ${variableValue}`
+              `layer name already exists in i18n collection, replaced ${variableValue} with ${nodeText}`
             );
           } else {
             node.setBoundVariable("characters", variable);
             figma.ui.postMessage(
-              `layer name already exists in i18n collection, no changes made: ${layerName}`
+              `layer name already exists in i18n collection, associated to: ${layerName}`
             );
           }
         }
