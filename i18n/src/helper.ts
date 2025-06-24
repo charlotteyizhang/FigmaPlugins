@@ -20,7 +20,7 @@ export type Mode = keyof typeof modeName;
 
 const patterns = [
   {
-    paramName: "n",
+    paramName: "number+unit",
     displayVariableName: "unit",
     p: /\b\d+(?:\.\d+)?\s?(?:w|wh|kwh|kw|%)\b/i,
   }, // number + unit
@@ -46,6 +46,26 @@ export const generateTemplateFn = (input: string): string => {
       params.push(displayName + ":string");
       matchStr = replaced;
     }
+  }
+
+  return matchStr !== input
+    ? "(" + params.join(",") + ")=>" + "`" + matchStr + "`"
+    : `"${input}"`;
+};
+
+export const generateErrorTemplateFn = (input: string): string => {
+  let matchStr = input;
+
+  const params: Array<string> = [];
+  const displayName = "statusCode";
+
+  const match = input.match(/\b\d+(\.\d+)?\b/);
+  console.log({ match });
+
+  if (match) {
+    const replaced = input.replace(match[0], "${" + displayName + "}");
+    params.push(displayName + ":number");
+    matchStr = replaced;
   }
 
   return matchStr !== input

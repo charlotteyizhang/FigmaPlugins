@@ -1,7 +1,12 @@
 // This plugin will open a window to prompt the user to enter a number, and
 // it will then create that many rectangles on the screen.
 
-import { findOrCreateCollection, generateTemplateFn, modeName } from "./helper";
+import {
+  findOrCreateCollection,
+  generateErrorTemplateFn,
+  generateTemplateFn,
+  modeName,
+} from "./helper";
 
 // This file holds the main code for plugins. Code in this file has access to
 // the *figma document* via the figma global object.
@@ -59,7 +64,11 @@ figma.ui.onmessage = async (msg: Message) => {
             const value =
               variable.valuesByMode[modes[i].modeId] ?? "i18n.TODO_TRANSLATE";
 
-            str += `"${name}": ${generateTemplateFn(value.toString())},`;
+            if (variable.name.includes("error")) {
+              str += `"${name}": ${generateErrorTemplateFn(value.toString())},`;
+            } else {
+              str += `"${name}": ${generateTemplateFn(value.toString())},`;
+            }
           }
         }
 
