@@ -23,15 +23,15 @@ figma.showUI(__html__, { width: 500, height: 600 });
 interface Generate {
   type: "generateTranslationVariables";
 }
-interface Assign {
-  type: "assignTranslationVariables";
+interface Rename {
+  type: "renameLayersToVariableName";
 }
 interface Create {
   type: "createVariables";
   language: "en" | "ja";
 }
 
-type Message = Generate | Assign | Create;
+type Message = Generate | Rename | Create;
 figma.ui.onmessage = async (msg: Message) => {
   // One way of distinguishing between different types of messages sent from
   // your HTML page is to use an object with a "type" property like this.
@@ -77,6 +77,58 @@ figma.ui.onmessage = async (msg: Message) => {
     }
 
     figma.ui.postMessage(str);
+  } else if (msg.type === "renameLayersToVariableName") {
+    const localCollections =
+      await figma.variables.getLocalVariableCollectionsAsync();
+
+    const i18nCollection = localCollections.find((c) => c.name === "i18n");
+    console.log({ i18nCollection });
+
+    if (i18nCollection === undefined) {
+      return figma.ui.postMessage("No i18nCollection found.");
+    } else {
+      for (const node of figma.currentPage.selection) {
+        if (node.type === "TEXT") {
+          const boundVariableCharacter = node.boundVariables?.characters;
+
+          if (boundVariableCharacter !== undefined) {
+            const variable = await figma.variables.getVariableByIdAsync(
+              boundVariableCharacter.id
+            );
+            if (variable !== null) {
+              const variableName = `#${variable.name}`;
+              node.name = variableName;
+              figma.ui.postMessage(
+                `successfully renamed layer to ${variableName} `
+              );
+            } else {
+              figma.ui.postMessage(
+                `bound variable not found for layer ${node.name}, skipping rename`
+              );
+            }
+          } else {
+            const inferredVariables = node.inferredVariables?.characters;
+            const variableId =
+              inferredVariables !== undefined && inferredVariables.length > 0
+                ? (await figma.variables.getVariableByIdAsync(
+                    inferredVariables[0].id
+                  )) ?? undefined
+                : undefined;
+            if (variableId !== undefined) {
+              const variableName = `#${variableId.name}`;
+              node.name = variableName;
+              figma.ui.postMessage(
+                `successfully renamed layer to ${variableName} `
+              );
+            } else {
+              figma.ui.postMessage(
+                `no variable found for layer ${node.name}, skipping rename`
+              );
+            }
+          }
+        }
+      }
+    }
   } else if (msg.type === "createVariables") {
     const targetName = "i18n";
     const localCollections =

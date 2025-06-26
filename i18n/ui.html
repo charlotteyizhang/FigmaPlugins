@@ -131,6 +131,7 @@
 <body>
   <div class="container">
     <button class="button marginTop" id="generateTranslationVariables">Generate i18n and Copy to code</button>
+    <button class="button clear marginTop" id="renameLayersToVariableName">Rename layers to linked variable name</button>
     <div class="divider"></div>
     <form id="createVariables" class="container marginTop">
       <label>
@@ -158,6 +159,10 @@ document.getElementById('generateTranslationVariables').onclick = () => {
   parent.postMessage({ pluginMessage: { type: "generateTranslationVariables", } }, '*')
 }
 
+document.getElementById('renameLayersToVariableName').onclick = () => {
+  parent.postMessage({ pluginMessage: { type: "renameLayersToVariableName", } }, '*')
+}
+
 
 document.getElementById('createVariables').onsubmit = (el) => {
   el.preventDefault();
@@ -165,9 +170,6 @@ document.getElementById('createVariables').onsubmit = (el) => {
   parent.postMessage({ pluginMessage: { type: "createVariables", language: selectedLanguage,  } }, '*')
 }
 
-document.getElementById('clear').onclick = () => {
-  codebox.innerText=""
-}
 
 
 const codebox = document.getElementById('code');
