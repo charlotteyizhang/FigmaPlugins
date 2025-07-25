@@ -18,12 +18,25 @@ interface Generate {
 interface GenerateTextEN {
   type: "generateTextEN";
 }
-interface addSpacing {
+interface AddSpacing {
   type: "addSpacing";
-  spacing: string | undefined;
+  value: string | undefined;
+}
+interface AddBorderRadius {
+  type: "addBorderRadius";
+  value: string | undefined;
+}
+interface AddIconSize {
+  type: "addIconSize";
+  value: string | undefined;
 }
 
-type Message = Generate | GenerateTextEN | addSpacing;
+type Message =
+  | Generate
+  | GenerateTextEN
+  | AddSpacing
+  | AddBorderRadius
+  | AddIconSize;
 
 figma.ui.onmessage = async (msg: Message) => {
   // One way of distinguishing between different types of messages sent from
@@ -73,14 +86,18 @@ figma.ui.onmessage = async (msg: Message) => {
           lunarSpacingKey
         );
 
-      if (msg.spacing === undefined) {
-        figma.ui.postMessage({ data: variables, kind: "variables" });
+      if (msg.value === undefined) {
+        figma.ui.postMessage({
+          data: variables,
+          type: msg.type,
+          kind: "variables",
+        });
       } else {
-        const spacingVariable = variables.find((v) => v.key === msg.spacing);
+        const spacingVariable = variables.find((v) => v.key === msg.value);
 
         if (spacingVariable === undefined) {
           figma.ui.postMessage({
-            data: `Spacing variable "${msg.spacing}" not found.`,
+            data: `Spacing variable "${msg.value}" not found.`,
             kind: "msg",
           });
         } else {
@@ -91,6 +108,115 @@ figma.ui.onmessage = async (msg: Message) => {
               node.setBoundVariable("itemSpacing", importedVariable);
             }
           }
+        }
+      }
+    }
+  } else if (msg.type === "addBorderRadius") {
+    const libraryCollections =
+      await figma.teamLibrary.getAvailableLibraryVariableCollectionsAsync();
+
+    const lunarBorderRadius = libraryCollections.find(
+      (c) => c.name === "borderRadius"
+    );
+
+    const lunarBorderRadiusKey = lunarBorderRadius?.key;
+
+    if (lunarBorderRadiusKey === undefined) {
+      figma.ui.postMessage({
+        data: "Lunar Design System Border Radius collection not found.",
+        kind: "msg",
+      });
+    } else {
+      const variables =
+        await figma.teamLibrary.getVariablesInLibraryCollectionAsync(
+          lunarBorderRadiusKey
+        );
+
+      if (msg.value === undefined) {
+        figma.ui.postMessage({
+          data: variables,
+          type: msg.type,
+          kind: "variables",
+        });
+      } else {
+        const borderRadiusVariable = variables.find((v) => v.key === msg.value);
+
+        if (borderRadiusVariable === undefined) {
+          console.log({ variables });
+
+          figma.ui.postMessage({
+            data: `Border Radius variable "${msg.value}" not found.`,
+            kind: "msg",
+          });
+        } else {
+          const importedVariable =
+            await figma.variables.importVariableByKeyAsync(
+              borderRadiusVariable.key
+            );
+          for (const node of figma.currentPage.selection) {
+            node.setBoundVariable("topLeftRadius", importedVariable);
+            node.setBoundVariable("topRightRadius", importedVariable);
+            node.setBoundVariable("bottomRightRadius", importedVariable);
+            node.setBoundVariable("bottomLeftRadius", importedVariable);
+          }
+          figma.ui.postMessage({
+            data: `Border Radius variable "${msg.value}" is set.`,
+            kind: "msg",
+          });
+        }
+      }
+    }
+  } else if (msg.type === "addIconSize") {
+    const libraryCollections =
+      await figma.teamLibrary.getAvailableLibraryVariableCollectionsAsync();
+
+    console.log({ libraryCollections });
+    const lunarIconSize = libraryCollections.find(
+      (c) => c.name === "iconSizes"
+    );
+
+    const lunarIconSizeKey = lunarIconSize?.key;
+
+    if (lunarIconSizeKey === undefined) {
+      figma.ui.postMessage({
+        data: "Lunar Design System Icon Size collection not found.",
+        kind: "msg",
+      });
+    } else {
+      const variables =
+        await figma.teamLibrary.getVariablesInLibraryCollectionAsync(
+          lunarIconSizeKey
+        );
+
+      if (msg.value === undefined) {
+        figma.ui.postMessage({
+          data: variables,
+          type: msg.type,
+          kind: "variables",
+        });
+      } else {
+        const iconSizeVariable = variables.find((v) => v.key === msg.value);
+
+        if (iconSizeVariable === undefined) {
+          console.log({ variables });
+
+          figma.ui.postMessage({
+            data: `Icon Size variable "${msg.value}" not found.`,
+            kind: "msg",
+          });
+        } else {
+          const importedVariable =
+            await figma.variables.importVariableByKeyAsync(
+              iconSizeVariable.key
+            );
+          for (const node of figma.currentPage.selection) {
+            node.setBoundVariable("width", importedVariable);
+            node.setBoundVariable("height", importedVariable);
+          }
+          figma.ui.postMessage({
+            data: `Icon Size variable "${msg.value}" is set.`,
+            kind: "msg",
+          });
         }
       }
     }

@@ -122,6 +122,44 @@
     display: flex;
     flex-direction: column;
   }
+  .radio-group {
+    display: flex;
+    gap: 2px;
+    margin-top: 2px;
+    font: 600 14px "PingFang SC";
+  }
+
+  .radio-card {
+    position: relative;
+    border: 2px solid #5477c8;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: border 0.2s ease, background 0.2s ease;
+    min-width: 100px;
+    text-align: center;
+  }
+
+  .radio-card input[type="radio"] {
+    opacity: 0;
+    position: absolute;
+    pointer-events: none;
+  }
+
+  .radio-card label {
+    display: block;
+    cursor: pointer;
+    font-weight: 500;
+  }
+
+  .radio-card:hover {
+    border-color: #888;
+  }
+
+  .radio-card input[type="radio"]:checked + label {
+    border-color: #007bff;
+    background-color: #a5c4f2;
+    border-radius: 6px;
+  }
 </style>
 <h2 class="intro_cell_title">React native code creator</h2>
 <body>
@@ -130,6 +168,33 @@
     <button class="button marginTop" id="generateTextEN">
       Generate text EN
     </button>
+    <form class="marginTop" id="property-form">
+      <div class="radio-group">
+        <div class="radio-card">
+          <input
+            type="radio"
+            id="spacing"
+            name="property"
+            value="spacing"
+            checked
+          />
+          <label for="spacing">Spacing</label>
+        </div>
+        <div class="radio-card">
+          <input
+            type="radio"
+            id="borderRadius"
+            name="property"
+            value="borderRadius"
+          />
+          <label for="borderRadius">Border Radius</label>
+        </div>
+        <div class="radio-card">
+          <input type="radio" id="iconSize" name="property" value="iconSize" />
+          <label for="iconSize">Icon Size</label>
+        </div>
+      </div>
+    </form>
     <div id="buttons" />
   </div>
   <p class="marginTop" id="code"></p>
@@ -145,6 +210,41 @@
   };
   document.getElementById("generateTextEN").onclick = () => {
     parent.postMessage({ pluginMessage: { type: "generateTextEN" } }, "*");
+  };
+
+  const radios = document.querySelectorAll('input[name="property"]');
+
+  radios.forEach((radio) => {
+    radio.addEventListener("onClick", function () {
+      if (!this.checked) {
+        this.checked = true;
+      }
+    });
+    radio.addEventListener("change", function () {
+      if (this.checked) {
+        console.log("Changed to:", this.value);
+        const pluginMessage =
+          this.value === "spacing"
+            ? { type: "addSpacing", value: undefined }
+            : this.value === "borderRadius"
+            ? { type: "addBorderRadius", value: undefined }
+            : { type: "addIconSize", value: undefined };
+
+        parent.postMessage(
+          {
+            pluginMessage,
+          },
+          "*"
+        );
+      }
+    });
+  });
+
+  document.getElementById("property-form").onsubmit = (event) => {
+    event.preventDefault();
+    const selectedProperty = document.querySelector(
+      'input[name="property"]:checked'
+    ).value;
   };
 
   document.getElementById("clear").onclick = () => {
@@ -165,7 +265,12 @@
       copyInput.select();
       document.execCommand("copy");
     } else if (pluginMessage.kind === "variables") {
+      console.log("Received variables:", pluginMessage.data);
       const container = document.getElementById("buttons");
+      container.innerHTML = ""; // Clear previous buttons
+
+      const type = pluginMessage.type;
+      console.log(type);
 
       pluginMessage.data.forEach((token) => {
         const btn = document.createElement("button");
@@ -173,7 +278,7 @@
         btn.className = "button pink marginTop";
         btn.onclick = () => {
           parent.postMessage(
-            { pluginMessage: { type: "addSpacing", spacing: token.key } },
+            { pluginMessage: { type, value: token.key } },
             "*"
           );
         };
