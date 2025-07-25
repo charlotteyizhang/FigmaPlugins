@@ -115,7 +115,7 @@ const getChildrenView = (
     } else {
       let content = "";
       if (node.type === "TEXT") {
-        content = getTextKind(node) ?? "";
+        content = (await getTextKind(node)) ?? "";
       } else if (node.type === "INSTANCE" || node.type === "COMPONENT") {
         if (hasIconWord(node.name)) {
           content = `<Icon color={textColors[theme].default} icon="${replaceIconWord(
@@ -160,10 +160,11 @@ const getChildrenView = (
   return recurse(node, acc, localCollections, firstElement);
 };
 
-const getTextKind = (node: TextNode): string | undefined => {
+const getTextKind = async (node: TextNode): Promise<string | undefined> => {
   const styleId = node.textStyleId;
 
-  const textKind = figma.getStyleById(`${styleId as string}`)?.name;
+  const figmaStyle = await figma.getStyleByIdAsync(`${styleId as string}`);
+  const textKind = figmaStyle?.name;
   const nodeColorIds = node.boundVariables?.fills;
 
   const colorName =
@@ -251,15 +252,24 @@ const replaceIconWord = (text: string): string => {
   const regex = /icon\//gi;
   return text.replace(regex, "");
 };
-const getIconSize = (node: SceneNode): string => {
+const getIconSize = async (node: SceneNode): Promise<string> => {
   const nodeWidthId = node.boundVariables?.width?.id;
 
-  const size =
-    nodeWidthId !== undefined
-      ? figma.variables.getVariableById(nodeWidthId)?.name
-      : "default";
+  if (nodeWidthId === undefined) {
+    return "iconSizes.default";
+  } else {
+    const sizeVariable = await figma.variables.getVariableByIdAsync(
+      nodeWidthId
+    );
 
-  return `iconSizes.${size}`;
+    const sizeName = sizeVariable?.name;
+    if (sizeName === undefined) {
+      console.warn("sizeName===undefined");
+      return "iconSizes.default";
+    } else {
+      return `iconSizes.${sizeName}`;
+    }
+  }
 };
 
 const getText = (node: TextNode, str: string, isEn: boolean): string => {
