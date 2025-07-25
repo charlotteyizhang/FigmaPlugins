@@ -12,7 +12,20 @@ figma.showUI(__html__, { width: 400, height: 600 });
 // callback. The callback will be passed the "pluginMessage" property of the
 // posted message.
 
-figma.ui.onmessage = async (msg) => {
+interface Generate {
+  type: "generate";
+}
+interface GenerateTextEN {
+  type: "generateTextEN";
+}
+interface addSpacing {
+  type: "addSpacing";
+  spacing: string | undefined;
+}
+
+type Message = Generate | GenerateTextEN | addSpacing;
+
+figma.ui.onmessage = async (msg: Message) => {
   // One way of distinguishing between different types of messages sent from
   // your HTML page is to use an object with a "type" property like this.
   if (msg.type === "generate") {
@@ -25,17 +38,62 @@ figma.ui.onmessage = async (msg) => {
       str += await getChildrenView(node, str, localCollections, true);
     }
 
-    figma.ui.postMessage(str);
-  } else if (msg.type === "generateTextEN" || msg.type === "generateTextTODO") {
-    const isEn = msg.type === "generateTextEN";
+    figma.ui.postMessage({
+      data: str,
+      kind: "msg",
+    });
+  } else if (msg.type === "generateTextEN") {
     let str = "";
     for (const node of figma.currentPage.selection) {
       if (node.type === "TEXT") {
-        str += getText(node, str, isEn);
+        str += getText(node, str, true);
       }
     }
 
-    figma.ui.postMessage(str);
+    figma.ui.postMessage({
+      data: str,
+      kind: "msg",
+    });
+  } else if (msg.type === "addSpacing") {
+    const libraryCollections =
+      await figma.teamLibrary.getAvailableLibraryVariableCollectionsAsync();
+
+    const lunarSpacing = libraryCollections.find((c) => c.name === "spacing");
+
+    const lunarSpacingKey = lunarSpacing?.key;
+
+    if (lunarSpacingKey === undefined) {
+      figma.ui.postMessage({
+        data: "Lunar Design System Spacing collection not found.",
+        kind: "msg",
+      });
+    } else {
+      const variables =
+        await figma.teamLibrary.getVariablesInLibraryCollectionAsync(
+          lunarSpacingKey
+        );
+
+      if (msg.spacing === undefined) {
+        figma.ui.postMessage({ data: variables, kind: "variables" });
+      } else {
+        const spacingVariable = variables.find((v) => v.key === msg.spacing);
+
+        if (spacingVariable === undefined) {
+          figma.ui.postMessage({
+            data: `Spacing variable "${msg.spacing}" not found.`,
+            kind: "msg",
+          });
+        } else {
+          const importedVariable =
+            await figma.variables.importVariableByKeyAsync(spacingVariable.key);
+          for (const node of figma.currentPage.selection) {
+            if (node.type === "FRAME") {
+              node.setBoundVariable("itemSpacing", importedVariable);
+            }
+          }
+        }
+      }
+    }
   }
   // Make sure to close the plugin when you're done. Otherwise the plugin will
   // keep running, which shows the cancel button at the bottom of the screen.

@@ -13,7 +13,7 @@
   }
 
   .secetion_title {
-    font: 600 16px/22px 'PingFang SC';
+    font: 600 16px/22px "PingFang SC";
     color: #000000;
     margin-bottom: 8px;
   }
@@ -22,7 +22,7 @@
     padding: 12px 8px;
     left: 0px;
     top: 30px;
-    background: #F5F5F5;
+    background: #f5f5f5;
     border-radius: 4px;
   }
 
@@ -31,12 +31,12 @@
   }
 
   .intro_cell_title {
-    font: 600 14px 'PingFang SC';
+    font: 600 14px "PingFang SC";
     color: #999;
   }
 
   .intro_cell_content {
-    font: 400 12px 'PingFang SC';
+    font: 400 12px "PingFang SC";
     color: #999;
     margin-top: 4px;
   }
@@ -51,10 +51,10 @@
 
     padding: 6px 12px;
 
-    background: #FFFFFF;
-    border: 1px solid #E6E6E6;
+    background: #ffffff;
+    border: 1px solid #e6e6e6;
 
-    font: 400 14px/20px 'PingFang SC';
+    font: 400 14px/20px "PingFang SC";
 
     color: #000000;
 
@@ -73,9 +73,9 @@
     margin-left: -1px;
     padding: 8px 12px 7px;
 
-    background: #F5F5F5;
-    border: 1px solid #E6E6E6;
-    border: 1px 12px/18px solid #E6E6E6;
+    background: #f5f5f5;
+    border: 1px solid #e6e6e6;
+    border: 1px 12px/18px solid #e6e6e6;
   }
 
   .trangle {
@@ -89,20 +89,29 @@
   .button {
     width: 276px;
     height: 32px;
-    background: #0099FF;
+    background: #0099ff;
     border-radius: 4px;
     border-width: 0px;
-    color: #FFFFFF;
-    &:hover{
+    color: #ffffff;
+    &:hover {
       background: #264d74;
       cursor: pointer;
     }
   }
+  .pink {
+    width: 100px;
+    margin: 4px;
+    background: #a44c87;
+    &:hover {
+      background: #5a1c3f;
+      cursor: pointer;
+    }
+  }
   .clear {
-    background: #3F51CF;
-    
-    &:hover{
-      background: #26317F;
+    background: #3f51cf;
+
+    &:hover {
+      background: #26317f;
       cursor: pointer;
     }
   }
@@ -118,50 +127,58 @@
 <body>
   <div class="container">
     <button class="button marginTop" id="create">Create</button>
-    <button class="button marginTop" id="generateTextEN">Generate text EN</button>
-    <button class="button marginTop" id="generateTextTODO">Generate text TODO</button>
+    <button class="button marginTop" id="generateTextEN">
+      Generate text EN
+    </button>
+    <div id="buttons" />
   </div>
   <p class="marginTop" id="code"></p>
-  <input style="opacity: 0;" type="text" id="copy"></input>
+  <input style="opacity: 0" type="text" id="copy" />
   <button class="button clear marginTop" id="clear">Clear</button>
 </body>
 
-
-
 <script>
+  parent.postMessage({ pluginMessage: { type: "addSpacing" } }, "*");
 
-document.getElementById('create').onclick = () => {
-  parent.postMessage({ pluginMessage: { type: "generate", } }, '*')
-}
-document.getElementById('generateTextEN').onclick = () => {
-  parent.postMessage({ pluginMessage: { type: "generateTextEN", } }, '*')
-}
-document.getElementById('generateTextTODO').onclick = () => {
-  parent.postMessage({ pluginMessage: { type: "generateTextTODO", } }, '*')
-}
+  document.getElementById("create").onclick = () => {
+    parent.postMessage({ pluginMessage: { type: "generate" } }, "*");
+  };
+  document.getElementById("generateTextEN").onclick = () => {
+    parent.postMessage({ pluginMessage: { type: "generateTextEN" } }, "*");
+  };
 
-document.getElementById('clear').onclick = () => {
-  codebox.innerText=""
-}
+  document.getElementById("clear").onclick = () => {
+    codebox.innerText = "";
+  };
 
+  const codebox = document.getElementById("code");
+  const sign = document.getElementById("sign");
 
-const codebox = document.getElementById('code');
-const sign = document.getElementById('sign')
+  onmessage = (event) => {
+    const pluginMessage = event.data.pluginMessage;
+    if (pluginMessage.kind === "msg") {
+      const reactStr = event.data.pluginMessage.data;
+      codebox.innerText = reactStr;
 
-onmessage = (event)=>{
-  const reactStr =  event.data.pluginMessage
-  codebox.innerText=reactStr
+      const copyInput = document.getElementById("copy");
+      copyInput.value = reactStr;
+      copyInput.select();
+      document.execCommand("copy");
+    } else if (pluginMessage.kind === "variables") {
+      const container = document.getElementById("buttons");
 
-  const copyInput = document.getElementById("copy")
-  copyInput.value = reactStr
-  copyInput.select()
-  document.execCommand("copy")
-
-
-  
-}
-
+      pluginMessage.data.forEach((token) => {
+        const btn = document.createElement("button");
+        btn.textContent = token.name;
+        btn.className = "button pink marginTop";
+        btn.onclick = () => {
+          parent.postMessage(
+            { pluginMessage: { type: "addSpacing", spacing: token.key } },
+            "*"
+          );
+        };
+        container.appendChild(btn);
+      });
+    }
+  };
 </script>
-
-
-
