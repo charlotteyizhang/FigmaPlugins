@@ -160,6 +160,10 @@
     background-color: #a5c4f2;
     border-radius: 6px;
   }
+  .wrap {
+    display: flex;
+    flex-wrap: wrap;
+  }
 </style>
 <h2 class="intro_cell_title">React native code creator</h2>
 <body>
@@ -169,7 +173,7 @@
       Generate text EN
     </button>
     <form class="marginTop" id="property-form">
-      <div class="radio-group">
+      <div class="radio-group wrap">
         <div class="radio-card">
           <input
             type="radio"
@@ -178,7 +182,27 @@
             value="spacing"
             checked
           />
-          <label for="spacing">Spacing</label>
+          <label for="spacing">Gap</label>
+        </div>
+        <div class="radio-card">
+          <input
+            type="radio"
+            id="horizontalPadding"
+            name="property"
+            value="horizontalPadding"
+            checked
+          />
+          <label for="horizontalPadding">Horizontal Padding</label>
+        </div>
+        <div class="radio-card">
+          <input
+            type="radio"
+            id="verticalPadding"
+            name="property"
+            value="verticalPadding"
+            checked
+          />
+          <label for="verticalPadding">Vertical Padding</label>
         </div>
         <div class="radio-card">
           <input
@@ -226,6 +250,10 @@
         const pluginMessage =
           this.value === "spacing"
             ? { type: "addSpacing", value: undefined }
+            : this.value === "verticalPadding"
+            ? { type: "addVerticalPadding", value: undefined }
+            : this.value === "horizontalPadding"
+            ? { type: "addHorizontalPadding", value: undefined }
             : this.value === "borderRadius"
             ? { type: "addBorderRadius", value: undefined }
             : { type: "addIconSize", value: undefined };

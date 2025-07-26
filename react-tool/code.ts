@@ -22,6 +22,14 @@ interface AddSpacing {
   type: "addSpacing";
   value: string | undefined;
 }
+interface AddVerticalPadding {
+  type: "addVerticalPadding";
+  value: string | undefined;
+}
+interface AddHorizontalPadding {
+  type: "addHorizontalPadding";
+  value: string | undefined;
+}
 interface AddBorderRadius {
   type: "addBorderRadius";
   value: string | undefined;
@@ -35,6 +43,8 @@ type Message =
   | Generate
   | GenerateTextEN
   | AddSpacing
+  | AddVerticalPadding
+  | AddHorizontalPadding
   | AddBorderRadius
   | AddIconSize;
 
@@ -67,7 +77,11 @@ figma.ui.onmessage = async (msg: Message) => {
       data: str,
       kind: "msg",
     });
-  } else if (msg.type === "addSpacing") {
+  } else if (
+    msg.type === "addSpacing" ||
+    msg.type === "addVerticalPadding" ||
+    msg.type === "addHorizontalPadding"
+  ) {
     const libraryCollections =
       await figma.teamLibrary.getAvailableLibraryVariableCollectionsAsync();
 
@@ -103,9 +117,23 @@ figma.ui.onmessage = async (msg: Message) => {
         } else {
           const importedVariable =
             await figma.variables.importVariableByKeyAsync(spacingVariable.key);
-          for (const node of figma.currentPage.selection) {
-            if (node.type === "FRAME") {
-              node.setBoundVariable("itemSpacing", importedVariable);
+          if (msg.type === "addSpacing") {
+            for (const node of figma.currentPage.selection) {
+              if (node.type === "FRAME" || node.type === "COMPONENT") {
+                node.setBoundVariable("itemSpacing", importedVariable);
+              }
+            }
+          } else {
+            for (const node of figma.currentPage.selection) {
+              if (node.type === "FRAME" || node.type === "COMPONENT") {
+                if (msg.type === "addHorizontalPadding") {
+                  node.setBoundVariable("paddingLeft", importedVariable);
+                  node.setBoundVariable("paddingRight", importedVariable);
+                } else {
+                  node.setBoundVariable("paddingTop", importedVariable);
+                  node.setBoundVariable("paddingBottom", importedVariable);
+                }
+              }
             }
           }
         }
