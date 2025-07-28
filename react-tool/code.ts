@@ -170,8 +170,6 @@ figma.ui.onmessage = async (msg: Message) => {
         const borderRadiusVariable = variables.find((v) => v.key === msg.value);
 
         if (borderRadiusVariable === undefined) {
-          console.log({ variables });
-
           figma.ui.postMessage({
             data: `Border Radius variable "${msg.value}" not found.`,
             kind: "msg",
@@ -269,6 +267,7 @@ const getChildrenView = (
     if (!node.visible) {
       return acc;
     }
+
     if (node.type === "FRAME" && "children" in node) {
       const variableId = await figma.variables.getVariableByIdAsync(
         node.boundVariables?.itemSpacing?.id ?? ""
@@ -330,9 +329,11 @@ const getChildrenView = (
         content = (await getTextKind(node)) ?? "";
       } else if (node.type === "INSTANCE" || node.type === "COMPONENT") {
         if (hasIconWord(node.name)) {
+          const iconSize = await getIconSize(node);
+
           content = `<Icon color={textColors[theme].default} icon="${replaceIconWord(
             node.name
-          )}" size={${getIconSize(node)}}/>`;
+          )}" size={${iconSize ?? undefined}}/>`;
         } else if (node.name.includes("Button")) {
           const buttonKind = node.variantProperties?.["Type"] ?? "";
 
@@ -379,10 +380,13 @@ const getTextKind = async (node: TextNode): Promise<string | undefined> => {
   const textKind = figmaStyle?.name;
   const nodeColorIds = node.boundVariables?.fills;
 
-  const colorName =
-    nodeColorIds !== undefined && nodeColorIds.length > 0
-      ? figma.variables.getVariableById(nodeColorIds[0].id)?.name ?? undefined
-      : undefined;
+  let colorName: string | undefined;
+  if (nodeColorIds !== undefined && nodeColorIds.length > 0) {
+    const variable = await figma.variables.getVariableByIdAsync(
+      nodeColorIds[0].id
+    );
+    colorName = variable?.name ?? undefined;
+  }
 
   if (textKind === undefined) {
     console.warn("textKind===undefined");
@@ -475,6 +479,9 @@ const getIconSize = async (node: SceneNode): Promise<string> => {
     );
 
     const sizeName = sizeVariable?.name;
+
+    console.log({ sizeName });
+
     if (sizeName === undefined) {
       console.warn("sizeName===undefined");
       return "iconSizes.default";
