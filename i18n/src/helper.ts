@@ -22,7 +22,7 @@ const patterns = [
   {
     paramName: "number+unit",
     displayVariableName: "unit",
-    p: /\b\d+(?:\.\d+)?\s?(?:w|wh|kwh|kw|%)\b/i,
+    p: /(?:\b\d+(?:\.\d+)?\s?(?:w|wh|kwh|kw)\b|\d+(?:\.\d+)?%)/i,
   }, // number + unit
   {
     paramName: "timestamp",
@@ -38,7 +38,6 @@ export const generateTemplateFn = (input: string): string => {
 
   for (const pattern of patterns) {
     const match = input.match(pattern.p);
-    console.log({ match });
 
     if (match) {
       const displayName = pattern.displayVariableName + idx;
