@@ -13,7 +13,7 @@
   }
 
   .secetion_title {
-    font: 600 16px/22px 'PingFang SC';
+    font: 600 16px/22px "PingFang SC";
     color: #000000;
     margin-bottom: 8px;
   }
@@ -22,7 +22,7 @@
     padding: 12px 8px;
     left: 0px;
     top: 30px;
-    background: #F5F5F5;
+    background: #f5f5f5;
     border-radius: 4px;
   }
 
@@ -31,12 +31,12 @@
   }
 
   .intro_cell_title {
-    font: 600 14px 'PingFang SC';
+    font: 600 14px "PingFang SC";
     color: #999;
   }
 
   .intro_cell_content {
-    font: 400 12px 'PingFang SC';
+    font: 400 12px "PingFang SC";
     color: #999;
     margin-top: 4px;
   }
@@ -51,10 +51,10 @@
 
     padding: 6px 12px;
 
-    background: #FFFFFF;
-    border: 1px solid #E6E6E6;
+    background: #ffffff;
+    border: 1px solid #e6e6e6;
 
-    font: 400 14px/20px 'PingFang SC';
+    font: 400 14px/20px "PingFang SC";
 
     color: #000000;
 
@@ -73,9 +73,9 @@
     margin-left: -1px;
     padding: 8px 12px 7px;
 
-    background: #F5F5F5;
-    border: 1px solid #E6E6E6;
-    border: 1px 12px/18px solid #E6E6E6;
+    background: #f5f5f5;
+    border: 1px solid #e6e6e6;
+    border: 1px 12px/18px solid #e6e6e6;
   }
 
   .trangle {
@@ -89,20 +89,20 @@
   .button {
     width: 276px;
     height: 32px;
-    background: #0099FF;
+    background: #0099ff;
     border-radius: 4px;
     border-width: 0px;
-    color: #FFFFFF;
-    &:hover{
+    color: #ffffff;
+    &:hover {
       background: #264d74;
       cursor: pointer;
     }
   }
   .clear {
-    background: #3F51CF;
-    
-    &:hover{
-      background: #26317F;
+    background: #3f51cf;
+
+    &:hover {
+      background: #26317f;
       cursor: pointer;
     }
   }
@@ -119,38 +119,44 @@
 </style>
 <h2 class="intro_cell_title">Design tokens in code to variables</h2>
 <body>
-  
-    <div class="container">
-      
-      <button class="button marginTop" id="drawBaseColor">Draw base color</button>
-      <button class="button marginTop" id="drawSpacing">Draw spacing</button>
-      <button class="button marginTop" id="colorVariable">Colors.ts to variables</button>
-      <button class="button marginTop" id="spacingVariable">Spacing.ts to variables</button>
-      <button class="button marginTop" id="borderRadiusVariable">Border.ts to variables</button>
-      
-    </div>
-  
+  <div class="container">
+    <button class="button marginTop" id="drawBaseColor">Draw base color</button>
+    <button class="button marginTop" id="drawSpacing">Draw spacing</button>
+    <button class="button marginTop" id="colorVariable">
+      Colors.ts to variables
+    </button>
+    <button class="button marginTop" id="spacingVariable">
+      Spacing.ts to variables
+    </button>
+    <button class="button marginTop" id="borderRadiusVariable">
+      Border.ts to variables
+    </button>
+    <button class="button marginTop clear" id="baseColorsVariable">
+      Import baseColors to variables
+    </button>
+  </div>
 </body>
 
-
 <script>
-document.getElementById('colorVariable').onclick = (e)=> {
-  parent.postMessage({ pluginMessage: { type: 'colorToVariables' } }, '*');
-};
-document.getElementById('drawBaseColor').onclick = (e)=> {
-  parent.postMessage({ pluginMessage: { type: 'drawBaseColor' } }, '*');
-};
-document.getElementById('drawSpacing').onclick = (e)=> {
-  parent.postMessage({ pluginMessage: { type: 'drawSpacing' } }, '*');
-};
-document.getElementById('spacingVariable').onclick = (e)=> {
-  parent.postMessage({ pluginMessage: { type: 'spacingToVariables' } }, '*');
-};
-document.getElementById('borderRadiusVariable').onclick = (e)=> {
-  parent.postMessage({ pluginMessage: { type: 'borderRadiusVariable' } }, '*');
-};
-
+  document.getElementById("colorVariable").onclick = (e) => {
+    parent.postMessage({ pluginMessage: { type: "colorToVariables" } }, "*");
+  };
+  document.getElementById("drawBaseColor").onclick = (e) => {
+    parent.postMessage({ pluginMessage: { type: "drawBaseColor" } }, "*");
+  };
+  document.getElementById("drawSpacing").onclick = (e) => {
+    parent.postMessage({ pluginMessage: { type: "drawSpacing" } }, "*");
+  };
+  document.getElementById("spacingVariable").onclick = (e) => {
+    parent.postMessage({ pluginMessage: { type: "spacingToVariables" } }, "*");
+  };
+  document.getElementById("borderRadiusVariable").onclick = (e) => {
+    parent.postMessage(
+      { pluginMessage: { type: "borderRadiusVariable" } },
+      "*"
+    );
+  };
+  document.getElementById("baseColorsVariable").onclick = (e) => {
+    parent.postMessage({ pluginMessage: { type: "baseColorsVariable" } }, "*");
+  };
 </script>
-
-
-

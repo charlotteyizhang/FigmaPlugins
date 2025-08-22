@@ -1,6 +1,45 @@
 import * as Colors from "../codebase/colors";
 import { findOrCreateCollection, flattenObjKey } from "../common";
 
+export const baseColorsToVariables = async (
+  localCollections: Array<VariableCollection>
+) => {
+  const targetName = "colors";
+
+  const collection = findOrCreateCollection(localCollections, targetName);
+  if (collection.modes.length < 1) {
+    throw Error("No modes found in the collection");
+  }
+  const variables = await figma.variables.getLocalVariablesAsync();
+  if (variables !== undefined) {
+    Object.entries(Colors.baseColors).forEach(([colorName, obj]) => {
+      Object.entries(obj).forEach(async ([key, value]) => {
+        const rgb = Colors.hexToRgb(value);
+        if (
+          !Number.isNaN(rgb.r) &&
+          !Number.isNaN(rgb.g) &&
+          !Number.isNaN(rgb.b)
+        ) {
+          let token = variables.find((v) => v.name === key);
+
+          if (token === undefined) {
+            token = await figma.variables.createVariable(
+              `${colorName}/${key}`,
+              collection,
+              "COLOR"
+            );
+          }
+          token.setValueForMode(collection.modes[0].modeId, {
+            b: rgb.b / 255,
+            g: rgb.g / 255,
+            r: rgb.r / 255,
+          });
+        }
+      });
+    });
+  }
+};
+
 export const colorsToVariables = (
   localCollections: Array<VariableCollection>
 ) => {

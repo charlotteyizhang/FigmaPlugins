@@ -1,7 +1,10 @@
 // This plugin will open a window to prompt the user to enter a number, and
 // it will then create that many rectangles on the screen.
 
-import { colorsToVariables } from "./toVariables/colorsToVariables";
+import {
+  baseColorsToVariables,
+  colorsToVariables,
+} from "./toVariables/colorsToVariables";
 import { colorsVisualDisplay } from "./visualDisplay/colorsVisualDisplay";
 import { borderToVariables } from "./toVariables/borderToVariables";
 import { spacingsToVariables } from "./toVariables/spacingsToVariables";
@@ -32,5 +35,8 @@ figma.ui.onmessage = (msg) => {
     borderToVariables(localCollections);
   } else if (msg.type === "drawSpacing") {
     spacingVisualDisplay();
+  } else if (msg.type === "baseColorsVariable") {
+    const localCollections = figma.variables.getLocalVariableCollections();
+    baseColorsToVariables(localCollections);
   }
 };
