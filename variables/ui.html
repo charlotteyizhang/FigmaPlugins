@@ -134,6 +134,9 @@
     <button class="button marginTop clear" id="baseColorsVariable">
       Import baseColors to variables
     </button>
+    <!-- <button class="button marginTop" id="matchColorVariables">
+      Match variables to baseColors
+    </button> -->
   </div>
 </body>
 
@@ -159,4 +162,7 @@
   document.getElementById("baseColorsVariable").onclick = (e) => {
     parent.postMessage({ pluginMessage: { type: "baseColorsVariable" } }, "*");
   };
+  // document.getElementById("matchColorVariables").onclick = (e) => {
+  //   parent.postMessage({ pluginMessage: { type: "matchColorVariables" } }, "*");
+  // };
 </script>
