@@ -30,8 +30,11 @@ interface Create {
   type: "createVariables";
   language: "en" | "ja";
 }
+interface CreateCode {
+  type: "createCode";
+}
 
-type Message = Generate | Rename | Create;
+type Message = Generate | Rename | Create | CreateCode;
 figma.ui.onmessage = async (msg: Message) => {
   // One way of distinguishing between different types of messages sent from
   // your HTML page is to use an object with a "type" property like this.
@@ -200,5 +203,16 @@ figma.ui.onmessage = async (msg: Message) => {
         }
       }
     }
+  } else if (msg.type === "createCode") {
+    let str = "";
+    for (const node of figma.currentPage.selection) {
+      if (node.type === "TEXT") {
+        const layerName = node.name.substring(1).replace(/\//g, "_"); // Remove the leading '#' and translate to code
+
+        str += `translationsCommon[userLocale.userLanguage].${layerName}`;
+      }
+    }
+
+    figma.ui.postMessage(str);
   }
 };
