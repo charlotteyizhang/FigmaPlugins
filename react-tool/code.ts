@@ -400,15 +400,19 @@ const getTextKind = async (node: TextNode): Promise<string | undefined> => {
     const text2 = texts[1];
     const color = colorName.split("/");
 
-    const translation = `translations[userLocale.userLanguage].${toLowercaseFirstLetterCamelCase(
-      node.characters
-    )}`;
+    let translation: string;
+    if (node.name[0] === "#") {
+      const layerName = node.name.substring(1).replace(/\//g, "_"); // Remove the leading '#' and translate to code
+
+      translation = `translationsCommon[userLocale.userLanguage].${layerName}`;
+    } else {
+      translation = `translations[userLocale.userLanguage].${toLowercaseFirstLetterCamelCase(
+        node.characters
+      )}`;
+    }
 
     if (text.includes("Heading")) {
-      const heading = toCapitalFirstLetterCamelCase(
-        text.replace("Heading", "")
-      );
-      return `<${heading} responsive={responsive} color={${color[0]}[theme].${color[1]}}>{${translation}}</${heading}>`;
+      return `<${text2} responsive={responsive} color={${color[0]}[theme].${color[1]}}>{${translation}}</${text2}>`;
     } else {
       console.log({ text });
 
