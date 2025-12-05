@@ -30,20 +30,31 @@ const patterns = [
     p: /\b\d{1,2}:\d{2}(?:\s?(?:AM|PM))?\b/i,
   }, // timestamp (12, 4:30, 3 AM)
 ];
+export const getParamMatchingPattern = (input: string) => {
+  const regex = /\[\[(.*?)\]\]/g;
+  return [...input.matchAll(regex)].map((m) => m[1]);
+};
 export const generateTemplateFn = (input: string): string => {
   let matchStr = input;
+
+  const specialInputs = getParamMatchingPattern(input);
 
   const params: Array<string> = [];
   let idx = 0;
 
-  for (const pattern of patterns) {
-    const match = input.match(pattern.p);
+  for (const specialInput of specialInputs) {
+    for (const pattern of patterns) {
+      const match = specialInput.match(pattern.p);
 
-    if (match) {
-      const displayName = pattern.displayVariableName + idx;
-      const replaced = input.replace(match[0], "${" + displayName + "}");
-      params.push(displayName + ":string");
-      matchStr = replaced;
+      if (match) {
+        const displayName = pattern.displayVariableName + idx;
+        const replaced = matchStr.replace(
+          "[[" + specialInput + "]]",
+          "${" + displayName + "}"
+        );
+        params.push(displayName + ":string");
+        matchStr = replaced;
+      }
     }
   }
 

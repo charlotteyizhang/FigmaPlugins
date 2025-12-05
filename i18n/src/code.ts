@@ -5,6 +5,7 @@ import {
   findOrCreateCollection,
   generateErrorTemplateFn,
   generateTemplateFn,
+  getParamMatchingPattern,
   modeName,
 } from "./helper";
 
@@ -174,9 +175,16 @@ figma.ui.onmessage = async (msg: Message) => {
             console.log({ node: nodeText });
 
             variable.setValueForMode(targetModeId, nodeText);
+            const specialInputs = getParamMatchingPattern(nodeText);
+
+            const paramStr = specialInputs.reduce(
+              (acc, s) => acc + "[[" + s + "]]",
+              ""
+            );
+
             variable.setValueForMode(
               i18nCollection.modes[1].modeId,
-              "TODO_TRANSLATE"
+              paramStr + "TODO_TRANSLATE"
             );
             node.setBoundVariable("characters", variable);
             figma.ui.postMessage("successfully created translation variables");
