@@ -261,6 +261,20 @@ figma.ui.onmessage = async (msg: Message) => {
   // keep running, which shows the cancel button at the bottom of the screen.
   // figma.closePlugin();
 };
+const findTextNode = (node: SceneNode): TextNode | null => {
+  if (node.type === "TEXT") {
+    return node as TextNode;
+  }
+
+  if ("children" in node) {
+    for (const child of node.children) {
+      const found = findTextNode(child);
+      if (found) return found;
+    }
+  }
+
+  return null;
+};
 
 interface ChildViewProps {
   node: SceneNode;
@@ -354,6 +368,7 @@ const getChildrenView = (props: ChildViewProps): Promise<string> => {
       }
     } else {
       let content = "";
+
       if (x.node.type === "TEXT") {
         content = (await getTextKind(x.node, x.queryKind)) ?? "";
       } else if (x.node.type === "INSTANCE") {
@@ -364,9 +379,9 @@ const getChildrenView = (props: ChildViewProps): Promise<string> => {
             x.node.name
           )}" size={${iconSize ?? undefined}}/>`;
         } else if (x.node.name.includes("Button")) {
-          const buttonKind = x.node.variantProperties?.["Type"] ?? "";
+          const buttonKind = x.node.componentProperties?.["Type"]?.value ?? "";
 
-          const textNode = x.node.findChild((n) => n.type === "TEXT");
+          const textNode = findTextNode(x.node);
 
           if (textNode !== null && textNode.type === "TEXT") {
             const translation = getTranslationByLayername(textNode);
