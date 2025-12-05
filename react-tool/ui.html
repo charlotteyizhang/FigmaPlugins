@@ -12,6 +12,12 @@
     margin-top: 12px;
   }
 
+  .row {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+  }
+
   .secetion_title {
     font: 600 16px/22px "PingFang SC";
     color: #000000;
@@ -98,6 +104,13 @@
       cursor: pointer;
     }
   }
+  .yellow {
+    background: #f9a53e;
+    &:hover {
+      background: #d07c17;
+      cursor: pointer;
+    }
+  }
   .pink {
     width: 100px;
     margin: 4px;
@@ -168,11 +181,36 @@
 <h2 class="intro_cell_title">React native code creator</h2>
 <body>
   <div class="container">
-    <button class="button marginTop" id="create">Create</button>
-    <button class="button marginTop" id="generateTextEN">
+    <p class="marginTop secetion_title">Generate code</p>
+    <div class="row">
+      <button class="button marginTop" id="lunarCustomer">
+        Lunar customer
+      </button>
+      <button class="button marginTop yellow" id="WL">White label</button>
+    </div>
+    <!-- <form id="code-form">
+      <div class="radio-group wrap">
+        <div class="radio-card">
+          <input
+            type="radio"
+            id="lunarCustomer"
+            name="code"
+            value="lunarCustomer"
+          />
+          <label for="lunarCustomer">Lunar customer</label>
+        </div>
+        <div class="radio-card">
+          <input type="radio" id="WL" name="code" value="WL" />
+          <label for="WL">White label</label>
+        </div>
+      </div>
+    </form> -->
+    <!-- <button class="button marginTop" id="generateTextEN">
       Generate text EN
-    </button>
-    <form class="marginTop" id="property-form">
+    </button> -->
+
+    <p class="marginTop secetion_title">Manage variables</p>
+    <form id="property-form">
       <div class="radio-group wrap">
         <div class="radio-card">
           <input
@@ -229,11 +267,17 @@
 <script>
   parent.postMessage({ pluginMessage: { type: "addSpacing" } }, "*");
 
-  document.getElementById("create").onclick = () => {
-    parent.postMessage({ pluginMessage: { type: "generate" } }, "*");
+  document.getElementById("lunarCustomer").onclick = () => {
+    parent.postMessage(
+      { pluginMessage: { type: "generate", value: "lunarCustomer" } },
+      "*"
+    );
   };
-  document.getElementById("generateTextEN").onclick = () => {
-    parent.postMessage({ pluginMessage: { type: "generateTextEN" } }, "*");
+  document.getElementById("WL").onclick = () => {
+    parent.postMessage(
+      { pluginMessage: { type: "generate", value: "WL" } },
+      "*"
+    );
   };
 
   const radios = document.querySelectorAll('input[name="property"]');

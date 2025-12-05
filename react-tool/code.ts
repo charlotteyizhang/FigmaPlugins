@@ -12,8 +12,10 @@ figma.showUI(__html__, { width: 400, height: 600 });
 // callback. The callback will be passed the "pluginMessage" property of the
 // posted message.
 
+type QueryKind = "lunarCustomer" | "WL";
 interface Generate {
   type: "generate";
+  value: QueryKind;
 }
 interface GenerateTextEN {
   type: "generateTextEN";
@@ -54,11 +56,19 @@ figma.ui.onmessage = async (msg: Message) => {
   if (msg.type === "generate") {
     let str = "";
 
+    const queryKind = msg.value;
+
     const localCollections =
       await figma.variables.getLocalVariableCollectionsAsync();
 
     for (const node of figma.currentPage.selection) {
-      str += await getChildrenView(node, str, localCollections, true);
+      str += await getChildrenView({
+        node,
+        acc: str,
+        localCollections,
+        firstElement: true,
+        queryKind,
+      });
     }
 
     figma.ui.postMessage({
@@ -252,128 +262,174 @@ figma.ui.onmessage = async (msg: Message) => {
   // figma.closePlugin();
 };
 
-const getChildrenView = (
-  node: SceneNode,
-  acc: string,
-  localCollections: Array<VariableCollection>,
-  firstElement: boolean
-): Promise<string> => {
-  const recurse = async (
-    node: SceneNode,
-    acc: string,
-    localCollections: Array<VariableCollection>,
-    firstElement: boolean
-  ) => {
-    if (!node.visible) {
-      return acc;
+interface ChildViewProps {
+  node: SceneNode;
+  acc: string;
+  localCollections: Array<VariableCollection>;
+  firstElement: boolean;
+  queryKind: QueryKind;
+}
+
+const getChildrenView = (props: ChildViewProps): Promise<string> => {
+  const recurse = async (x: ChildViewProps) => {
+    if (!x.node.visible) {
+      return x.acc;
     }
 
-    if (node.type === "FRAME" && "children" in node) {
+    if (
+      (x.node.type === "FRAME" || x.node.type === "COMPONENT") &&
+      "children" in x.node
+    ) {
       const variableId = await figma.variables.getVariableByIdAsync(
-        node.boundVariables?.itemSpacing?.id ?? ""
+        x.node.boundVariables?.itemSpacing?.id ?? ""
       );
-      const spacingId = node.boundVariables?.itemSpacing?.id;
-
+      const spacingId = x.node.boundVariables?.itemSpacing?.id;
       const gapStr =
         spacingId !== undefined
           ? `gap: ${variableId?.name.replace("/", ".")},`
           : "";
 
       const containerStyle =
-        node.inferredAutoLayout?.layoutMode === "HORIZONTAL"
+        x.node.inferredAutoLayout?.layoutMode === "HORIZONTAL"
           ? `flexDirection: "row",${
-              node.inferredAutoLayout?.primaryAxisAlignItems === "SPACE_BETWEEN"
+              x.node.inferredAutoLayout?.primaryAxisAlignItems ===
+              "SPACE_BETWEEN"
                 ? `justifyContent: "space-between",`
                 : ""
             } alignItems: "center", ${gapStr}`
           : gapStr;
 
-      const firstChild = node.children[0];
+      const firstChild = x.node.children[0];
       const firstElementIsCard =
         hasCardTitleWord(firstChild.name) && firstChild.type === "INSTANCE";
 
       let content = "";
       for (
         let idx = firstElementIsCard ? 1 : 0;
-        idx < node.children.length;
+        idx < x.node.children.length;
         idx++
       ) {
-        content = await recurse(
-          node.children[idx],
-          content,
-          localCollections,
-          idx === 0
-        );
+        content = await recurse({
+          node: x.node.children[idx],
+          acc: content,
+          localCollections: x.localCollections,
+          firstElement: idx === 0,
+          queryKind: x.queryKind,
+        });
       }
 
       const el =
         containerStyle === undefined
-          ? firstElement
+          ? x.firstElement
             ? `<View>${content}</View>`
             : content
           : `<View style={{${containerStyle ?? ""}}}>${content}</View>`;
 
-      return firstElementIsCard
-        ? acc +
-            `<Card theme={theme} title={{text:translations[userLocale.userLanguage].${toLowercaseFirstLetterCamelCase(
-              firstChild.componentProperties?.[
-                "Text#3945:0"
-              ]?.value.toString() ?? ""
-            )}, showIconRight:${
-              firstChild.componentProperties?.["isLink"]?.value
-            }}}>${content}</Card>`
-        : acc + el;
+      const env =
+        x.queryKind === "lunarCustomer"
+          ? "appAppearanceCtx={appAppearanceCtx}"
+          : "appCtx={appCtx}";
+
+      if (firstElementIsCard) {
+        const textNode = firstChild.findChild((n) => n.type === "TEXT");
+        if (textNode !== null && textNode.type === "TEXT") {
+          const translation = getTranslationByLayername(textNode as TextNode);
+          return (
+            x.acc +
+            `<Card ${env} title={{text:${translation}, showIconRight:${firstChild.componentProperties?.["isLink"]?.value}}}>${content}</Card>`
+          );
+        }
+
+        return (
+          x.acc +
+          `<Card ${env} title={{text:translations[userLocale.userLanguage].${toLowercaseFirstLetterCamelCase(
+            firstChild.componentProperties?.["Text#3945:0"]?.value.toString() ??
+              ""
+          )}, showIconRight:${
+            firstChild.componentProperties?.["isLink"]?.value
+          }}}>${content}</Card>`
+        );
+      } else {
+        return x.acc + el;
+      }
     } else {
       let content = "";
-      if (node.type === "TEXT") {
-        content = (await getTextKind(node)) ?? "";
-      } else if (node.type === "INSTANCE" || node.type === "COMPONENT") {
-        if (hasIconWord(node.name)) {
-          const iconSize = await getIconSize(node);
+      if (x.node.type === "TEXT") {
+        content = (await getTextKind(x.node, x.queryKind)) ?? "";
+      } else if (x.node.type === "INSTANCE") {
+        if (hasIconWord(x.node.name)) {
+          const iconSize = await getIconSize(x.node);
 
           content = `<Icon color={textColors[theme].default} icon="${replaceIconWord(
-            node.name
+            x.node.name
           )}" size={${iconSize ?? undefined}}/>`;
-        } else if (node.name.includes("Button")) {
-          const buttonKind = node.variantProperties?.["Type"] ?? "";
+        } else if (x.node.name.includes("Button")) {
+          const buttonKind = x.node.variantProperties?.["Type"] ?? "";
 
-          const text = node
-            .findChildren((n) => n.type === "TEXT")
-            .reduce(
-              (acc, v) => (v.type === "TEXT" ? acc + v.characters : acc),
-              ""
+          const textNode = x.node.findChild((n) => n.type === "TEXT");
+
+          if (textNode !== null && textNode.type === "TEXT") {
+            const translation = getTranslationByLayername(textNode);
+
+            const env =
+              x.queryKind === "lunarCustomer"
+                ? "theme={theme} responsive={responsive}"
+                : "theme={appCtx.theme}";
+
+            content = `<${x.node.name} ${env} ${
+              buttonKind === undefined ? "" : `kind="${buttonKind}"`
+            } text={${translation}} onPress={()=>undefined}/>`;
+          } else {
+            const icon = x.node.findChild((n) =>
+              n.name.toLocaleLowerCase().includes("icon")
             );
-
-          content = `<${node.name} theme={theme} ${
-            buttonKind === undefined ? "" : `kind="${buttonKind}"`
-          } text={${
-            text !== undefined && text !== ""
-              ? `translations[userLocale.userLanguage].${toLowercaseFirstLetterCamelCase(
-                  text
-                )}`
-              : ""
-          }} onPress={()=>undefined}/>`;
+            if (icon !== null) {
+              content = ` <IconButton theme={theme} onPress={() =>undefined} icon="Close" />`;
+            }
+          }
         } else {
-          console.log("component", node.name);
+          console.log("component", x.node.name);
 
-          const nodeName = node.name;
+          const nodeName = x.node.name;
+
+          const env =
+            x.queryKind === "lunarCustomer"
+              ? "appAppearanceCtx={appAppearanceCtx}"
+              : "appCtx={appCtx}";
           content = `<${
             nodeName.charAt(0).toUpperCase() + nodeName.slice(1)
-          } appAppearanceCtx={appAppearanceCtx} />`;
+          } ${env} />`;
         }
       } else {
-        console.log("others", node.name, node.type);
-        content = `<>${node.name}, ${node.type}</>`;
+        console.log("others", x.node.name, x.node.type);
+        content = `<>${x.node.name}, ${x.node.type}</>`;
       }
 
-      return acc + content;
+      return x.acc + content;
     }
   };
 
-  return recurse(node, acc, localCollections, firstElement);
+  return recurse(props);
 };
 
-const getTextKind = async (node: TextNode): Promise<string | undefined> => {
+const getTranslationByLayername = (node: TextNode): string => {
+  let translation: string;
+  if (node.name[0] === "#") {
+    const layerName = node.name.substring(1).replace(/\//g, "_"); // Remove the leading '#' and translate to code
+
+    translation = `translationsCommon[userLocale.userLanguage].${layerName}`;
+  } else {
+    translation = `translations[userLocale.userLanguage].${toLowercaseFirstLetterCamelCase(
+      node.characters
+    )}`;
+  }
+  return translation;
+};
+
+const getTextKind = async (
+  node: TextNode,
+  queryKind: QueryKind
+): Promise<string | undefined> => {
   const styleId = node.textStyleId;
 
   const figmaStyle = await figma.getStyleByIdAsync(`${styleId as string}`);
@@ -388,31 +444,27 @@ const getTextKind = async (node: TextNode): Promise<string | undefined> => {
     colorName = variable?.name ?? undefined;
   }
 
+  const env =
+    queryKind === "lunarCustomer"
+      ? "responsive={responsive}"
+      : "appCtx={appCtx}";
+
   if (textKind === undefined) {
     console.warn("textKind===undefined");
-    return "<P responsive={responsive} kind={undefined} />";
+    return `<P ${env} kind={undefined} />`;
   } else if (colorName === undefined) {
     console.warn("colorName===undefined");
-    return "<P responsive={responsive} color={undefined} />";
+    return `<P ${env} color={undefined} />`;
   } else {
     const texts = textKind.split("/");
     const text = texts[0];
     const text2 = texts[1];
     const color = colorName.split("/");
 
-    let translation: string;
-    if (node.name[0] === "#") {
-      const layerName = node.name.substring(1).replace(/\//g, "_"); // Remove the leading '#' and translate to code
-
-      translation = `translationsCommon[userLocale.userLanguage].${layerName}`;
-    } else {
-      translation = `translations[userLocale.userLanguage].${toLowercaseFirstLetterCamelCase(
-        node.characters
-      )}`;
-    }
+    const translation = getTranslationByLayername(node);
 
     if (text.includes("Heading")) {
-      return `<${text2} responsive={responsive} color={${color[0]}[theme].${color[1]}}>{${translation}}</${text2}>`;
+      return `<${text2} color={${color[0]}[theme].${color[1]}}>{${translation}}</${text2}>`;
     } else {
       console.log({ text });
 
@@ -422,9 +474,9 @@ const getTextKind = async (node: TextNode): Promise<string | undefined> => {
           : text.charAt(0).toLowerCase() +
             text.slice(1) +
             toCapitalFirstLetterCamelCase(texts[1]);
-      return `<P responsive={responsive} ${
-        kind === undefined ? "" : `kind="${kind}"`
-      } color={${color[0]}[theme].${color[1]}}>{${translation}}</P>`;
+      return `<P ${env} ${kind === undefined ? "" : `kind="${kind}"`} color={${
+        color[0]
+      }[theme].${color[1]}}>{${translation}}</P>`;
     }
   }
 };
