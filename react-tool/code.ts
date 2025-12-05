@@ -314,6 +314,7 @@ const getChildrenView = (props: ChildViewProps): Promise<string> => {
           : gapStr;
 
       const firstChild = x.node.children[0];
+
       const firstElementIsCard =
         hasCardTitleWord(firstChild.name) && firstChild.type === "INSTANCE";
 
@@ -345,9 +346,11 @@ const getChildrenView = (props: ChildViewProps): Promise<string> => {
           : "appCtx={appCtx}";
 
       if (firstElementIsCard) {
-        const textNode = firstChild.findChild((n) => n.type === "TEXT");
+        const textNode = findTextNode(firstChild);
+
         if (textNode !== null && textNode.type === "TEXT") {
-          const translation = getTranslationByLayername(textNode as TextNode);
+          const translation = getTranslationByLayername(textNode);
+
           return (
             x.acc +
             `<Card ${env} title={{text:${translation}, showIconRight:${firstChild.componentProperties?.["isLink"]?.value}}}>${content}</Card>`
@@ -447,7 +450,10 @@ const getTextKind = async (
 ): Promise<string | undefined> => {
   const styleId = node.textStyleId;
 
-  const figmaStyle = await figma.getStyleByIdAsync(`${styleId as string}`);
+  let figmaStyle: BaseStyle | null = null;
+  if (typeof styleId === "string") {
+    figmaStyle = await figma.getStyleByIdAsync(`${styleId}`);
+  }
   const textKind = figmaStyle?.name;
   const nodeColorIds = node.boundVariables?.fills;
 
