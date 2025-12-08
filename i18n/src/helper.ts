@@ -42,6 +42,7 @@ export const generateTemplateFn = (input: string): string => {
   const params: Array<string> = [];
   let idx = 0;
 
+  let matchFlag = false;
   for (const specialInput of specialInputs) {
     for (const pattern of patterns) {
       const match = specialInput.match(pattern.p);
@@ -53,8 +54,15 @@ export const generateTemplateFn = (input: string): string => {
           "${" + displayName + "}"
         );
         params.push(displayName + ":string");
+        matchFlag = true;
         matchStr = replaced;
       }
+    }
+    if (!matchFlag) {
+      const replaced = matchStr.replace("[[" + specialInput + "]]", "${param}");
+      params.push("param:string");
+      matchFlag = true;
+      matchStr = replaced;
     }
   }
 
