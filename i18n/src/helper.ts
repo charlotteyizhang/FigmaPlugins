@@ -53,6 +53,7 @@ export const generateTemplateFn = (input: string): string => {
           "[[" + specialInput + "]]",
           "${" + displayName + "}"
         );
+        idx += 1;
         params.push(displayName + ":string");
         matchFlag = true;
         matchStr = replaced;
