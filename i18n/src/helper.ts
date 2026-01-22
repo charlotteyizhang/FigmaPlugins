@@ -72,9 +72,13 @@ export const generateTemplateFn = (input: string): string => {
     }
   }
 
+  const hasQuote = /"/.test(matchStr);
+
   return matchStr !== input
     ? "(" + params.join(",") + ")=>" + "`" + matchStr + "`"
-    : `"${input}"`;
+    : hasQuote
+      ? `\`${input}\``
+      : `"${input}"`;
 };
 
 export const generateErrorTemplateFn = (input: string): string => {
