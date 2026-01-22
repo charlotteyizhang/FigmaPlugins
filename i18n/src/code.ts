@@ -56,9 +56,8 @@ figma.ui.onmessage = async (msg: Message) => {
         str += `const i18n_${modeName} = {`;
 
         for (const translationKey of i18nCollection.variableIds) {
-          const variable = await figma.variables.getVariableByIdAsync(
-            translationKey
-          );
+          const variable =
+            await figma.variables.getVariableByIdAsync(translationKey);
           if (variable === null) {
             console.warn(`Variable with id ${translationKey} not found.`);
             return;
@@ -97,36 +96,36 @@ figma.ui.onmessage = async (msg: Message) => {
 
           if (boundVariableCharacter !== undefined) {
             const variable = await figma.variables.getVariableByIdAsync(
-              boundVariableCharacter.id
+              boundVariableCharacter.id,
             );
             if (variable !== null) {
               const variableName = `#${variable.name}`;
               node.name = variableName;
               figma.ui.postMessage(
-                `successfully renamed layer to ${variableName} `
+                `successfully renamed layer to ${variableName} `,
               );
             } else {
               figma.ui.postMessage(
-                `bound variable not found for layer ${node.name}, skipping rename`
+                `bound variable not found for layer ${node.name}, skipping rename`,
               );
             }
           } else {
             const inferredVariables = node.inferredVariables?.characters;
             const variableId =
               inferredVariables !== undefined && inferredVariables.length > 0
-                ? (await figma.variables.getVariableByIdAsync(
-                    inferredVariables[0].id
-                  )) ?? undefined
+                ? ((await figma.variables.getVariableByIdAsync(
+                    inferredVariables[0].id,
+                  )) ?? undefined)
                 : undefined;
             if (variableId !== undefined) {
               const variableName = `#${variableId.name}`;
               node.name = variableName;
               figma.ui.postMessage(
-                `successfully renamed layer to ${variableName} `
+                `successfully renamed layer to ${variableName} `,
               );
             } else {
               figma.ui.postMessage(
-                `no variable found for layer ${node.name}, skipping rename`
+                `no variable found for layer ${node.name}, skipping rename`,
               );
             }
           }
@@ -169,7 +168,7 @@ figma.ui.onmessage = async (msg: Message) => {
           variable = await figma.variables.createVariable(
             layerName,
             i18nCollection,
-            "STRING"
+            "STRING",
           );
           if (variable !== undefined) {
             console.log({ node: nodeText });
@@ -179,18 +178,18 @@ figma.ui.onmessage = async (msg: Message) => {
 
             const paramStr = specialInputs.reduce(
               (acc, s) => acc + "[[" + s + "]]",
-              ""
+              "",
             );
 
             variable.setValueForMode(
               i18nCollection.modes[1].modeId,
-              paramStr + "TODO_TRANSLATE"
+              paramStr + "TODO_TRANSLATE",
             );
             node.setBoundVariable("characters", variable);
             figma.ui.postMessage("successfully created translation variables");
           } else {
             figma.ui.postMessage(
-              `error generate variable layer name: ${layerName}`
+              `error generate variable layer name: ${layerName}`,
             );
           }
         } else {
@@ -200,12 +199,12 @@ figma.ui.onmessage = async (msg: Message) => {
             variable.setValueForMode(targetModeId, nodeText);
             node.setBoundVariable("characters", variable);
             figma.ui.postMessage(
-              `layer name already exists in i18n collection, replaced ${variableValue} with ${nodeText}`
+              `layer name already exists in i18n collection, replaced ${variableValue} with ${nodeText}`,
             );
           } else {
             node.setBoundVariable("characters", variable);
             figma.ui.postMessage(
-              `layer name already exists in i18n collection, associated to: ${layerName}`
+              `layer name already exists in i18n collection, associated to: ${layerName}`,
             );
           }
         }

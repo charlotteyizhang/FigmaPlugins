@@ -1,6 +1,6 @@
 export const findOrCreateCollection = (
   localCollections: Array<VariableCollection>,
-  targetName: string
+  targetName: string,
 ) => {
   const collection = localCollections.find((v) => {
     return v.name.match(targetName);
@@ -42,8 +42,8 @@ export const generateTemplateFn = (input: string): string => {
   const params: Array<string> = [];
   let idx = 0;
 
-  let matchFlag = false;
   for (const specialInput of specialInputs) {
+    let matchFlag = false;
     for (const pattern of patterns) {
       const match = specialInput.match(pattern.p);
 
@@ -51,7 +51,7 @@ export const generateTemplateFn = (input: string): string => {
         const displayName = pattern.displayVariableName + idx;
         const replaced = matchStr.replace(
           "[[" + specialInput + "]]",
-          "${" + displayName + "}"
+          "${" + displayName + "}",
         );
         idx += 1;
         params.push(displayName + ":string");
@@ -59,11 +59,16 @@ export const generateTemplateFn = (input: string): string => {
         matchStr = replaced;
       }
     }
+
     if (!matchFlag) {
-      const replaced = matchStr.replace("[[" + specialInput + "]]", "${param}");
-      params.push("param:string");
-      matchFlag = true;
+      const paramName = "param" + idx;
+      const replaced = matchStr.replace(
+        "[[" + specialInput + "]]",
+        "${" + paramName + "}",
+      );
+      params.push(paramName + ":string");
       matchStr = replaced;
+      idx += 1;
     }
   }
 
