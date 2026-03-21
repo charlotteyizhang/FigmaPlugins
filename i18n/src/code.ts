@@ -34,6 +34,7 @@ interface Create {
 }
 interface CreateCode {
   type: "createCode";
+  formatType: "userLocale" | "language";
 }
 
 type Message = Generate | Rename | Create | CreateCode;
@@ -182,11 +183,13 @@ figma.ui.onmessage = async (msg: Message) => {
     }
   } else if (msg.type === "createCode") {
     let str = "";
+    const type =
+      msg.formatType === "userLocale" ? "userLocale.userLanguage" : "language";
     for (const node of figma.currentPage.selection) {
       if (node.type === "TEXT") {
         const layerName = node.name.substring(1).replace(/\//g, "_"); // Remove the leading '#' and translate to code
 
-        str += `translationsCommon[userLocale.userLanguage].${layerName}`;
+        str += `translationsCommon[${type}].${layerName}`;
       }
     }
 

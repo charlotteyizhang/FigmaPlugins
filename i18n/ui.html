@@ -1,505 +1,504 @@
 <style>
-  /* CSS Variables for colors */
-  :root {
-    --bg-body: #ffffff;
-    --bg-footer: #0f172a;
-    --bg-output: #020617;
+    /* CSS Variables for colors */
+    :root {
+      --bg-body: #ffffff;
+      --bg-footer: #0f172a;
+      --bg-output: #020617;
 
-    --text-main: #0f172a;
-    --text-muted: #64748b;
-    --text-light: #cbd5e1;
-    --text-white: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #cbd5e1;
+      --text-white: #ffffff;
 
-    --border-light: #e2e8f0;
-    --border-dark: #1e293b;
+      --border-light: #e2e8f0;
+      --border-dark: #1e293b;
 
-    --emerald-500: #53a597;
-    --emerald-600: #478d82;
-    --emerald-100: #d1fae5;
+      --emerald-500: #53a597;
+      --emerald-600: #478d82;
+      --emerald-100: #d1fae5;
 
-    --blue-500: #4d6fbe;
-    --blue-600: #4260a4;
+      --blue-500: #4d6fbe;
+      --blue-600: #4260a4;
 
-    --orange-500: #ff6362;
-    --orange-600: #ec5959;
+      --orange-500: #ff6362;
+      --orange-600: #ec5959;
+      --orange-100: #fee2e2;
 
-    --indigo-500: #58508d;
-    --indigo-600: #494375;
+      --indigo-500: #58508d;
+      --indigo-600: #494375;
 
-    --red-400: #f87171;
-  }
-
-  /* Base Reset & Plugin Dimensions */
-  *,
-  *::before,
-  *::after {
-    box-sizing: border-box;
-  }
-
-  body {
-    margin: 0;
-    padding: 0;
-    width: 500px;
-    height: 600px;
-    overflow: hidden; /* Prevent scrolling */
-    background-color: var(--bg-body);
-    font-family:
-      ui-sans-serif,
-      system-ui,
-      -apple-system,
-      BlinkMacSystemFont,
-      "Segoe UI",
-      Roboto,
-      "Helvetica Neue",
-      Arial,
-      sans-serif;
-    color: var(--text-main);
-    display: flex;
-    flex-direction: column;
-    position: relative;
-  }
-
-  /* Custom Scrollbar */
-  ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  ::-webkit-scrollbar-thumb {
-    background: #475569;
-    border-radius: 3px;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: #64748b;
-  }
-
-  /* Main Layout - No extra background boxes, perfectly spaced */
-  .main-content {
-    flex: 1;
-    padding: 24px 32px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between; /* Evenly spaces the 4 steps */
-  }
-
-  .step-section {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  /* Steps Typography & Layout */
-  .step-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .step-number {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    color: var(--text-white);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    font-weight: bold;
-    flex-shrink: 0;
-  }
-
-  .step-number.emerald {
-    background-color: var(--emerald-500);
-  }
-  .step-number.blue {
-    background-color: var(--blue-500);
-  }
-  .step-number.orange {
-    background-color: var(--orange-500);
-  }
-  .step-number.indigo {
-    background-color: var(--indigo-500);
-  }
-
-  .step-title {
-    font-weight: 600;
-    font-size: 16px;
-    margin: 0;
-    color: var(--text-main);
-  }
-
-  .info-btn {
-    background: transparent;
-    border: none;
-    padding: 4px;
-    border-radius: 50%;
-    color: var(--text-muted);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition:
-      background-color 0.2s,
-      color 0.2s;
-  }
-
-  .info-btn:hover {
-    background-color: var(--border-light);
-    color: var(--text-main);
-  }
-
-  /* Radio Buttons */
-  .radio-group {
-    display: flex;
-    gap: 16px;
-  }
-
-  .radio-label {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    background-color: #f8fafc;
-    border: 1px solid var(--border-light);
-    border-radius: 6px;
-    padding: 10px;
-    cursor: pointer;
-    transition:
-      border-color 0.2s,
-      background-color 0.2s;
-  }
-
-  .radio-label:hover {
-    border-color: var(--emerald-400);
-    background-color: var(--emerald-100);
-  }
-
-  .radio-input {
-    width: 16px;
-    height: 16px;
-    accent-color: var(--emerald-500);
-    cursor: pointer;
-    margin: 0;
-  }
-
-  .radio-text {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text-main);
-  }
-
-  /* Buttons */
-  .btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 44px;
-    border-radius: 6px;
-    font-weight: 600;
-    font-size: 15px;
-    color: var(--text-white);
-    border: none;
-    cursor: pointer;
-    transition:
-      opacity 0.2s,
-      transform 0.1s;
-  }
-
-  .btn:active {
-    transform: scale(0.98);
-  }
-
-  .btn svg {
-    width: 18px;
-    height: 18px;
-    margin-right: 8px;
-  }
-
-  .btn-emerald {
-    background-color: var(--emerald-500);
-  }
-  .btn-emerald:hover {
-    background-color: var(--emerald-600);
-  }
-
-  .btn-blue {
-    background-color: var(--blue-500);
-  }
-  .btn-blue:hover {
-    background-color: var(--blue-600);
-  }
-
-  .btn-orange {
-    background-color: var(--orange-500);
-  }
-  .btn-orange:hover {
-    background-color: var(--orange-600);
-  }
-
-  .btn-indigo {
-    background-color: var(--indigo-500);
-  }
-  .btn-indigo:hover {
-    background-color: var(--indigo-600);
-  }
-
-  /* Footer Feedback Area */
-  .footer {
-    background-color: var(--bg-footer);
-    padding: 16px 32px;
-    height: 130px;
-    display: flex;
-    flex-direction: column;
-    flex-shrink: 0;
-  }
-
-  .footer-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 8px;
-  }
-
-  .footer-title {
-    font-weight: 600;
-    font-size: 12px;
-    color: var(--text-light);
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin: 0;
-  }
-
-  .footer-title svg {
-    width: 14px;
-    height: 14px;
-  }
-
-  .btn-icon-clear {
-    background: transparent;
-    border: none;
-    padding: 6px;
-    border-radius: 4px;
-    color: #94a3b8;
-    cursor: pointer;
-    transition:
-      color 0.2s,
-      background-color 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .btn-icon-clear:hover:not(:disabled) {
-    color: var(--red-400);
-    background-color: var(--border-dark);
-  }
-
-  .btn-icon-clear:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  .btn-icon-clear svg {
-    width: 16px;
-    height: 16px;
-  }
-
-  .output-box {
-    background-color: var(--bg-output);
-    border-radius: 6px;
-    border: 1px solid var(--border-dark);
-    padding: 10px 12px;
-    flex: 1;
-    overflow-y: auto;
-  }
-
-  pre {
-    font-size: 12px;
-    color: var(--text-light);
-    font-family: monospace;
-    white-space: pre-wrap;
-    line-height: 1.5;
-    margin: 0;
-  }
-
-  .empty-state {
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #475569;
-    font-size: 13px;
-    font-style: italic;
-    margin: 0;
-  }
-
-  .hidden {
-    display: none !important;
-  }
-
-  /* Modal Styling */
-  .modal-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(15, 23, 42, 0.6);
-    backdrop-filter: blur(2px);
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 1;
-    transition: opacity 0.2s ease;
-  }
-
-  .modal-backdrop.hidden {
-    opacity: 0;
-    pointer-events: none;
-    visibility: hidden;
-  }
-
-  .modal-box {
-    background: var(--bg-body);
-    width: 400px;
-    border-radius: 8px;
-    box-shadow:
-      0 20px 25px -5px rgba(0, 0, 0, 0.1),
-      0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    overflow: hidden;
-    transform: scale(1);
-    transition: transform 0.2s ease;
-  }
-
-  .modal-backdrop.hidden .modal-box {
-    transform: scale(0.95);
-  }
-
-  .modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px 20px;
-    border-bottom: 1px solid var(--border-light);
-  }
-
-  .modal-title {
-    font-size: 16px;
-    font-weight: 600;
-    margin: 0;
-    color: var(--text-main);
-  }
-
-  .modal-close {
-    background: transparent;
-    border: none;
-    color: var(--text-muted);
-    cursor: pointer;
-    padding: 4px;
-    border-radius: 4px;
-  }
-
-  .modal-close:hover {
-    background: var(--border-light);
-    color: var(--text-main);
-  }
-
-  .modal-body {
-    padding: 20px;
-    font-size: 15px;
-    line-height: 1.6;
-    color: #334155;
-  }
-
-  .modal-body code {
-    background-color: #f1f5f9;
-    padding: 3px 6px;
-    border-radius: 4px;
-    color: var(--blue-600);
-    font-family: monospace;
-    font-size: 14px;
-    border: 1px solid var(--border-light);
-  }
-
-  /* Toast Notifications */
-  .toast-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 50;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    padding: 16px;
-    pointer-events: none;
-  }
-
-  .toast {
-    padding: 10px 16px;
-    border-radius: 6px;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text-white);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    max-width: 90%;
-    text-align: left;
-    line-height: 1.4;
-  }
-
-  .toast-success {
-    background-color: var(--border-dark);
-    border-left: 4px solid var(--emerald-400);
-  }
-  .toast-info {
-    background-color: #334155;
-  }
-
-  .toast-icon {
-    width: 18px;
-    height: 18px;
-    color: var(--emerald-400);
-    flex-shrink: 0;
-  }
-
-  @keyframes slideDown {
-    from {
-      transform: translateY(-100%);
-      opacity: 0;
+      --red-400: #f87171;
     }
-    to {
-      transform: translateY(0);
+
+    /* Base Reset & Plugin Dimensions */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      width: 500px;
+      height: 600px;
+      overflow: hidden; /* Prevent scrolling */
+      background-color: var(--bg-body);
+      font-family:
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        "Helvetica Neue",
+        Arial,
+        sans-serif;
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #475569;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #64748b;
+    }
+
+    /* Main Layout - tighter padding to prevent overflow */
+    .main-content {
+      flex: 1;
+      padding: 16px 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between; 
+    }
+
+    .step-section {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* Steps Typography & Layout */
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .step-number {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      color: var(--text-white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+
+    .step-number.emerald {
+      background-color: var(--emerald-500);
+    }
+    .step-number.blue {
+      background-color: var(--blue-500);
+    }
+    .step-number.orange {
+      background-color: var(--orange-500);
+    }
+    .step-number.indigo {
+      background-color: var(--indigo-500);
+    }
+
+    .step-title {
+      font-weight: 600;
+      font-size: 15px;
+      margin: 0;
+      color: var(--text-main);
+    }
+
+    .info-btn {
+      background: transparent;
+      border: none;
+      padding: 4px;
+      border-radius: 50%;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+
+    .info-btn:hover {
+      background-color: var(--border-light);
+      color: var(--text-main);
+    }
+
+    /* Radio Buttons */
+    .radio-group {
+      display: flex;
+      gap: 12px;
+    }
+
+    .radio-label {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background-color: #f8fafc;
+      border: 1px solid var(--border-light);
+      border-radius: 6px;
+      padding: 8px;
+      cursor: pointer;
+      transition: border-color 0.2s, background-color 0.2s;
+    }
+
+    .radio-label.emerald-theme:hover {
+      border-color: var(--emerald-500);
+      background-color: var(--emerald-100);
+    }
+    .radio-label.orange-theme:hover {
+      border-color: var(--orange-500);
+      background-color: var(--orange-100);
+    }
+
+    .radio-input {
+      width: 14px;
+      height: 14px;
+      cursor: pointer;
+      margin: 0;
+    }
+    .radio-input.emerald-theme { accent-color: var(--emerald-500); }
+    .radio-input.orange-theme { accent-color: var(--orange-500); }
+
+    .radio-text {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-main);
+    }
+
+    /* Buttons */
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 40px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text-white);
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn svg {
+      width: 16px;
+      height: 16px;
+      margin-right: 8px;
+    }
+
+    .btn-emerald {
+      background-color: var(--emerald-500);
+    }
+    .btn-emerald:hover {
+      background-color: var(--emerald-600);
+    }
+
+    .btn-blue {
+      background-color: var(--blue-500);
+    }
+    .btn-blue:hover {
+      background-color: var(--blue-600);
+    }
+
+    .btn-orange {
+      background-color: var(--orange-500);
+    }
+    .btn-orange:hover {
+      background-color: var(--orange-600);
+    }
+
+    .btn-indigo {
+      background-color: var(--indigo-500);
+    }
+    .btn-indigo:hover {
+      background-color: var(--indigo-600);
+    }
+
+    /* Footer Feedback Area */
+    .footer {
+      background-color: var(--bg-footer);
+      padding: 12px 24px;
+      height: 110px;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+
+    .footer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .footer-title {
+      font-weight: 600;
+      font-size: 11px;
+      color: var(--text-light);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin: 0;
+    }
+
+    .footer-title svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    .btn-icon-clear {
+      background: transparent;
+      border: none;
+      padding: 4px;
+      border-radius: 4px;
+      color: #94a3b8;
+      cursor: pointer;
+      transition: color 0.2s, background-color 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-icon-clear:hover:not(:disabled) {
+      color: var(--red-400);
+      background-color: var(--border-dark);
+    }
+
+    .btn-icon-clear:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-icon-clear svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .output-box {
+      background-color: var(--bg-output);
+      border-radius: 6px;
+      border: 1px solid var(--border-dark);
+      padding: 8px 10px;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    pre {
+      font-size: 11px;
+      color: var(--text-light);
+      font-family: monospace;
+      white-space: pre-wrap;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    .empty-state {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #475569;
+      font-size: 12px;
+      font-style: italic;
+      margin: 0;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Modal Styling */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(2px);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       opacity: 1;
+      transition: opacity 0.2s ease;
     }
-  }
-  @keyframes fadeOut {
-    from {
-      opacity: 1;
-    }
-    to {
-      opacity: 0;
-    }
-  }
 
-  .toast-enter {
-    animation: slideDown 0.3s ease-out forwards;
-  }
-  .toast-exit {
-    animation: fadeOut 0.3s ease-out forwards;
-  }
-</style>
+    .modal-backdrop.hidden {
+      opacity: 0;
+      pointer-events: none;
+      visibility: hidden;
+    }
+
+    .modal-box {
+      background: var(--bg-body);
+      width: 400px;
+      border-radius: 8px;
+      box-shadow:
+        0 20px 25px -5px rgba(0, 0, 0, 0.1),
+        0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      overflow: hidden;
+      transform: scale(1);
+      transition: transform 0.2s ease;
+    }
+
+    .modal-backdrop.hidden .modal-box {
+      transform: scale(0.95);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0;
+      color: var(--text-main);
+    }
+
+    .modal-close {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+    }
+
+    .modal-close:hover {
+      background: var(--border-light);
+      color: var(--text-main);
+    }
+
+    .modal-body {
+      padding: 20px;
+      font-size: 15px;
+      line-height: 1.6;
+      color: #334155;
+    }
+
+    .modal-body code {
+      background-color: #f1f5f9;
+      padding: 3px 6px;
+      border-radius: 4px;
+      color: var(--blue-600);
+      font-family: monospace;
+      font-size: 14px;
+      border: 1px solid var(--border-light);
+    }
+
+    /* Toast Notifications */
+    .toast-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 16px;
+      pointer-events: none;
+    }
+
+    .toast {
+      padding: 10px 16px;
+      border-radius: 6px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-white);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      max-width: 90%;
+      text-align: left;
+      line-height: 1.4;
+    }
+
+    .toast-success {
+      background-color: var(--border-dark);
+      border-left: 4px solid var(--emerald-400);
+    }
+    .toast-info {
+      background-color: #334155;
+    }
+
+    .toast-icon {
+      width: 18px;
+      height: 18px;
+      color: var(--emerald-400);
+      flex-shrink: 0;
+    }
+
+    @keyframes slideDown {
+      from {
+        transform: translateY(-100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+    @keyframes fadeOut {
+      from {
+        opacity: 1;
+      }
+      to {
+        opacity: 0;
+      }
+    }
+
+    .toast-enter {
+      animation: slideDown 0.3s ease-out forwards;
+    }
+    .toast-exit {
+      animation: fadeOut 0.3s ease-out forwards;
+    }
+  </style>
+</head>
 <body>
   <!-- Modal for Helper Texts -->
   <div id="info-modal" class="modal-backdrop hidden">
@@ -544,7 +543,21 @@
     <!-- Step 1: Create Variable Form -->
     <form id="createVariables" class="step-section">
       <div class="step-header">
-        <div class="step-number emerald">1</div>
+        <div class="step-number emerald">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M20 6 9 17l-5-5" />
+          </svg>
+        </div>
         <h2 class="step-title">Create variable from text layer</h2>
         <button
           type="button"
@@ -554,8 +567,8 @@
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="18"
-            height="18"
+            width="16"
+            height="16"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -571,50 +584,55 @@
       </div>
 
       <div class="radio-group">
-        <label for="en" class="radio-label">
+        <label for="en" class="radio-label emerald-theme">
           <input
             type="radio"
             id="en"
             name="language"
             value="en"
             checked
-            class="radio-input"
+            class="radio-input emerald-theme"
           />
           <span class="radio-text">English</span>
         </label>
-        <label for="ja" class="radio-label">
+        <label for="ja" class="radio-label emerald-theme">
           <input
             type="radio"
             id="ja"
             name="language"
             value="ja"
-            class="radio-input"
+            class="radio-input emerald-theme"
           />
           <span class="radio-text">日本語</span>
         </label>
       </div>
 
       <button type="submit" class="btn btn-emerald">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path d="M20 6 9 17l-5-5" />
-        </svg>
-        Create Variable (shift + cmd + C)
+        Create (shift + cmd + C)
       </button>
     </form>
 
     <!-- Step 2: Generate i18n -->
     <div class="step-section">
       <div class="step-header">
-        <div class="step-number blue">2</div>
-        <h2 class="step-title">Generate code from variables table</h2>
+        <div class="step-number blue">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+            <path d="M2 12h20" />
+          </svg>
+        </div>
+        <h2 class="step-title">Copy code from variables table</h2>
         <button
           type="button"
           class="info-btn"
@@ -623,8 +641,8 @@
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="18"
-            height="18"
+            width="16"
+            height="16"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -643,27 +661,33 @@
         id="generateTranslationVariables"
         class="btn btn-blue"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <circle cx="12" cy="12" r="10" />
-          <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
-          <path d="M2 12h20" />
-        </svg>
-        Copy to translations.tsx (shift + enter)
+        To translations.tsx (shift + enter)
       </button>
     </div>
 
     <!-- Step 3: Create Component Code -->
     <div class="step-section">
       <div class="step-header">
-        <div class="step-number orange">3</div>
+        <div class="step-number orange">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M10 12.5 8 15l2 2.5" />
+            <path d="m14 12.5 2 2.5-2 2.5" />
+            <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+            <path
+              d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"
+            />
+          </svg>
+        </div>
         <h2 class="step-title">Create React code for this text</h2>
         <button
           type="button"
@@ -673,8 +697,8 @@
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="18"
-            height="18"
+            width="16"
+            height="16"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -688,32 +712,60 @@
           </svg>
         </button>
       </div>
-      <button type="button" id="createCode" class="btn btn-orange">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path d="M10 12.5 8 15l2 2.5" />
-          <path d="m14 12.5 2 2.5-2 2.5" />
-          <path d="M14 2v4a2 2 0 0 0 2 2h4" />
-          <path
-            d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"
+      
+      <div class="radio-group">
+        <label for="var-user" class="radio-label orange-theme">
+          <input
+            type="radio"
+            id="var-user"
+            name="codeVariableType"
+            value="userLocale"
+            checked
+            class="radio-input orange-theme"
           />
-        </svg>
-        Copy to your component file (shift + space)
+          <span class="radio-text">userLocale.userLanguage</span>
+        </label>
+        <label for="var-lang" class="radio-label orange-theme">
+          <input
+            type="radio"
+            id="var-lang"
+            name="codeVariableType"
+            value="language"
+            class="radio-input orange-theme"
+          />
+          <span class="radio-text">language</span>
+        </label>
+      </div>
+
+      <button type="button" id="createCode" class="btn btn-orange">
+        To your component file (shift + space)
       </button>
     </div>
 
     <!-- Step 4: Rename Layers -->
     <div class="step-section">
       <div class="step-header">
-        <div class="step-number indigo">4</div>
-        <h2 class="step-title">Update text layer names</h2>
+        <div class="step-number indigo">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"
+            />
+            <path
+              d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"
+            />
+          </svg>
+        </div>
+        <h2 class="step-title">Update text layer name with variable name</h2>
         <button
           type="button"
           class="info-btn"
@@ -722,8 +774,8 @@
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="18"
-            height="18"
+            width="16"
+            height="16"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -742,23 +794,7 @@
         id="renameLayersToVariableName"
         class="btn btn-indigo"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path
-            d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"
-          />
-          <path
-            d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"
-          />
-        </svg>
-        Rename layers with variable name (shift + cmd + R)
+        Rename layer (shift + cmd + R)
       </button>
     </div>
   </div>
@@ -896,8 +932,7 @@
         generateTranslationVariables();
       } else if (e.shiftKey && e.key === " ") {
         e.preventDefault();
-        lastAction = "create";
-        parent.postMessage({ pluginMessage: { type: "createCode" } }, "*");
+        createCode();
       } else if (e.shiftKey && cmd && e.key.toLowerCase() === "r") {
         e.preventDefault();
         renameLayersToVariableName();
@@ -934,14 +969,24 @@
     };
     function createCode() {
       lastAction = "create";
-      parent.postMessage({ pluginMessage: { type: "createCode" } }, "*");
+      // Read the newly added radio group state for the format type
+      const codeFormatType = document.querySelector('input[name="codeVariableType"]:checked').value;
+      parent.postMessage(
+        { 
+          pluginMessage: { 
+            type: "createCode", 
+            formatType: codeFormatType 
+          } 
+        }, 
+        "*"
+      );
     }
 
     document.getElementById("createVariables").onsubmit = (el) => {
       el.preventDefault();
       createVariables();
     };
-    function createVariables(language) {
+    function createVariables() {
       lastAction = "add";
 
       const selectedLanguage = document.querySelector(
