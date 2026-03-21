@@ -7,6 +7,7 @@ import {
   generateTemplateFn,
   getParamMatchingPattern,
   modeName,
+  renameLayersToVariableName,
 } from "./helper";
 
 // This file holds the main code for plugins. Code in this file has access to
@@ -85,49 +86,18 @@ figma.ui.onmessage = async (msg: Message) => {
       await figma.variables.getLocalVariableCollectionsAsync();
 
     const i18nCollection = localCollections.find((c) => c.name === "i18n");
-    console.log({ i18nCollection });
 
     if (i18nCollection === undefined) {
       return figma.ui.postMessage("No i18nCollection found.");
     } else {
       for (const node of figma.currentPage.selection) {
         if (node.type === "TEXT") {
-          const boundVariableCharacter = node.boundVariables?.characters;
+          renameLayersToVariableName(node);
+        } else if (node.type === "INSTANCE") {
+          const textNodes = node.findAllWithCriteria({ types: ["TEXT"] });
 
-          if (boundVariableCharacter !== undefined) {
-            const variable = await figma.variables.getVariableByIdAsync(
-              boundVariableCharacter.id,
-            );
-            if (variable !== null) {
-              const variableName = `#${variable.name}`;
-              node.name = variableName;
-              figma.ui.postMessage(
-                `successfully renamed layer to ${variableName} `,
-              );
-            } else {
-              figma.ui.postMessage(
-                `bound variable not found for layer ${node.name}, skipping rename`,
-              );
-            }
-          } else {
-            const inferredVariables = node.inferredVariables?.characters;
-            const variableId =
-              inferredVariables !== undefined && inferredVariables.length > 0
-                ? ((await figma.variables.getVariableByIdAsync(
-                    inferredVariables[0].id,
-                  )) ?? undefined)
-                : undefined;
-            if (variableId !== undefined) {
-              const variableName = `#${variableId.name}`;
-              node.name = variableName;
-              figma.ui.postMessage(
-                `successfully renamed layer to ${variableName} `,
-              );
-            } else {
-              figma.ui.postMessage(
-                `no variable found for layer ${node.name}, skipping rename`,
-              );
-            }
+          for (const textNode of textNodes) {
+            renameLayersToVariableName(textNode);
           }
         }
       }

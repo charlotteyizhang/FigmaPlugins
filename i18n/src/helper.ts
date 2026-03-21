@@ -100,3 +100,39 @@ export const generateErrorTemplateFn = (input: string): string => {
     ? "(" + params.join(",") + ")=>" + "`" + matchStr + "`"
     : `"${input}"`;
 };
+
+export const renameLayersToVariableName = async (node: SceneNode) => {
+  const boundVariableCharacter = node.boundVariables?.characters;
+
+  if (boundVariableCharacter !== undefined) {
+    const variable = await figma.variables.getVariableByIdAsync(
+      boundVariableCharacter.id,
+    );
+    if (variable !== null) {
+      const variableName = `#${variable.name}`;
+      node.name = variableName;
+      figma.ui.postMessage(`successfully renamed layer to ${variableName} `);
+    } else {
+      figma.ui.postMessage(
+        `bound variable not found for layer ${node.name}, skipping rename`,
+      );
+    }
+  } else {
+    const inferredVariables = node.inferredVariables?.characters;
+    const variableId =
+      inferredVariables !== undefined && inferredVariables.length > 0
+        ? ((await figma.variables.getVariableByIdAsync(
+            inferredVariables[0].id,
+          )) ?? undefined)
+        : undefined;
+    if (variableId !== undefined) {
+      const variableName = `#${variableId.name}`;
+      node.name = variableName;
+      figma.ui.postMessage(`successfully renamed layer to ${variableName} `);
+    } else {
+      figma.ui.postMessage(
+        `no variable found for layer ${node.name}, skipping rename`,
+      );
+    }
+  }
+};
