@@ -2,6 +2,7 @@
 // it will then create that many rectangles on the screen.
 
 import {
+  createOrUpdateVariable,
   findOrCreateCollection,
   generateErrorTemplateFn,
   generateTemplateFn,
@@ -34,7 +35,7 @@ interface Create {
 }
 interface CreateCode {
   type: "createCode";
-  formatType: "userLocale" | "language";
+  formatType: "native" | "react";
 }
 
 type Message = Generate | Rename | Create | CreateCode;
@@ -124,58 +125,27 @@ figma.ui.onmessage = async (msg: Message) => {
       if (node.type === "TEXT" && node.visible && node.name.startsWith("#")) {
         const layerName = node.name.substring(1); // Remove the leading '#'
         const nodeText = node.characters;
+        const lines = nodeText.split("\n");
+        const isMultiParagraph = lines.length > 1;
 
-        let variable: Variable | undefined = undefined;
-
-        for (const variableId of i18nCollection.variableIds) {
-          const v = await figma.variables.getVariableByIdAsync(variableId);
-          if (v?.name === layerName) {
-            variable = v;
-            break;
-          }
-        }
-
-        if (variable === undefined) {
-          variable = await figma.variables.createVariable(
+        if (!isMultiParagraph) {
+          const variable = await createOrUpdateVariable(
             layerName,
+            nodeText,
             i18nCollection,
-            "STRING",
+            targetModeId,
           );
           if (variable !== undefined) {
-            console.log({ node: nodeText });
-
-            variable.setValueForMode(targetModeId, nodeText);
-            const specialInputs = getParamMatchingPattern(nodeText);
-
-            const paramStr = specialInputs.reduce(
-              (acc, s) => acc + "[[" + s + "]]",
-              "",
-            );
-
-            variable.setValueForMode(
-              i18nCollection.modes[1].modeId,
-              paramStr + "TODO_TRANSLATE",
-            );
             node.setBoundVariable("characters", variable);
-            figma.ui.postMessage("successfully created translation variables");
-          } else {
-            figma.ui.postMessage(
-              `error generate variable layer name: ${layerName}`,
-            );
           }
         } else {
-          const variableValue = variable.valuesByMode[targetModeId];
-
-          if (variableValue !== undefined && nodeText !== variableValue) {
-            variable.setValueForMode(targetModeId, nodeText);
-            node.setBoundVariable("characters", variable);
-            figma.ui.postMessage(
-              `layer name already exists in i18n collection, replaced ${variableValue} with ${nodeText}`,
-            );
-          } else {
-            node.setBoundVariable("characters", variable);
-            figma.ui.postMessage(
-              `layer name already exists in i18n collection, associated to: ${layerName}`,
+          for (let i = 0; i < lines.length; i++) {
+            const varName = `${layerName}/p${i + 1}`;
+            await createOrUpdateVariable(
+              varName,
+              lines[i],
+              i18nCollection,
+              targetModeId,
             );
           }
         }
@@ -184,12 +154,25 @@ figma.ui.onmessage = async (msg: Message) => {
   } else if (msg.type === "createCode") {
     let str = "";
     const type =
-      msg.formatType === "userLocale" ? "userLocale.userLanguage" : "language";
+      msg.formatType === "native" ? "userLocale.userLanguage" : "language";
     for (const node of figma.currentPage.selection) {
       if (node.type === "TEXT") {
         const layerName = node.name.substring(1).replace(/\//g, "_"); // Remove the leading '#' and translate to code
-
-        str += `translationsCommon[${type}].${layerName}`;
+        const nodeText = node.characters;
+        const lines = nodeText.split("\n");
+        const isMultiParagraph = lines.length > 1;
+        if (isMultiParagraph) {
+          const isNative = msg.formatType === "native";
+          for (let i = 0; i < lines.length; i++) {
+            if (isNative) {
+              str += `<P>{'\\"\\u2022\\"'} {translationsCommon[${type}].${layerName}_p${i + 1}}</P>`;
+            } else {
+              str += `<li><P>{translationsCommon[${type}].${layerName}_p${i + 1}}</P></li>`;
+            }
+          }
+        } else {
+          str += `translationsCommon[${type}].${layerName}`;
+        }
       }
     }
 

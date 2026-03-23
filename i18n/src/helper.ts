@@ -136,3 +136,62 @@ export const renameLayersToVariableName = async (node: SceneNode) => {
     }
   }
 };
+
+export const createOrUpdateVariable = async (
+  varName: string,
+  text: string,
+  i18nCollection: VariableCollection,
+  targetModeId: string,
+) => {
+  let variable: Variable | undefined = undefined;
+
+  for (const variableId of i18nCollection.variableIds) {
+    const v = await figma.variables.getVariableByIdAsync(variableId);
+    if (v?.name === varName) {
+      variable = v;
+      break;
+    }
+  }
+
+  if (variable === undefined) {
+    variable = figma.variables.createVariable(
+      varName,
+      i18nCollection,
+      "STRING",
+    );
+    if (variable !== undefined) {
+      console.log({ node: text });
+
+      variable.setValueForMode(targetModeId, text);
+      const specialInputs = getParamMatchingPattern(text);
+
+      const paramStr = specialInputs.reduce(
+        (acc, s) => acc + "[[" + s + "]]",
+        "",
+      );
+
+      variable.setValueForMode(
+        i18nCollection.modes[1].modeId,
+        paramStr + "TODO_TRANSLATE",
+      );
+      figma.ui.postMessage("successfully created translation variables");
+    } else {
+      figma.ui.postMessage(`error generate variable layer name: ${varName}`);
+    }
+  } else {
+    const variableValue = variable.valuesByMode[targetModeId];
+
+    if (variableValue !== undefined && text !== variableValue) {
+      variable.setValueForMode(targetModeId, text);
+      figma.ui.postMessage(
+        `layer name already exists in i18n collection, replaced ${variableValue} with ${text}`,
+      );
+    } else {
+      figma.ui.postMessage(
+        `layer name already exists in i18n collection, associated to: ${varName}`,
+      );
+    }
+  }
+
+  return variable;
+};

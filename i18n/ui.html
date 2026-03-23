@@ -719,21 +719,21 @@
             type="radio"
             id="var-user"
             name="codeVariableType"
-            value="userLocale"
+            value="native"
             checked
             class="radio-input orange-theme"
           />
-          <span class="radio-text">userLocale.userLanguage</span>
+          <span class="radio-text">React Native</span>
         </label>
         <label for="var-lang" class="radio-label orange-theme">
           <input
             type="radio"
             id="var-lang"
             name="codeVariableType"
-            value="language"
+            value="react"
             class="radio-input orange-theme"
           />
-          <span class="radio-text">language</span>
+          <span class="radio-text">React</span>
         </label>
       </div>
 
@@ -878,7 +878,7 @@
       },
       step3: {
         title: "Create Component React Code",
-        body: "Creates something similar to <code>translationCommon[userLanguage].variablename</code>, so that you can paste in the actual <code>.tsx</code> file without manually finding the translation variable.",
+        body: "Creates something similar to <code>translationCommon[language].variablename</code>, so that you can paste in the actual <code>.tsx</code> file without manually finding the translation variable. For paragraphs, it would automatically append <code>p${n}</code> for each line.",
       },
       step4: {
         title: "Update Layer Names",
