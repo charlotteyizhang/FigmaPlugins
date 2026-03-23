@@ -88,7 +88,6 @@ export const generateErrorTemplateFn = (input: string): string => {
   const displayName = "statusCode";
 
   const match = input.match(/\b\d+(\.\d+)?\b/);
-  console.log({ match });
 
   if (match) {
     const replaced = input.replace(match[0], "${" + displayName + "}");

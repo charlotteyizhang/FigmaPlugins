@@ -58,23 +58,34 @@ figma.ui.onmessage = async (msg: Message) => {
         const modeName = modes[i].name;
         str += `const i18n_${modeName} = {`;
 
-        for (const translationKey of i18nCollection.variableIds) {
-          const variable =
-            await figma.variables.getVariableByIdAsync(translationKey);
-          if (variable === null) {
-            console.warn(`Variable with id ${translationKey} not found.`);
-            return;
+        const variables = (
+          await Promise.all(
+            i18nCollection.variableIds.map((id) =>
+              figma.variables.getVariableByIdAsync(id),
+            ),
+          )
+        ).filter((v): v is Variable => {
+          if (v === null) {
+            console.warn(`Variable not found.`);
+            return false;
+          }
+          return true;
+        });
+
+        variables.sort((a, b) => a.name.localeCompare(b.name));
+
+        for (const variable of variables) {
+          const name = variable.name.replace(/\//g, "_");
+
+          const value =
+            variable.valuesByMode[modes[i].modeId] ?? "i18n.TODO_TRANSLATE";
+
+          const escapedValue = value.toString().replace(/\n/g, "\\n");
+
+          if (variable.name.includes("error")) {
+            str += `"${name}": ${generateErrorTemplateFn(escapedValue)},`;
           } else {
-            const name = variable.name.replace(/\//g, "_");
-
-            const value =
-              variable.valuesByMode[modes[i].modeId] ?? "i18n.TODO_TRANSLATE";
-
-            if (variable.name.includes("error")) {
-              str += `"${name}": ${generateErrorTemplateFn(value.toString())},`;
-            } else {
-              str += `"${name}": ${generateTemplateFn(value.toString())},`;
-            }
+            str += `"${name}": ${generateTemplateFn(escapedValue)},`;
           }
         }
 
@@ -139,14 +150,18 @@ figma.ui.onmessage = async (msg: Message) => {
             node.setBoundVariable("characters", variable);
           }
         } else {
+          let n = 0;
           for (let i = 0; i < lines.length; i++) {
-            const varName = `${layerName}/p${i + 1}`;
-            await createOrUpdateVariable(
-              varName,
-              lines[i],
-              i18nCollection,
-              targetModeId,
-            );
+            if (lines[i].trim() !== "") {
+              const varName = `${layerName}/p${n + 1}`;
+              n++;
+              await createOrUpdateVariable(
+                varName,
+                lines[i],
+                i18nCollection,
+                targetModeId,
+              );
+            }
           }
         }
       }
