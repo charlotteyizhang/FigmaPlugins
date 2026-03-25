@@ -608,7 +608,7 @@
       </div>
 
       <button type="submit" class="btn btn-emerald">
-        Create (shift + cmd + C)
+        Create (C)
       </button>
     </form>
 
@@ -661,7 +661,7 @@
         id="generateTranslationVariables"
         class="btn btn-blue"
       >
-        To translations.tsx (shift + enter)
+        To translations.tsx (A)
       </button>
     </div>
 
@@ -738,7 +738,7 @@
       </div>
 
       <button type="button" id="createCode" class="btn btn-orange">
-        To your component file (shift + space)
+        To your component file (E)
       </button>
     </div>
 
@@ -794,7 +794,7 @@
         id="renameLayersToVariableName"
         class="btn btn-indigo"
       >
-        Rename layer (shift + cmd + R)
+        Rename layer (R)
       </button>
     </div>
   </div>
@@ -927,16 +927,16 @@
 
     document.addEventListener("keydown", (e) => {
       const cmd = e.metaKey || e.ctrlKey;
-      if (e.shiftKey && e.key === "Enter") {
+      if (e.key === "a") {
         e.preventDefault();
         generateTranslationVariables();
-      } else if (e.shiftKey && e.key === " ") {
+      } else if (e.key.toLowerCase() === "e") {
         e.preventDefault();
         createCode();
-      } else if (e.shiftKey && cmd && e.key.toLowerCase() === "r") {
+      } else if ( e.key.toLowerCase() === "r") {
         e.preventDefault();
         renameLayersToVariableName();
-      } else if (e.shiftKey && cmd && e.key.toLowerCase() === "c") {
+      } else if (e.key.toLowerCase() === "c") {
         e.preventDefault();
         createVariables();
       }
