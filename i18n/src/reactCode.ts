@@ -1,4 +1,4 @@
-import { createCode } from "./helper";
+import { createCode, createColor } from "./helper";
 
 export type QueryKind = "lunarCustomer" | "WL" | "webApp";
 
@@ -362,7 +362,12 @@ const getChildrenView = (props: ChildViewProps): Promise<string> => {
       } else if (x.node.type === "INSTANCE") {
         if (hasIconWord(x.node.name)) {
           const iconSize = await getIconSize(x.node);
-          content = `<Icon color={textColors[theme].default} icon="${replaceIconWord(x.node.name)}" size={${iconSize ?? undefined}}/>`;
+          const colorStr = createColor(
+            x.queryKind === "webApp" ? "react" : "native",
+            "textColors",
+            "default",
+          );
+          content = `<Icon ${colorStr} icon="${replaceIconWord(x.node.name)}" size={${iconSize ?? undefined}}/>`;
         } else if (x.node.name.includes("Button")) {
           const buttonKind = x.node.componentProperties?.["Type"]?.value ?? "";
           const textNode = findTextNode(x.node);
@@ -403,29 +408,24 @@ const getChildrenView = (props: ChildViewProps): Promise<string> => {
             types: ["TEXT"],
           }) as TextNode[];
 
-          const resolvedProps = await Promise.all(
-            componentTextProps.map(async ([key, prop]) => {
-              // "Label#1234:0" → "label"
-              const propName = toLowercaseFirstLetterCamelCase(
-                key.replace(/#.*$/, ""),
-              );
-              const value = prop.value as string;
+          const resolvedProps = componentTextProps.map(([key, prop]) => {
+            // "Label#1234:0" → "label"
+            const propName = toLowercaseFirstLetterCamelCase(
+              key.replace(/#.*$/, ""),
+            );
+            const value = prop.value as string;
 
-              // Find the text node whose current content matches this property value
-              const textNode = allTextNodes.find((n) => n.characters === value);
-              if (textNode !== undefined) {
-                const translationStr = createCode(
-                  x.queryKind === "webApp" ? "react" : "native",
-                  x.queryKind === "webApp"
-                    ? "language"
-                    : "userLocale.userLanguage",
-                  textNode,
-                );
-                return `${propName}={${translationStr}}`;
-              }
-              return `${propName}="${value}"`;
-            }),
-          );
+            // Find the text node whose current content matches this property value
+            const textNode = allTextNodes.find((n) => n.characters === value);
+            if (textNode !== undefined) {
+              const translationStr = createCode(
+                x.queryKind === "webApp" ? "react" : "native",
+                textNode,
+              );
+              return `${propName}={${translationStr}}`;
+            }
+            return `${propName}="${value}"`;
+          });
 
           const propsStr =
             resolvedProps.length > 0 ? ` ${resolvedProps.join(" ")}` : "";
@@ -488,10 +488,19 @@ const getTextKind = async (
     const text = texts[0];
     const text2 = texts[1];
     const color = colorName.split("/");
-    const translation = getTranslationByLayername(node);
+    const translation = createCode(
+      queryKind === "webApp" ? "react" : "native",
+      node,
+    );
+
+    const colorStr = createColor(
+      queryKind === "webApp" ? "react" : "native",
+      color[0],
+      color[1],
+    );
 
     if (text.includes("Heading")) {
-      return `<${text2} color={${color[0]}[theme].${color[1]}}>{${translation}}</${text2}>`;
+      return `<${text2} ${colorStr}>{${translation}}</${text2}>`;
     } else {
       const kind =
         text2.toLowerCase() === "medium"
@@ -499,7 +508,7 @@ const getTextKind = async (
           : text.charAt(0).toLowerCase() +
             text.slice(1) +
             toCapitalFirstLetterCamelCase(texts[1]);
-      return `<P${env ? ` ${env}` : ""} ${kind === undefined ? "" : `kind="${kind}"`} color={${color[0]}[theme].${color[1]}}>{${translation}}</P>`;
+      return `<P${env ? ` ${env}` : ""} ${kind === undefined ? "" : `kind="${kind}"`} ${colorStr}>{${translation}}</P>`;
     }
   }
 };

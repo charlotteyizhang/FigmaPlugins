@@ -154,12 +154,10 @@ export const handleI18nMessage = async (msg: I18nMessage): Promise<void> => {
     }
   } else if (msg.type === "createCode") {
     let str = "";
-    const type =
-      msg.formatType === "native" ? "userLocale.userLanguage" : "language";
 
     for (const node of figma.currentPage.selection) {
       if (node.type === "TEXT") {
-        str += createCode(msg.formatType, type, node);
+        str += createCode(msg.formatType, node);
         // const layerName = node.name.substring(1).replace(/\//g, "_");
         // const nodeText = node.characters;
         // const lines = nodeText.split("\n");

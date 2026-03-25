@@ -197,10 +197,11 @@ export const createOrUpdateVariable = async (
 
 export const createCode = (
   formatType: "native" | "react",
-  type: string,
   node: TextNode,
 ): string => {
   const isNative = formatType === "native";
+  const type = isNative ? "userLocale.userLanguage" : "language";
+
   let str = "";
   const layerName = node.name.substring(1).replace(/\//g, "_");
   const nodeText = node.characters;
@@ -221,3 +222,12 @@ export const createCode = (
 
   return str;
 };
+
+export const createColor = (
+  formatType: "native" | "react",
+  colorName: string,
+  colorValue: string,
+): string =>
+  formatType === "react"
+    ? `color={${colorName}.${colorValue}}`
+    : `color={${colorName}[theme].${colorValue}}`;
