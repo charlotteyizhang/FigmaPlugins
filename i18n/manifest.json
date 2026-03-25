@@ -8,6 +8,7 @@
   "enableProposedApi": false,
   "editorType": ["figma"],
   "ui": "ui.html",
+  "permissions": ["teamlibrary"],
   "networkAccess": {
     "allowedDomains": ["https://developer.mozilla.org/"]
   }
