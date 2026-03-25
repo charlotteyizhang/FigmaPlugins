@@ -1,4 +1,5 @@
 import {
+  createCode,
   createOrUpdateVariable,
   findOrCreateCollection,
   generateErrorTemplateFn,
@@ -158,23 +159,24 @@ export const handleI18nMessage = async (msg: I18nMessage): Promise<void> => {
 
     for (const node of figma.currentPage.selection) {
       if (node.type === "TEXT") {
-        const layerName = node.name.substring(1).replace(/\//g, "_");
-        const nodeText = node.characters;
-        const lines = nodeText.split("\n");
-        const isMultiParagraph = lines.length > 1;
+        str += createCode(msg.formatType, type, node);
+        // const layerName = node.name.substring(1).replace(/\//g, "_");
+        // const nodeText = node.characters;
+        // const lines = nodeText.split("\n");
+        // const isMultiParagraph = lines.length > 1;
 
-        if (isMultiParagraph) {
-          const isNative = msg.formatType === "native";
-          for (let i = 0; i < lines.length; i++) {
-            if (isNative) {
-              str += `<P>{'\\"\\u2022\\"'} {translationsCommon[${type}].${layerName}_p${i + 1}}</P>`;
-            } else {
-              str += `<li><P>{translationsCommon[${type}].${layerName}_p${i + 1}}</P></li>`;
-            }
-          }
-        } else {
-          str += `translationsCommon[${type}].${layerName}`;
-        }
+        // if (isMultiParagraph) {
+        //   const isNative = msg.formatType === "native";
+        //   for (let i = 0; i < lines.length; i++) {
+        //     if (isNative) {
+        //       str += `<P>{'\\"\\u2022\\"'} {translationsCommon[${type}].${layerName}_p${i + 1}}</P>`;
+        //     } else {
+        //       str += `<li><P>{translationsCommon[${type}].${layerName}_p${i + 1}}</P></li>`;
+        //     }
+        //   }
+        // } else {
+        //   str += `translationsCommon[${type}].${layerName}`;
+        // }
       }
     }
 

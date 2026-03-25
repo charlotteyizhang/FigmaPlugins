@@ -194,3 +194,30 @@ export const createOrUpdateVariable = async (
 
   return variable;
 };
+
+export const createCode = (
+  formatType: "native" | "react",
+  type: string,
+  node: TextNode,
+): string => {
+  const isNative = formatType === "native";
+  let str = "";
+  const layerName = node.name.substring(1).replace(/\//g, "_");
+  const nodeText = node.characters;
+  const lines = nodeText.split("\n");
+  const isMultiParagraph = lines.length > 1;
+
+  if (isMultiParagraph) {
+    for (let i = 0; i < lines.length; i++) {
+      if (isNative) {
+        str += `<P>{'\\"\\u2022\\"'} {translationsCommon[${type}].${layerName}_p${i + 1}}</P>`;
+      } else {
+        str += `<li><P>{translationsCommon[${type}].${layerName}_p${i + 1}}</P></li>`;
+      }
+    }
+  } else {
+    str += `translationsCommon[${type}].${layerName}`;
+  }
+
+  return str;
+};

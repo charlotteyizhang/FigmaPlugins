@@ -1,4 +1,6 @@
-export type QueryKind = "lunarCustomer" | "WL";
+import { createCode } from "./helper";
+
+export type QueryKind = "lunarCustomer" | "WL" | "webApp";
 
 interface GenerateMsg {
   type: "generate";
@@ -273,9 +275,10 @@ const getChildrenView = (props: ChildViewProps): Promise<string> => {
         x.node.boundVariables?.itemSpacing?.id ?? "",
       );
       const spacingId = x.node.boundVariables?.itemSpacing?.id;
+
       const gapStr =
         spacingId !== undefined
-          ? `gap: ${variableId?.name.replace("/", ".")},`
+          ? `gap: spacing.${variableId?.name ?? "default"},`
           : "";
 
       const containerStyle =
@@ -307,8 +310,19 @@ const getChildrenView = (props: ChildViewProps): Promise<string> => {
         });
       }
 
-      const el =
-        containerStyle === undefined
+      const isWeb = x.queryKind === "webApp";
+
+      // Web defaults to flex-direction: row, so always inject display+column.
+      // For HORIZONTAL nodes the containerStyle already has flexDirection: "row"
+      // which overrides the column default.
+      const webStyle =
+        x.node.inferredAutoLayout?.layoutMode === "HORIZONTAL"
+          ? `display: "flex", ${containerStyle}`
+          : `display: "flex", flexDirection: "column"${containerStyle ? `, ${containerStyle}` : ""}`;
+
+      const el = isWeb
+        ? `<div className={css({${webStyle}})}>${content}</div>`
+        : containerStyle === undefined
           ? x.firstElement
             ? `<View>${content}</View>`
             : content
@@ -317,7 +331,9 @@ const getChildrenView = (props: ChildViewProps): Promise<string> => {
       const env =
         x.queryKind === "lunarCustomer"
           ? "appAppearanceCtx={appAppearanceCtx}"
-          : "appCtx={appCtx}";
+          : x.queryKind === "WL"
+            ? "appCtx={appCtx}"
+            : "";
 
       if (firstElementIsCard) {
         const textNode = findTextNode(firstChild);
@@ -325,12 +341,12 @@ const getChildrenView = (props: ChildViewProps): Promise<string> => {
           const translation = getTranslationByLayername(textNode);
           return (
             x.acc +
-            `<Card ${env} title={{text:${translation}, showIconRight:${firstChild.componentProperties?.["isLink"]?.value}}}>${content}</Card>`
+            `<Card${env ? ` ${env}` : ""} title={{text:${translation}, showIconRight:${firstChild.componentProperties?.["isLink"]?.value}}}>${content}</Card>`
           );
         }
         return (
           x.acc +
-          `<Card ${env} title={{text:translations[userLocale.userLanguage].${toLowercaseFirstLetterCamelCase(
+          `<Card${env ? ` ${env}` : ""} title={{text:translations[userLocale.userLanguage].${toLowercaseFirstLetterCamelCase(
             firstChild.componentProperties?.["Text#3945:0"]?.value.toString() ??
               "",
           )}, showIconRight:${firstChild.componentProperties?.["isLink"]?.value}}}>${content}</Card>`
@@ -356,8 +372,10 @@ const getChildrenView = (props: ChildViewProps): Promise<string> => {
             const env =
               x.queryKind === "lunarCustomer"
                 ? "theme={theme} responsive={responsive}"
-                : "theme={appCtx.theme}";
-            content = `<${x.node.name} ${env} ${buttonKind === undefined ? "" : `kind="${buttonKind}"`} text={${translation}} onPress={()=>undefined}/>`;
+                : x.queryKind === "WL"
+                  ? "theme={appCtx.theme}"
+                  : "";
+            content = `<${x.node.name}${env ? ` ${env}` : ""} ${buttonKind === undefined ? "" : `kind="${buttonKind}"`} text={${translation}} onPress={()=>undefined}/>`;
           } else {
             const icon = x.node.findChild((n) =>
               n.name.toLocaleLowerCase().includes("icon"),
@@ -371,8 +389,47 @@ const getChildrenView = (props: ChildViewProps): Promise<string> => {
           const env =
             x.queryKind === "lunarCustomer"
               ? "appAppearanceCtx={appAppearanceCtx}"
-              : "appCtx={appCtx}";
-          content = `<${nodeName.charAt(0).toUpperCase() + nodeName.slice(1)} ${env} />`;
+              : x.queryKind === "WL"
+                ? "appCtx={appCtx}"
+                : "";
+
+          // Use exposed component properties (TEXT type) for prop names.
+          // For each, find the matching text node inside to check for a variable binding.
+          const componentTextProps = Object.entries(
+            x.node.componentProperties ?? {},
+          ).filter(([, prop]) => prop.type === "TEXT");
+
+          const allTextNodes = x.node.findAllWithCriteria({
+            types: ["TEXT"],
+          }) as TextNode[];
+
+          const resolvedProps = await Promise.all(
+            componentTextProps.map(async ([key, prop]) => {
+              // "Label#1234:0" → "label"
+              const propName = toLowercaseFirstLetterCamelCase(
+                key.replace(/#.*$/, ""),
+              );
+              const value = prop.value as string;
+
+              // Find the text node whose current content matches this property value
+              const textNode = allTextNodes.find((n) => n.characters === value);
+              if (textNode !== undefined) {
+                const translationStr = createCode(
+                  x.queryKind === "webApp" ? "react" : "native",
+                  x.queryKind === "webApp"
+                    ? "language"
+                    : "userLocale.userLanguage",
+                  textNode,
+                );
+                return `${propName}={${translationStr}}`;
+              }
+              return `${propName}="${value}"`;
+            }),
+          );
+
+          const propsStr =
+            resolvedProps.length > 0 ? ` ${resolvedProps.join(" ")}` : "";
+          content = `<${nodeName.charAt(0).toUpperCase() + nodeName.slice(1)}${env ? ` ${env}` : ""}${propsStr} />`;
         }
       } else {
         content = `<>${x.node.name}, ${x.node.type}</>`;
@@ -416,14 +473,16 @@ const getTextKind = async (
   const env =
     queryKind === "lunarCustomer"
       ? "responsive={responsive}"
-      : "appCtx={appCtx}";
+      : queryKind === "WL"
+        ? "appCtx={appCtx}"
+        : "";
 
   if (textKind === undefined) {
     console.warn("textKind===undefined");
-    return `<P ${env} kind={undefined} />`;
+    return `<P${env ? ` ${env}` : ""} kind={undefined} />`;
   } else if (colorName === undefined) {
     console.warn("colorName===undefined");
-    return `<P ${env} color={undefined} />`;
+    return `<P${env ? ` ${env}` : ""} color={undefined} />`;
   } else {
     const texts = textKind.split("/");
     const text = texts[0];
@@ -440,7 +499,7 @@ const getTextKind = async (
           : text.charAt(0).toLowerCase() +
             text.slice(1) +
             toCapitalFirstLetterCamelCase(texts[1]);
-      return `<P ${env} ${kind === undefined ? "" : `kind="${kind}"`} color={${color[0]}[theme].${color[1]}}>{${translation}}</P>`;
+      return `<P${env ? ` ${env}` : ""} ${kind === undefined ? "" : `kind="${kind}"`} color={${color[0]}[theme].${color[1]}}>{${translation}}</P>`;
     }
   }
 };
