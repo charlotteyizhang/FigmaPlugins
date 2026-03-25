@@ -41,7 +41,7 @@
     margin: 0;
     padding: 0;
     width: 500px;
-    height: 600px;
+    height: 680px;
     overflow: hidden;
     background-color: var(--bg-body);
     font-family:
@@ -135,13 +135,12 @@
 
   /* Main Layout */
   .main-content {
-    flex: 1;
     min-height: 0;
     padding: 16px 24px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     overflow-y: auto;
+    gap: 16px;
   }
 
   .step-section {
@@ -327,8 +326,8 @@
   .footer {
     background-color: var(--bg-footer);
     padding: 12px 24px;
-    height: 110px;
     display: flex;
+    flex: 1;
     flex-direction: column;
     flex-shrink: 0;
   }
@@ -1186,12 +1185,12 @@
             </div>
           </div>
         </form>
-        <div id="react-buttons" />
+        <div id="react-buttons"></div>
       </div>
     </div>
 
     <!-- React Tool Footer -->
-    <div class="footer">
+    <div class="footer large">
       <div class="footer-header">
         <h3 class="footer-title">
           <svg

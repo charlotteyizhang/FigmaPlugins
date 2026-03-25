@@ -1,7 +1,11 @@
-import { handleI18nMessage, I18N_MESSAGE_TYPES, type I18nMessage } from "./i18n";
+import {
+  handleI18nMessage,
+  I18N_MESSAGE_TYPES,
+  type I18nMessage,
+} from "./i18n";
 import { handleReactMessage, type ReactMessage } from "./reactCode";
 
-figma.showUI(__html__, { width: 500, height: 600 });
+figma.showUI(__html__, { width: 500, height: 680 });
 
 type Message = I18nMessage | ReactMessage;
 
