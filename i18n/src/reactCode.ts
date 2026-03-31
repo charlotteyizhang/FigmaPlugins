@@ -338,15 +338,20 @@ const getChildrenView = (props: ChildViewProps): Promise<string> => {
       if (firstElementIsCard) {
         const textNode = findTextNode(firstChild);
         if (textNode !== null && textNode.type === "TEXT") {
-          const translation = getTranslationByLayername(textNode);
+          const translation = getTranslationByLayername(
+            textNode,
+            x.queryKind === "webApp" ? "react" : "native",
+          );
           return (
             x.acc +
             `<Card${env ? ` ${env}` : ""} title={{text:${translation}, showIconRight:${firstChild.componentProperties?.["isLink"]?.value}}}>${content}</Card>`
           );
         }
+        const formatStr =
+          x.queryKind === "webApp" ? "language" : "userLocale.userLanguage";
         return (
           x.acc +
-          `<Card${env ? ` ${env}` : ""} title={{text:translations[userLocale.userLanguage].${toLowercaseFirstLetterCamelCase(
+          `<Card${env ? ` ${env}` : ""} title={{text:translations[${formatStr}].${toLowercaseFirstLetterCamelCase(
             firstChild.componentProperties?.["Text#3945:0"]?.value.toString() ??
               "",
           )}, showIconRight:${firstChild.componentProperties?.["isLink"]?.value}}}>${content}</Card>`
@@ -373,7 +378,10 @@ const getChildrenView = (props: ChildViewProps): Promise<string> => {
           const textNode = findTextNode(x.node);
 
           if (textNode !== null && textNode.type === "TEXT") {
-            const translation = getTranslationByLayername(textNode);
+            const translation = getTranslationByLayername(
+              textNode,
+              x.queryKind === "webApp" ? "react" : "native",
+            );
             const env =
               x.queryKind === "lunarCustomer"
                 ? "theme={theme} responsive={responsive}"
@@ -442,12 +450,16 @@ const getChildrenView = (props: ChildViewProps): Promise<string> => {
   return recurse(props);
 };
 
-const getTranslationByLayername = (node: TextNode): string => {
+const getTranslationByLayername = (
+  node: TextNode,
+  formatType: "native" | "react",
+): string => {
   if (node.name[0] === "#") {
-    const layerName = node.name.substring(1).replace(/\//g, "_");
-    return `translationsCommon[userLocale.userLanguage].${layerName}`;
+    return createCode(formatType, node);
   }
-  return `translations[userLocale.userLanguage].${toLowercaseFirstLetterCamelCase(node.characters)}`;
+  const formatStr =
+    formatType === "react" ? "language" : "userLocale.userLanguage";
+  return `translations[${formatStr}].${toLowercaseFirstLetterCamelCase(node.characters)}`;
 };
 
 const getTextKind = async (
