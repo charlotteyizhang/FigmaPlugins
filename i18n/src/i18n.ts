@@ -81,6 +81,9 @@ export const handleI18nMessage = async (msg: I18nMessage): Promise<void> => {
       str += "};\n";
     }
 
+    str +=
+      "export const translationsCommon = {\nen: i18n_en,\n ja: i18n_ja,\n} as const;";
+
     figma.ui.postMessage(str);
   } else if (msg.type === "renameLayersToVariableName") {
     const localCollections =
