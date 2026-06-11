@@ -39,11 +39,7 @@ figma.ui.onmessage = async (msg: Message) => {
       const str = Object.entries(list)
         .map(([name, value]) => {
           const names = name.split("/");
-          return `${value}={${
-            names[0].charAt(0).toLowerCase() + names[0].slice(1)
-          }${names[1].charAt(0).toUpperCase() + names[1].slice(1)}[theme].${
-            names[2]
-          }}`;
+          return `${value}={${names[0]}[theme].${names[1]}}`;
         })
         .join(",");
 
@@ -56,9 +52,29 @@ figma.ui.onmessage = async (msg: Message) => {
   }
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const resolveColor = async (value: any): Promise<string | undefined> => {
+  if (typeof value === "object" && value !== null && "r" in value) {
+    return rgbaToHex(value as RGBA);
+  }
+  if (
+    typeof value === "object" &&
+    value !== null &&
+    (value as VariableAlias).type === "VARIABLE_ALIAS"
+  ) {
+    const alias = value as VariableAlias;
+    const variable = await figma.variables.getVariableByIdAsync(alias.id);
+    if (variable) {
+      const firstValue = Object.values(variable.valuesByMode)[0];
+      return resolveColor(firstValue);
+    }
+  }
+  return undefined;
+};
+
 const get = async (
   v: VariableAlias,
-  list: Record<string, string>
+  list: Record<string, string>,
 ): Promise<{ color: string; name: string } | undefined> => {
   const varId = v.id;
   const variable = await figma.variables.getVariableByIdAsync(varId);
@@ -66,17 +82,16 @@ const get = async (
     return undefined;
   } else {
     const variableName = variable.name;
-    const variableValue = Object.values(variable.valuesByMode).map((v) => v);
+    const variableValue = Object.values(variable.valuesByMode);
 
     if (
       variableName !== undefined &&
       list[variableName] === undefined &&
-      variableValue !== undefined
+      variableValue.length > 0
     ) {
-      return {
-        color: rgbaToHex(variableValue[0] as RGBA),
-        name: variableName,
-      };
+      const color = await resolveColor(variableValue[0]);
+      if (color === undefined) return undefined;
+      return { color, name: variableName };
     }
     return undefined;
   }
