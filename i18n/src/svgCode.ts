@@ -1,6 +1,8 @@
+type SvgTarget = "native" | "react" | "skia";
+
 interface ConvertMsg {
   type: "convertSvgColors";
-  native: boolean;
+  target: SvgTarget;
 }
 
 export type SvgMessage = ConvertMsg;
@@ -114,10 +116,13 @@ export const handleSvgMessage = async (msg: SvgMessage): Promise<void> => {
     //   { "#1a1a1a": "{color[theme].iconPrimary}" }
     // SVGR's replaceAttrValues matching is case-sensitive. Figma exports
     // lowercase hex, but emit both cases to be robust across export variations.
+    // React Native and Skia both use the themed `namespace[theme].field` token;
+    // React (web) uses the flat `namespace.field` form.
+    const themed = msg.target !== "react";
     const replaceAttrValues: Record<string, string> = {};
     for (const [name, hex] of Object.entries(list)) {
       const names = name.split("/");
-      const token = msg.native
+      const token = themed
         ? `${names[0]}[theme].${names[1]}`
         : `${names[0]}.${names[1]}`;
       const lower = normalizeHex(hex);
@@ -132,7 +137,7 @@ export const handleSvgMessage = async (msg: SvgMessage): Promise<void> => {
       kind: "svg",
       svg,
       replaceAttrValues,
-      native: msg.native,
+      target: msg.target,
       componentName,
     });
   }

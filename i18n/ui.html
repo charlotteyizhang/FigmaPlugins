@@ -1130,6 +1130,16 @@
             />
             <span class="radio-text">React Native</span>
           </label>
+          <label for="svg-skia" class="radio-label orange-theme">
+            <input
+              type="radio"
+              id="svg-skia"
+              name="svg-target"
+              value="skia"
+              class="radio-input orange-theme"
+            />
+            <span class="radio-text">Skia</span>
+          </label>
           <label for="svg-react" class="radio-label orange-theme">
             <input
               type="radio"
@@ -1566,11 +1576,11 @@
     const svgClearBtn = document.getElementById("svg-clear-btn");
 
     document.getElementById("svg-convert-btn").onclick = () => {
-      const native =
-        document.querySelector('input[name="svg-target"]:checked').value ===
-        "native";
+      const target = document.querySelector(
+        'input[name="svg-target"]:checked',
+      ).value;
       parent.postMessage(
-        { pluginMessage: { type: "convertSvgColors", native } },
+        { pluginMessage: { type: "convertSvgColors", target } },
         "*",
       );
     };
@@ -1645,7 +1655,7 @@
         }
         try {
           const code = await window.__svgrConvert(pluginMessage.svg, {
-            native: pluginMessage.native,
+            target: pluginMessage.target,
             replaceAttrValues: pluginMessage.replaceAttrValues,
             componentName: pluginMessage.componentName,
           });
@@ -1658,7 +1668,8 @@
         } catch (err) {
           console.error(err);
           showToast(
-            "SVGR conversion failed: " + (err && err.message ? err.message : err),
+            "SVGR conversion failed: " +
+              (err && err.message ? err.message : err),
             "info",
           );
         }

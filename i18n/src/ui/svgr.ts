@@ -6,18 +6,17 @@ import { transform } from "@svgr/core";
 import jsxPlugin from "@svgr/plugin-jsx";
 import svgoPlugin from "@svgr/plugin-svgo";
 
+type SvgTarget = "native" | "react" | "skia";
+
 interface SvgrConvertOptions {
-  native: boolean;
+  target: SvgTarget;
   replaceAttrValues: Record<string, string>;
   componentName: string;
 }
 
 declare global {
   interface Window {
-    __svgrConvert?: (
-      svg: string,
-      opts: SvgrConvertOptions,
-    ) => Promise<string>;
+    __svgrConvert?: (svg: string, opts: SvgrConvertOptions) => Promise<string>;
   }
 }
 
@@ -84,6 +83,16 @@ const formatChildren = (inner: string): string => {
   return lines.join("\n");
 };
 
+// Collect the color-token namespaces used in the body (the `names[0]` part of
+// each token, referenced as `namespace[theme].field`) and build a single import
+// from the given module. Returns "" when no themed tokens are present.
+const colorsImportLine = (body: string, importPath: string): string => {
+  const namespaces = [...new Set(body.match(/[A-Za-z_$][\w$]*(?=\[theme\])/g))];
+  return namespaces.length > 0
+    ? `import { ${namespaces.sort().join(", ")} } from "${importPath}";\n`
+    : "";
+};
+
 // Rewrite SVGR's default react-native-svg component into the project's
 // scale-aware template (HasTheme/CommonSVGProps + mkWidthHeightViewbox). We keep
 // SVGR's element imports and themed-fill JSX, and only swap the <Svg> wrapper.
@@ -104,14 +113,7 @@ const toRNScalingComponent = (
   const name = componentName.endsWith("SVG")
     ? componentName
     : `${componentName}SVG`;
-
-  // Collect the color-token namespaces used (the `names[0]` part of each token,
-  // referenced as `namespace[theme].field`) and import them from the theme.
-  const namespaces = [...new Set(body.match(/[A-Za-z_$][\w$]*(?=\[theme\])/g))];
-  const colorsImport =
-    namespaces.length > 0
-      ? `import { ${namespaces.sort().join(", ")} } from "../theme/colors";\n`
-      : "";
+  const colorsImport = colorsImportLine(body, "../theme/colors");
 
   return `import Svg, { ${named} } from "react-native-svg";
 import type { HasTheme } from "../components/types";
@@ -145,12 +147,90 @@ ${body}
 `;
 };
 
+// Map react-native-svg JSX to @shopify/react-native-skia JSX. Per the skia docs
+// (shapes/path): the path comes from `path`, fill color from `color`, fill rule
+// from `fillType` ("winding"/"evenOdd"), and a stroked path uses style="stroke"
+// with strokeCap/strokeJoin/strokeMiter. SVG's clipRule has no skia equivalent.
+const toSkiaJsx = (body: string): string => {
+  let out = body;
+  // <Path> -> <skia.Path>, </Path> -> </skia.Path>, etc.
+  out = out.replace(/<(\/?)([A-Z][\w]*)/g, "<$1skia.$2");
+  // d="..." -> path={mkSkiaPathFromSVGString("...")}
+  out = out.replace(/\bd="([^"]*)"/g, 'path={mkSkiaPathFromSVGString("$1")}');
+  // SVG fill rule -> skia fillType; drop clipRule (no skia equivalent).
+  out = out
+    .replace(/\bfillRule="evenodd"/g, 'fillType="evenOdd"')
+    .replace(/\bfillRule="nonzero"/g, 'fillType="winding"')
+    .replace(/\s*clipRule="[^"]*"/g, "");
+  // Stroke attributes -> skia paint props; a stroked path needs style="stroke".
+  out = out
+    .replace(/\bstrokeLinecap=/g, "strokeCap=")
+    .replace(/\bstrokeLinejoin=/g, "strokeJoin=")
+    .replace(/\bstrokeMiterlimit=/g, "strokeMiter=")
+    .replace(/\bstroke=/g, 'style="stroke" color=');
+  // fill -> color (project convention; skia's documented prop is `color`).
+  out = out.replace(/\bfill=/g, "color=");
+  return out;
+};
+
+// Rewrite SVGR's react-native-svg output into a @shopify/react-native-skia
+// component: scale the canvas to the viewBox, namespace every SVG element under
+// `skia.` (e.g. <Path> -> <skia.Path>), and import colors from lunar-apps-native
+// (this output targets a different project than the React Native template).
+const toSkiaComponent = (svgrOutput: string, componentName: string): string => {
+  const svgMatch = svgrOutput.match(/<Svg\b([^>]*)>([\s\S]*)<\/Svg>/);
+  if (!svgMatch) return svgrOutput; // unexpected shape — return as-is
+
+  const { w, h } = extractDims(svgMatch[1], svgrOutput);
+  const body = toSkiaJsx(formatChildren(svgMatch[2]));
+  // Component name: *SVG -> *skia, else append "skia".
+  const base = componentName.endsWith("SVG")
+    ? componentName.slice(0, -3)
+    : componentName;
+  const name = `${base}skia`;
+  const colorsImport = colorsImportLine(
+    body,
+    "lunar-apps-native/src/theme/colors",
+  );
+  // mkSkiaPathFromSVGString is only needed when there are paths (d attributes).
+  const pathImport = body.includes("mkSkiaPathFromSVGString(")
+    ? `import { mkSkiaPathFromSVGString } from "./formatSVG";\n`
+    : "";
+
+  return `import * as skia from "@shopify/react-native-skia";
+import type { HasTheme } from "lunar-apps-native/src/components/types";
+import type { CommonSVGProps, ViewBox } from "lunar-apps-native/src/constants/formatSVG";
+import { mkWidthHeightViewbox } from "lunar-apps-native/src/constants/formatSVG";
+${pathImport}${colorsImport}
+interface ${name}Props extends HasTheme, CommonSVGProps {}
+const viewBox: ViewBox = {
+  w: ${w},
+  h: ${h},
+};
+
+export const ${name} = ({ width, height, theme }: ${name}Props) => {
+  const widthHeightViewbox = mkWidthHeightViewbox({ viewBox, width, height });
+  const scale = Math.min(
+    widthHeightViewbox.width / viewBox.w,
+    widthHeightViewbox.height / viewBox.h,
+  );
+  return (
+    <skia.Canvas style={{ width: viewBox.w * scale, height: viewBox.h * scale }}>
+${body}
+    </skia.Canvas>
+  );
+};
+`;
+};
+
 // Call transform() directly (NOT loadConfig) so cosmiconfig's Node fs path is
 // never reached in the browser bundle.
 window.__svgrConvert = async (
   svg,
-  { native, replaceAttrValues, componentName },
+  { target, replaceAttrValues, componentName },
 ) => {
+  // Native and Skia both build on SVGR's react-native-svg output.
+  const native = target !== "react";
   const output = await transform(
     svg,
     {
@@ -174,7 +254,9 @@ window.__svgrConvert = async (
     { componentName },
   );
 
-  // React Native output gets re-wrapped into the project's scaling template;
-  // React (web) keeps SVGR's default component.
-  return native ? toRNScalingComponent(output, componentName) : output;
+  // React Native -> scaling template; Skia -> Canvas template; React (web) keeps
+  // SVGR's default component.
+  if (target === "skia") return toSkiaComponent(output, componentName);
+  if (target === "native") return toRNScalingComponent(output, componentName);
+  return output;
 };
