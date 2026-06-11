@@ -1,5 +1,6 @@
 interface ConvertMsg {
   type: "convertSvgColors";
+  native: boolean;
 }
 
 export type SvgMessage = ConvertMsg;
@@ -75,20 +76,64 @@ const collectColors = async (
   }
 };
 
+// Figma exports hex colors as lowercase 6-digit (#rrggbb); alpha is emitted as a
+// separate fill-opacity attribute, so drop any 8-digit alpha suffix for matching.
+const normalizeHex = (hex: string): string => {
+  const h = hex.toLowerCase();
+  return h.length === 9 ? h.slice(0, 7) : h;
+};
+
+const toPascalCase = (name: string): string => {
+  const words = name
+    .replace(/[^a-zA-Z0-9]/g, " ")
+    .split(" ")
+    .filter((w) => w.length > 0);
+  const pascal = words
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join("");
+  // JSX component names must start with a letter.
+  return /^[A-Za-z]/.test(pascal) ? pascal : `SvgComponent`;
+};
+
 export const handleSvgMessage = async (msg: SvgMessage): Promise<void> => {
   if (msg.type === "convertSvgColors") {
+    const node = figma.currentPage.selection[0];
+    if (node === undefined) {
+      figma.ui.postMessage({
+        kind: "svg",
+        error: "Select a node to convert.",
+      });
+      return;
+    }
+
+    // Build variable-name -> hex map from the node being exported.
     const list: Record<string, string> = {};
-    await Promise.all(
-      figma.currentPage.selection.map((node) => collectColors(node, list)),
-    );
+    await collectColors(node, list);
 
-    const str = Object.entries(list)
-      .map(([name, value]) => {
-        const names = name.split("/");
-        return `${value}={${names[0]}[theme].${names[1]}}`;
-      })
-      .join(",");
+    // Turn the color map into SVGR's replaceAttrValues option:
+    //   { "#1a1a1a": "{color[theme].iconPrimary}" }
+    // SVGR's replaceAttrValues matching is case-sensitive. Figma exports
+    // lowercase hex, but emit both cases to be robust across export variations.
+    const replaceAttrValues: Record<string, string> = {};
+    for (const [name, hex] of Object.entries(list)) {
+      const names = name.split("/");
+      const token = msg.native
+        ? `${names[0]}[theme].${names[1]}`
+        : `${names[0]}.${names[1]}`;
+      const lower = normalizeHex(hex);
+      replaceAttrValues[lower] = `{${token}}`;
+      replaceAttrValues[lower.toUpperCase()] = `{${token}}`;
+    }
 
-    figma.ui.postMessage({ data: str, kind: "svg" });
+    const svg = await node.exportAsync({ format: "SVG_STRING" });
+    const componentName = toPascalCase(node.name);
+
+    figma.ui.postMessage({
+      kind: "svg",
+      svg,
+      replaceAttrValues,
+      native: msg.native,
+      componentName,
+    });
   }
 };

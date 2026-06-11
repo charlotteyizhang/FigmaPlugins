@@ -404,6 +404,24 @@
     margin: 0;
   }
 
+  textarea#svg-code {
+    width: 100%;
+    height: 100%;
+    min-height: 200px;
+    box-sizing: border-box;
+    resize: none;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    color: var(--text-light);
+    font-family: monospace;
+    font-size: 11px;
+    line-height: 1.5;
+    white-space: pre;
+    margin: 0;
+    padding: 0;
+  }
+
   .empty-state {
     height: 100%;
     display: flex;
@@ -1097,10 +1115,35 @@
               />
             </svg>
           </div>
-          <h2 class="step-title">Extract color variables from selection</h2>
+          <h2 class="step-title">Convert selection to SVGR component</h2>
         </div>
+
+        <div class="radio-group">
+          <label for="svg-native" class="radio-label orange-theme">
+            <input
+              type="radio"
+              id="svg-native"
+              name="svg-target"
+              value="native"
+              checked
+              class="radio-input orange-theme"
+            />
+            <span class="radio-text">React Native</span>
+          </label>
+          <label for="svg-react" class="radio-label orange-theme">
+            <input
+              type="radio"
+              id="svg-react"
+              name="svg-target"
+              value="react"
+              class="radio-input orange-theme"
+            />
+            <span class="radio-text">React</span>
+          </label>
+        </div>
+
         <button type="button" id="svg-convert-btn" class="btn btn-indigo">
-          Convert colors
+          Convert to component
         </button>
       </div>
     </div>
@@ -1148,9 +1191,9 @@
         </button>
       </div>
       <div class="output-box">
-        <pre id="svg-code" class="hidden"></pre>
+        <textarea id="svg-code" class="hidden" spellcheck="false"></textarea>
         <div id="svg-empty-state" class="empty-state">
-          Select layers, then click Convert colors.
+          Select a layer, then click Convert to component.
         </div>
       </div>
     </div>
@@ -1349,6 +1392,8 @@
     </div>
   </div>
 
+  <!-- SVGR_BUNDLE -->
+
   <script>
     // ===== TAB SWITCHING =====
     function switchTab(tab) {
@@ -1521,11 +1566,17 @@
     const svgClearBtn = document.getElementById("svg-clear-btn");
 
     document.getElementById("svg-convert-btn").onclick = () => {
-      parent.postMessage({ pluginMessage: { type: "convertSvgColors" } }, "*");
+      const native =
+        document.querySelector('input[name="svg-target"]:checked').value ===
+        "native";
+      parent.postMessage(
+        { pluginMessage: { type: "convertSvgColors", native } },
+        "*",
+      );
     };
 
     svgClearBtn.onclick = () => {
-      svgCodebox.innerText = "";
+      svgCodebox.value = "";
       svgCodebox.classList.add("hidden");
       svgEmptyState.classList.remove("hidden");
       svgClearBtn.disabled = true;
@@ -1582,19 +1633,35 @@
     };
 
     // ===== COMBINED MESSAGE HANDLER =====
-    onmessage = (event) => {
+    onmessage = async (event) => {
       const pluginMessage = event.data.pluginMessage;
       if (!pluginMessage) return;
 
       // React Tool messages have a `kind` field
       if (pluginMessage.kind === "svg") {
-        const svgStr = pluginMessage.data;
-        svgCodebox.innerText = svgStr;
-        svgCodebox.classList.remove("hidden");
-        svgEmptyState.classList.add("hidden");
-        svgClearBtn.disabled = false;
-        copyToClipboard(svgStr);
-        showToast("Color props copied to clipboard.");
+        if (pluginMessage.error) {
+          showToast(pluginMessage.error, "info");
+          return;
+        }
+        try {
+          const code = await window.__svgrConvert(pluginMessage.svg, {
+            native: pluginMessage.native,
+            replaceAttrValues: pluginMessage.replaceAttrValues,
+            componentName: pluginMessage.componentName,
+          });
+          svgCodebox.value = code;
+          svgCodebox.classList.remove("hidden");
+          svgEmptyState.classList.add("hidden");
+          svgClearBtn.disabled = false;
+          copyToClipboard(code);
+          showToast("Component copied to clipboard.");
+        } catch (err) {
+          console.error(err);
+          showToast(
+            "SVGR conversion failed: " + (err && err.message ? err.message : err),
+            "info",
+          );
+        }
       } else if (pluginMessage.kind === "msg") {
         const reactStr = pluginMessage.data;
         reactCodebox.innerText = reactStr;

@@ -7,7 +7,7 @@
     "lint": "eslint --ext .ts,.tsx --ignore-pattern node_modules .",
     "lint:fix": "eslint --ext .ts,.tsx --ignore-pattern node_modules --fix .",
     "watch": "./node_modules/.bin/tsx esbuild.bundle.mjs --watch",
-    "typecheck": "tsc --project tsconfig.json --noEmit",
+    "typecheck": "tsc --project tsconfig.json --noEmit && tsc --project tsconfig.ui.json --noEmit",
     "typecheck--watch": "npm run typecheck -- --watch",
     "build": "./node_modules/.bin/tsx esbuild.bundle.mjs --build"
   },
@@ -16,12 +16,17 @@
   "devDependencies": {
     "@figma/eslint-plugin-figma-plugins": "1.0.0",
     "@figma/plugin-typings": "1.126.0",
+    "@svgr/core": "^8.1.0",
+    "@svgr/plugin-jsx": "^8.1.0",
+    "@svgr/plugin-svgo": "^8.1.0",
     "@typescript-eslint/eslint-plugin": "8.59.4",
     "@typescript-eslint/parser": "8.59.4",
-    "eslint": "10.4.0",
-    "typescript": "6.0.3",
     "esbuild": "0.28.0",
-    "tsx": "4.22.3"
+    "eslint": "10.4.0",
+    "os-browserify": "^0.3.0",
+    "path-browserify": "^1.0.1",
+    "tsx": "4.22.3",
+    "typescript": "6.0.3"
   },
   "eslintConfig": {
     "extends": [
@@ -31,7 +36,7 @@
     ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
-      "project": "./tsconfig.json"
+      "project": ["./tsconfig.json", "./tsconfig.ui.json"]
     },
     "root": true,
     "rules": {

@@ -7,7 +7,7 @@
   "capabilities": [],
   "enableProposedApi": false,
   "editorType": ["figma"],
-  "ui": "ui.html",
+  "ui": "./target/ui.html",
   "permissions": ["teamlibrary"],
   "networkAccess": {
     "allowedDomains": ["https://developer.mozilla.org/"]
