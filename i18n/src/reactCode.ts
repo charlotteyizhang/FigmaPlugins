@@ -57,7 +57,7 @@ export const handleReactMessage = async (msg: ReactMessage): Promise<void> => {
       await figma.variables.getLocalVariableCollectionsAsync();
 
     for (const node of figma.currentPage.selection) {
-      str += await getChildrenView({
+      str = await getChildrenView({
         node,
         acc: str,
         localCollections,

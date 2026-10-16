@@ -1,6 +1,7 @@
 import * as esbuild from "esbuild";
 import * as process from "node:process";
 import { readFile, writeFile, mkdir } from "node:fs/promises";
+import { watch as fsWatch } from "node:fs";
 
 const SVGR_MARKER = "<!-- SVGR_BUNDLE -->";
 
@@ -169,6 +170,10 @@ const main = async () => {
         ],
       });
       await svgrCtx.watch();
+      // esbuild doesn't watch the HTML template, so rebuild when ui.html changes.
+      fsWatch("./ui.html", () => {
+        buildUiHtml().catch(console.error);
+      });
       return;
     }
     default:
