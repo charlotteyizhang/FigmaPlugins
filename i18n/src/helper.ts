@@ -229,5 +229,5 @@ export const createColor = (
   colorValue: string,
 ): string =>
   formatType === "react"
-    ? `color={${colorName}.${colorValue}}`
+    ? `color={${colorName}Themed[theme].${colorValue}}`
     : `color={${colorName}[theme].${colorValue}}`;
