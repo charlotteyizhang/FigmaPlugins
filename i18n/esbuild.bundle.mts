@@ -140,7 +140,6 @@ const buildAll = async () => {
 };
 
 const main = async () => {
-  console.log(process.argv);
   const input = process.argv[2] ?? "--build";
   switch (input) {
     case "--build":
