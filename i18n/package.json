@@ -21,7 +21,7 @@
     "@svgr/plugin-jsx": "8.1.0",
     "@svgr/plugin-svgo": "8.1.0",
     "@types/node": "^24.19.2",
-    "esbuild": "0.28.0",
+    "esbuild": "0.28.2",
     "os-browserify": "0.3.0",
     "oxfmt": "^0.74.0",
     "oxlint": "^1.89.0",
