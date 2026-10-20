@@ -1,4 +1,5 @@
 import * as esbuild from "esbuild";
+import type { BuildOptions, Plugin } from "esbuild";
 import * as process from "node:process";
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { watch as fsWatch } from "node:fs";
@@ -25,7 +26,7 @@ function cosmiconfig(){return mk();}
 function cosmiconfigSync(){return mk();}
 module.exports={cosmiconfig,cosmiconfigSync,defaultLoaders:{},defaultLoadersSync:{},getDefaultSearchPlaces:()=>[],getDefaultSearchPlacesSync:()=>[]};
 `;
-const SPECIAL_SHIMS = {
+const SPECIAL_SHIMS: Record<string, string> = {
   util: UTIL_SHIM,
   "node:util": UTIL_SHIM,
   cosmiconfig: COSMI_SHIM,
@@ -48,13 +49,11 @@ const EMPTY_STUBS = [
   "typescript",
 ];
 
-const stubNodeBuiltins = {
+const stubNodeBuiltins: Plugin = {
   name: "stub-node-builtins",
   setup(build) {
     const names = [...EMPTY_STUBS, ...Object.keys(SPECIAL_SHIMS)];
-    const filter = new RegExp(
-      `^(${names.map((b) => b.replace("/", "\\/")).join("|")})$`,
-    );
+    const filter = new RegExp(`^(${names.map((b) => b.replace("/", "\\/")).join("|")})$`);
     build.onResolve({ filter }, (args) => ({
       path: args.path,
       namespace: "node-stub",
@@ -74,7 +73,7 @@ const svgrAlias = {
 };
 
 // Build the main sandbox code.
-const codeConfig = {
+const codeConfig: BuildOptions = {
   entryPoints: ["./src/code.ts"],
   bundle: true,
   minify: false,
@@ -86,7 +85,7 @@ const codeConfig = {
 };
 
 // Build the UI-side SVGR wrapper as an IIFE we inject into the HTML.
-const svgrConfig = {
+const svgrConfig: BuildOptions = {
   entryPoints: ["./src/ui/svgr.ts"],
   bundle: true,
   minify: true,
@@ -115,7 +114,7 @@ const svgrConfig = {
 //   2. A stray "</script" substring would prematurely close the inline <script>.
 //      Escaping to "<\/script" is equivalent inside JS string/regex literals but
 //      isn't seen as a closing tag by the HTML parser.
-const injectBundle = (template, iife) => {
+const injectBundle = (template: string, iife: string) => {
   if (!template.includes(SVGR_MARKER)) {
     throw new Error(`ui.html is missing the ${SVGR_MARKER} marker`);
   }
@@ -126,7 +125,11 @@ const injectBundle = (template, iife) => {
 const buildUiHtml = async () => {
   const result = await esbuild.build(svgrConfig);
   const template = await readFile("./ui.html", "utf8");
-  const html = injectBundle(template, result.outputFiles[0].text);
+  const bundle = result.outputFiles?.[0];
+  if (bundle === undefined) {
+    throw new Error("svgr bundle produced no output");
+  }
+  const html = injectBundle(template, bundle.text);
   await mkdir("./target", { recursive: true });
   await writeFile("./target/ui.html", html, "utf8");
   console.log("Built ./target/ui.html");
