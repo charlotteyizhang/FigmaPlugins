@@ -715,7 +715,7 @@
 
   <!-- Tab Bar -->
   <div class="tab-bar">
-    <button class="tab-btn active" id="tab-i18n" onclick="switchTab('i18n')">
+    <button class="tab-btn active" id="tab-i18n" data-tab="i18n">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="16"
@@ -734,7 +734,7 @@
       </svg>
       i18n
     </button>
-    <button class="tab-btn" id="tab-react" onclick="switchTab('react')">
+    <button class="tab-btn" id="tab-react" data-tab="react">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="16"
@@ -754,7 +754,7 @@
       </svg>
       React
     </button>
-    <button class="tab-btn" id="tab-svg" onclick="switchTab('svg')">
+    <button class="tab-btn" id="tab-svg" data-tab="svg">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="16"
@@ -804,7 +804,7 @@
           <button
             type="button"
             class="info-btn"
-            onclick="openModal('step1')"
+            data-help="step1"
             title="Show Help"
           >
             <svg
@@ -876,7 +876,7 @@
           <button
             type="button"
             class="info-btn"
-            onclick="openModal('step2')"
+            data-help="step2"
             title="Show Help"
           >
             <svg
@@ -932,7 +932,7 @@
           <button
             type="button"
             class="info-btn"
-            onclick="openModal('step3')"
+            data-help="step3"
             title="Show Help"
           >
             <svg
@@ -1009,7 +1009,7 @@
           <button
             type="button"
             class="info-btn"
-            onclick="openModal('step4')"
+            data-help="step4"
             title="Show Help"
           >
             <svg
@@ -1486,6 +1486,14 @@
       modalBody.innerHTML = helpData[stepId].body;
       modal.classList.remove("hidden");
     }
+
+    document.addEventListener("click", (e) => {
+      const target = e.target instanceof Element ? e.target : null;
+      const tabBtn = target?.closest("[data-tab]");
+      if (tabBtn) switchTab(tabBtn.dataset.tab);
+      const helpBtn = target?.closest("[data-help]");
+      if (helpBtn) openModal(helpBtn.dataset.help);
+    });
 
     modalClose.onclick = () => modal.classList.add("hidden");
     modal.onclick = (e) => {
