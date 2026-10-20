@@ -49,8 +49,7 @@ const getColorVariable = async (
   const variableName = variable.name;
   const variableValue = Object.values(variable.valuesByMode);
 
-  if (list[variableName] !== undefined || variableValue.length === 0)
-    return undefined;
+  if (list[variableName] !== undefined || variableValue.length === 0) return undefined;
 
   const color = await resolveColor(variableValue[0]);
   if (color === undefined) return undefined;
@@ -58,10 +57,7 @@ const getColorVariable = async (
   return { color, name: variableName };
 };
 
-const collectColors = async (
-  node: SceneNode,
-  list: Record<string, string>,
-): Promise<void> => {
+const collectColors = async (node: SceneNode, list: Record<string, string>): Promise<void> => {
   if ("children" in node) {
     await Promise.all(node.children.map((child) => collectColors(child, list)));
     return;
@@ -90,9 +86,7 @@ const toPascalCase = (name: string): string => {
     .replace(/[^a-zA-Z0-9]/g, " ")
     .split(" ")
     .filter((w) => w.length > 0);
-  const pascal = words
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join("");
+  const pascal = words.map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join("");
   // JSX component names must start with a letter.
   return /^[A-Za-z]/.test(pascal) ? pascal : `SvgComponent`;
 };
@@ -122,9 +116,7 @@ export const handleSvgMessage = async (msg: SvgMessage): Promise<void> => {
     const replaceAttrValues: Record<string, string> = {};
     for (const [name, hex] of Object.entries(list)) {
       const names = name.split("/");
-      const token = themed
-        ? `${names[0]}[theme].${names[1]}`
-        : `${names[0]}.${names[1]}`;
+      const token = themed ? `${names[0]}[theme].${names[1]}` : `${names[0]}.${names[1]}`;
       const lower = normalizeHex(hex);
       replaceAttrValues[lower] = `{${token}}`;
       replaceAttrValues[lower.toUpperCase()] = `{${token}}`;

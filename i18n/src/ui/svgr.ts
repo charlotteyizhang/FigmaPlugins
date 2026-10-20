@@ -23,13 +23,8 @@ declare global {
 // Pull the viewBox width/height out of the generated <Svg> open tag. Prefer the
 // viewBox attribute (its 3rd/4th numbers define the coordinate space), falling
 // back to width/height attributes.
-const extractDims = (
-  svgOpenTag: string,
-  fullOutput: string,
-): { w: string; h: string } => {
-  const vb = fullOutput.match(
-    /viewBox="\s*[-\d.]+\s+[-\d.]+\s+([-\d.]+)\s+([-\d.]+)\s*"/,
-  );
+const extractDims = (svgOpenTag: string, fullOutput: string): { w: string; h: string } => {
+  const vb = fullOutput.match(/viewBox="\s*[-\d.]+\s+[-\d.]+\s+([-\d.]+)\s+([-\d.]+)\s*"/);
   if (vb) return { w: vb[1], h: vb[2] };
   const w = svgOpenTag.match(/\bwidth=(?:\{([\d.]+)\}|"([\d.]+)")/);
   const h = svgOpenTag.match(/\bheight=(?:\{([\d.]+)\}|"([\d.]+)")/);
@@ -96,13 +91,8 @@ const colorsImportLine = (body: string, importPath: string): string => {
 // Rewrite SVGR's default react-native-svg component into the project's
 // scale-aware template (HasTheme/CommonSVGProps + mkWidthHeightViewbox). We keep
 // SVGR's element imports and themed-fill JSX, and only swap the <Svg> wrapper.
-const toRNScalingComponent = (
-  svgrOutput: string,
-  componentName: string,
-): string => {
-  const importMatch = svgrOutput.match(
-    /import Svg,\s*\{([^}]*)\}\s*from\s*"react-native-svg";/,
-  );
+const toRNScalingComponent = (svgrOutput: string, componentName: string): string => {
+  const importMatch = svgrOutput.match(/import Svg,\s*\{([^}]*)\}\s*from\s*"react-native-svg";/);
   const named = importMatch ? importMatch[1].trim() : "Path";
 
   const svgMatch = svgrOutput.match(/<Svg\b([^>]*)>([\s\S]*)<\/Svg>/);
@@ -110,9 +100,7 @@ const toRNScalingComponent = (
 
   const { w, h } = extractDims(svgMatch[1], svgrOutput);
   const body = formatChildren(svgMatch[2]);
-  const name = componentName.endsWith("SVG")
-    ? componentName
-    : `${componentName}SVG`;
+  const name = componentName.endsWith("SVG") ? componentName : `${componentName}SVG`;
   const colorsImport = colorsImportLine(body, "../theme/colors");
 
   return `import Svg, { ${named} } from "react-native-svg";
@@ -184,14 +172,9 @@ const toSkiaComponent = (svgrOutput: string, componentName: string): string => {
   const { w, h } = extractDims(svgMatch[1], svgrOutput);
   const body = toSkiaJsx(formatChildren(svgMatch[2]));
   // Component name: *SVG -> *skia, else append "skia".
-  const base = componentName.endsWith("SVG")
-    ? componentName.slice(0, -3)
-    : componentName;
+  const base = componentName.endsWith("SVG") ? componentName.slice(0, -3) : componentName;
   const name = `${base}skia`;
-  const colorsImport = colorsImportLine(
-    body,
-    "lunar-apps-native/src/theme/colors",
-  );
+  const colorsImport = colorsImportLine(body, "lunar-apps-native/src/theme/colors");
   // mkSkiaPathFromSVGString is only needed when there are paths (d attributes).
   const pathImport = body.includes("mkSkiaPathFromSVGString(")
     ? `import { mkSkiaPathFromSVGString } from "./formatSVG";\n`
@@ -225,10 +208,7 @@ ${body}
 
 // Call transform() directly (NOT loadConfig) so cosmiconfig's Node fs path is
 // never reached in the browser bundle.
-window.__svgrConvert = async (
-  svg,
-  { target, replaceAttrValues, componentName },
-) => {
+window.__svgrConvert = async (svg, { target, replaceAttrValues, componentName }) => {
   // Native and Skia both build on SVGR's react-native-svg output.
   const native = target !== "react";
   const output = await transform(

@@ -53,8 +53,7 @@ export const handleReactMessage = async (msg: ReactMessage): Promise<void> => {
   if (msg.type === "generate") {
     let str = "";
     const queryKind = msg.value;
-    const localCollections =
-      await figma.variables.getLocalVariableCollectionsAsync();
+    const localCollections = await figma.variables.getLocalVariableCollectionsAsync();
 
     for (const node of figma.currentPage.selection) {
       str = await getChildrenView({
@@ -94,10 +93,7 @@ export const handleReactMessage = async (msg: ReactMessage): Promise<void> => {
       return;
     }
 
-    const variables =
-      await figma.teamLibrary.getVariablesInLibraryCollectionAsync(
-        lunarSpacingKey,
-      );
+    const variables = await figma.teamLibrary.getVariablesInLibraryCollectionAsync(lunarSpacingKey);
 
     if (msg.value === undefined) {
       figma.ui.postMessage({
@@ -115,9 +111,7 @@ export const handleReactMessage = async (msg: ReactMessage): Promise<void> => {
         return;
       }
 
-      const importedVariable = await figma.variables.importVariableByKeyAsync(
-        spacingVariable.key,
-      );
+      const importedVariable = await figma.variables.importVariableByKeyAsync(spacingVariable.key);
 
       for (const node of figma.currentPage.selection) {
         if (node.type === "FRAME" || node.type === "COMPONENT") {
@@ -137,9 +131,7 @@ export const handleReactMessage = async (msg: ReactMessage): Promise<void> => {
     const libraryCollections =
       await figma.teamLibrary.getAvailableLibraryVariableCollectionsAsync();
 
-    const lunarBorderRadius = libraryCollections.find(
-      (c) => c.name === "borderRadius",
-    );
+    const lunarBorderRadius = libraryCollections.find((c) => c.name === "borderRadius");
     const lunarBorderRadiusKey = lunarBorderRadius?.key;
 
     if (lunarBorderRadiusKey === undefined) {
@@ -151,9 +143,7 @@ export const handleReactMessage = async (msg: ReactMessage): Promise<void> => {
     }
 
     const variables =
-      await figma.teamLibrary.getVariablesInLibraryCollectionAsync(
-        lunarBorderRadiusKey,
-      );
+      await figma.teamLibrary.getVariablesInLibraryCollectionAsync(lunarBorderRadiusKey);
 
     if (msg.value === undefined) {
       figma.ui.postMessage({
@@ -191,9 +181,7 @@ export const handleReactMessage = async (msg: ReactMessage): Promise<void> => {
     const libraryCollections =
       await figma.teamLibrary.getAvailableLibraryVariableCollectionsAsync();
 
-    const lunarIconSize = libraryCollections.find(
-      (c) => c.name === "iconSizes",
-    );
+    const lunarIconSize = libraryCollections.find((c) => c.name === "iconSizes");
     const lunarIconSizeKey = lunarIconSize?.key;
 
     if (lunarIconSizeKey === undefined) {
@@ -205,9 +193,7 @@ export const handleReactMessage = async (msg: ReactMessage): Promise<void> => {
     }
 
     const variables =
-      await figma.teamLibrary.getVariablesInLibraryCollectionAsync(
-        lunarIconSizeKey,
-      );
+      await figma.teamLibrary.getVariablesInLibraryCollectionAsync(lunarIconSizeKey);
 
     if (msg.value === undefined) {
       figma.ui.postMessage({
@@ -225,9 +211,7 @@ export const handleReactMessage = async (msg: ReactMessage): Promise<void> => {
         return;
       }
 
-      const importedVariable = await figma.variables.importVariableByKeyAsync(
-        iconSizeVariable.key,
-      );
+      const importedVariable = await figma.variables.importVariableByKeyAsync(iconSizeVariable.key);
 
       for (const node of figma.currentPage.selection) {
         node.setBoundVariable("width", importedVariable);
@@ -267,25 +251,19 @@ const getChildrenView = (props: ChildViewProps): Promise<string> => {
   const recurse = async (x: ChildViewProps): Promise<string> => {
     if (!x.node.visible) return x.acc;
 
-    if (
-      (x.node.type === "FRAME" || x.node.type === "COMPONENT") &&
-      "children" in x.node
-    ) {
+    if ((x.node.type === "FRAME" || x.node.type === "COMPONENT") && "children" in x.node) {
       const variableId = await figma.variables.getVariableByIdAsync(
         x.node.boundVariables?.itemSpacing?.id ?? "",
       );
       const spacingId = x.node.boundVariables?.itemSpacing?.id;
 
       const gapStr =
-        spacingId !== undefined
-          ? `gap: spacing.${variableId?.name ?? "default"},`
-          : "";
+        spacingId !== undefined ? `gap: spacing.${variableId?.name ?? "default"},` : "";
 
       const containerStyle =
         x.node.inferredAutoLayout?.layoutMode === "HORIZONTAL"
           ? `flexDirection: "row",${
-              x.node.inferredAutoLayout?.primaryAxisAlignItems ===
-              "SPACE_BETWEEN"
+              x.node.inferredAutoLayout?.primaryAxisAlignItems === "SPACE_BETWEEN"
                 ? `justifyContent: "space-between",`
                 : ""
             } alignItems: "center", ${gapStr}`
@@ -296,11 +274,7 @@ const getChildrenView = (props: ChildViewProps): Promise<string> => {
         hasCardTitleWord(firstChild.name) && firstChild.type === "INSTANCE";
 
       let content = "";
-      for (
-        let idx = firstElementIsCard ? 1 : 0;
-        idx < x.node.children.length;
-        idx++
-      ) {
+      for (let idx = firstElementIsCard ? 1 : 0; idx < x.node.children.length; idx++) {
         content = await recurse({
           node: x.node.children[idx],
           acc: content,
@@ -347,13 +321,11 @@ const getChildrenView = (props: ChildViewProps): Promise<string> => {
             `<Card${env ? ` ${env}` : ""} title={{text:${translation}, showIconRight:${firstChild.componentProperties?.["isLink"]?.value}}}>${content}</Card>`
           );
         }
-        const formatStr =
-          x.queryKind === "webApp" ? "language" : "userLocale.userLanguage";
+        const formatStr = x.queryKind === "webApp" ? "language" : "userLocale.userLanguage";
         return (
           x.acc +
           `<Card${env ? ` ${env}` : ""} title={{text:translations[${formatStr}].${toLowercaseFirstLetterCamelCase(
-            firstChild.componentProperties?.["Text#3945:0"]?.value.toString() ??
-              "",
+            firstChild.componentProperties?.["Text#3945:0"]?.value.toString() ?? "",
           )}, showIconRight:${firstChild.componentProperties?.["isLink"]?.value}}}>${content}</Card>`
         );
       } else {
@@ -390,9 +362,7 @@ const getChildrenView = (props: ChildViewProps): Promise<string> => {
                   : "";
             content = `<${x.node.name}${env ? ` ${env}` : ""} ${buttonKind === undefined ? "" : `kind="${buttonKind}"`} text={${translation}} onPress={()=>undefined}/>`;
           } else {
-            const icon = x.node.findChild((n) =>
-              n.name.toLocaleLowerCase().includes("icon"),
-            );
+            const icon = x.node.findChild((n) => n.name.toLocaleLowerCase().includes("icon"));
             if (icon !== null) {
               content = ` <IconButton theme={theme} onPress={() =>undefined} icon="Close" />`;
             }
@@ -408,9 +378,9 @@ const getChildrenView = (props: ChildViewProps): Promise<string> => {
 
           // Use exposed component properties (TEXT type) for prop names.
           // For each, find the matching text node inside to check for a variable binding.
-          const componentTextProps = Object.entries(
-            x.node.componentProperties ?? {},
-          ).filter(([, prop]) => prop.type === "TEXT");
+          const componentTextProps = Object.entries(x.node.componentProperties ?? {}).filter(
+            ([, prop]) => prop.type === "TEXT",
+          );
 
           const allTextNodes = x.node.findAllWithCriteria({
             types: ["TEXT"],
@@ -418,9 +388,7 @@ const getChildrenView = (props: ChildViewProps): Promise<string> => {
 
           const resolvedProps = componentTextProps.map(([key, prop]) => {
             // "Label#1234:0" → "label"
-            const propName = toLowercaseFirstLetterCamelCase(
-              key.replace(/#.*$/, ""),
-            );
+            const propName = toLowercaseFirstLetterCamelCase(key.replace(/#.*$/, ""));
             const value = prop.value as string;
 
             // Find the text node whose current content matches this property value
@@ -435,8 +403,7 @@ const getChildrenView = (props: ChildViewProps): Promise<string> => {
             return `${propName}="${value}"`;
           });
 
-          const propsStr =
-            resolvedProps.length > 0 ? ` ${resolvedProps.join(" ")}` : "";
+          const propsStr = resolvedProps.length > 0 ? ` ${resolvedProps.join(" ")}` : "";
           content = `<${nodeName.charAt(0).toUpperCase() + nodeName.slice(1)}${env ? ` ${env}` : ""}${propsStr} />`;
         }
       } else {
@@ -450,22 +417,15 @@ const getChildrenView = (props: ChildViewProps): Promise<string> => {
   return recurse(props);
 };
 
-const getTranslationByLayername = (
-  node: TextNode,
-  formatType: "native" | "react",
-): string => {
+const getTranslationByLayername = (node: TextNode, formatType: "native" | "react"): string => {
   if (node.name[0] === "#") {
     return createCode(formatType, node);
   }
-  const formatStr =
-    formatType === "react" ? "language" : "userLocale.userLanguage";
+  const formatStr = formatType === "react" ? "language" : "userLocale.userLanguage";
   return `translations[${formatStr}].${toLowercaseFirstLetterCamelCase(node.characters)}`;
 };
 
-const getTextKind = async (
-  node: TextNode,
-  queryKind: QueryKind,
-): Promise<string | undefined> => {
+const getTextKind = async (node: TextNode, queryKind: QueryKind): Promise<string | undefined> => {
   const styleId = node.textStyleId;
   let figmaStyle: BaseStyle | null = null;
   if (typeof styleId === "string") {
@@ -476,9 +436,7 @@ const getTextKind = async (
 
   let colorName: string | undefined;
   if (nodeColorIds !== undefined && nodeColorIds.length > 0) {
-    const variable = await figma.variables.getVariableByIdAsync(
-      nodeColorIds[0].id,
-    );
+    const variable = await figma.variables.getVariableByIdAsync(nodeColorIds[0].id);
     colorName = variable?.name ?? undefined;
   }
 
@@ -500,16 +458,9 @@ const getTextKind = async (
     const text = texts[0];
     const text2 = texts[1];
     const color = colorName.split("/");
-    const translation = createCode(
-      queryKind === "webApp" ? "react" : "native",
-      node,
-    );
+    const translation = createCode(queryKind === "webApp" ? "react" : "native", node);
 
-    const colorStr = createColor(
-      queryKind === "webApp" ? "react" : "native",
-      color[0],
-      color[1],
-    );
+    const colorStr = createColor(queryKind === "webApp" ? "react" : "native", color[0], color[1]);
 
     if (text.includes("Heading")) {
       return `<${text2} ${colorStr}>{${translation}}</${text2}>`;
@@ -517,9 +468,7 @@ const getTextKind = async (
       const kind =
         text2.toLowerCase() === "medium"
           ? undefined
-          : text.charAt(0).toLowerCase() +
-            text.slice(1) +
-            toCapitalFirstLetterCamelCase(texts[1]);
+          : text.charAt(0).toLowerCase() + text.slice(1) + toCapitalFirstLetterCamelCase(texts[1]);
       return `<P${env ? ` ${env}` : ""} ${kind === undefined ? "" : `kind="${kind}"`} ${colorStr}>{${translation}}</P>`;
     }
   }
@@ -530,9 +479,7 @@ const toCapitalFirstLetterCamelCase = (text: string): string => {
     .replace(/^[\d:]+/, "")
     .replace(/[^a-zA-Z0-9]/g, " ")
     .split(" ");
-  return words
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join("");
+  return words.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join("");
 };
 
 const toLowercaseFirstLetterCamelCase = (text: string): string => {
@@ -542,9 +489,7 @@ const toLowercaseFirstLetterCamelCase = (text: string): string => {
     .split(" ");
   return words
     .map((word, idx) =>
-      idx === 0
-        ? word.toLowerCase()
-        : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
+      idx === 0 ? word.toLowerCase() : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
     )
     .join("")
     .slice(0, 18);
@@ -552,8 +497,7 @@ const toLowercaseFirstLetterCamelCase = (text: string): string => {
 
 const hasIconWord = (text: string): boolean => /\bicon\b/i.test(text);
 
-const hasCardTitleWord = (text: string): boolean =>
-  text.toLowerCase().includes("card title");
+const hasCardTitleWord = (text: string): boolean => text.toLowerCase().includes("card title");
 
 const replaceIconWord = (text: string): string => text.replace(/icon\//gi, "");
 

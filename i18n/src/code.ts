@@ -1,14 +1,6 @@
-import {
-  handleI18nMessage,
-  I18N_MESSAGE_TYPES,
-  type I18nMessage,
-} from "./i18n";
+import { handleI18nMessage, I18N_MESSAGE_TYPES, type I18nMessage } from "./i18n";
 import { handleReactMessage, type ReactMessage } from "./reactCode";
-import {
-  handleSvgMessage,
-  SVG_MESSAGE_TYPES,
-  type SvgMessage,
-} from "./svgCode";
+import { handleSvgMessage, SVG_MESSAGE_TYPES, type SvgMessage } from "./svgCode";
 
 figma.showUI(__html__, { width: 500, height: 680 });
 

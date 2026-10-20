@@ -49,10 +49,7 @@ export const generateTemplateFn = (input: string): string => {
 
       if (match) {
         const displayName = pattern.displayVariableName + idx;
-        const replaced = matchStr.replace(
-          "[[" + specialInput + "]]",
-          "${" + displayName + "}",
-        );
+        const replaced = matchStr.replace("[[" + specialInput + "]]", "${" + displayName + "}");
         idx += 1;
         params.push(displayName + ":string");
         matchFlag = true;
@@ -62,10 +59,7 @@ export const generateTemplateFn = (input: string): string => {
 
     if (!matchFlag) {
       const paramName = "param" + idx;
-      const replaced = matchStr.replace(
-        "[[" + specialInput + "]]",
-        "${" + paramName + "}",
-      );
+      const replaced = matchStr.replace("[[" + specialInput + "]]", "${" + paramName + "}");
       params.push(paramName + ":string");
       matchStr = replaced;
       idx += 1;
@@ -95,43 +89,33 @@ export const generateErrorTemplateFn = (input: string): string => {
     matchStr = replaced;
   }
 
-  return matchStr !== input
-    ? "(" + params.join(",") + ")=>" + "`" + matchStr + "`"
-    : `"${input}"`;
+  return matchStr !== input ? "(" + params.join(",") + ")=>" + "`" + matchStr + "`" : `"${input}"`;
 };
 
 export const renameLayersToVariableName = async (node: SceneNode) => {
   const boundVariableCharacter = node.boundVariables?.characters;
 
   if (boundVariableCharacter !== undefined) {
-    const variable = await figma.variables.getVariableByIdAsync(
-      boundVariableCharacter.id,
-    );
+    const variable = await figma.variables.getVariableByIdAsync(boundVariableCharacter.id);
     if (variable !== null) {
       const variableName = `#${variable.name}`;
       node.name = variableName;
       figma.ui.postMessage(`successfully renamed layer to ${variableName} `);
     } else {
-      figma.ui.postMessage(
-        `bound variable not found for layer ${node.name}, skipping rename`,
-      );
+      figma.ui.postMessage(`bound variable not found for layer ${node.name}, skipping rename`);
     }
   } else {
     const inferredVariables = node.inferredVariables?.characters;
     const variableId =
       inferredVariables !== undefined && inferredVariables.length > 0
-        ? ((await figma.variables.getVariableByIdAsync(
-            inferredVariables[0].id,
-          )) ?? undefined)
+        ? ((await figma.variables.getVariableByIdAsync(inferredVariables[0].id)) ?? undefined)
         : undefined;
     if (variableId !== undefined) {
       const variableName = `#${variableId.name}`;
       node.name = variableName;
       figma.ui.postMessage(`successfully renamed layer to ${variableName} `);
     } else {
-      figma.ui.postMessage(
-        `no variable found for layer ${node.name}, skipping rename`,
-      );
+      figma.ui.postMessage(`no variable found for layer ${node.name}, skipping rename`);
     }
   }
 };
@@ -153,26 +137,16 @@ export const createOrUpdateVariable = async (
   }
 
   if (variable === undefined) {
-    variable = figma.variables.createVariable(
-      varName,
-      i18nCollection,
-      "STRING",
-    );
+    variable = figma.variables.createVariable(varName, i18nCollection, "STRING");
     if (variable !== undefined) {
       console.log({ node: text });
 
       variable.setValueForMode(targetModeId, text);
       const specialInputs = getParamMatchingPattern(text);
 
-      const paramStr = specialInputs.reduce(
-        (acc, s) => acc + "[[" + s + "]]",
-        "",
-      );
+      const paramStr = specialInputs.reduce((acc, s) => acc + "[[" + s + "]]", "");
 
-      variable.setValueForMode(
-        i18nCollection.modes[1].modeId,
-        paramStr + "TODO_TRANSLATE",
-      );
+      variable.setValueForMode(i18nCollection.modes[1].modeId, paramStr + "TODO_TRANSLATE");
       figma.ui.postMessage("successfully created translation variables");
     } else {
       figma.ui.postMessage(`error generate variable layer name: ${varName}`);
@@ -195,10 +169,7 @@ export const createOrUpdateVariable = async (
   return variable;
 };
 
-export const createCode = (
-  formatType: "native" | "react",
-  node: TextNode,
-): string => {
+export const createCode = (formatType: "native" | "react", node: TextNode): string => {
   const isNative = formatType === "native";
   const type = isNative ? "userLocale.userLanguage" : "language";
 

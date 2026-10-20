@@ -35,8 +35,7 @@ export const I18N_MESSAGE_TYPES = new Set<string>([
 export const handleI18nMessage = async (msg: I18nMessage): Promise<void> => {
   if (msg.type === "generateTranslationVariables") {
     let str = "";
-    const localCollections =
-      await figma.variables.getLocalVariableCollectionsAsync();
+    const localCollections = await figma.variables.getLocalVariableCollectionsAsync();
 
     const i18nCollection = localCollections.find((c) => c.name === "i18n");
 
@@ -51,9 +50,7 @@ export const handleI18nMessage = async (msg: I18nMessage): Promise<void> => {
 
       const variables = (
         await Promise.all(
-          i18nCollection.variableIds.map((id) =>
-            figma.variables.getVariableByIdAsync(id),
-          ),
+          i18nCollection.variableIds.map((id) => figma.variables.getVariableByIdAsync(id)),
         )
       ).filter((v): v is Variable => {
         if (v === null) {
@@ -67,8 +64,7 @@ export const handleI18nMessage = async (msg: I18nMessage): Promise<void> => {
 
       for (const variable of variables) {
         const varName = variable.name.replace(/\//g, "_");
-        const value =
-          variable.valuesByMode[modes[i].modeId] ?? "i18n.TODO_TRANSLATE";
+        const value = variable.valuesByMode[modes[i].modeId] ?? "i18n.TODO_TRANSLATE";
         const escapedValue = value.toString().replace(/\n/g, "\\n");
 
         if (variable.name.includes("error")) {
@@ -81,13 +77,11 @@ export const handleI18nMessage = async (msg: I18nMessage): Promise<void> => {
       str += "};\n";
     }
 
-    str +=
-      "export const translationsCommon = {\nen: i18n_en,\n ja: i18n_ja,\n} as const;";
+    str += "export const translationsCommon = {\nen: i18n_en,\n ja: i18n_ja,\n} as const;";
 
     figma.ui.postMessage(str);
   } else if (msg.type === "renameLayersToVariableName") {
-    const localCollections =
-      await figma.variables.getLocalVariableCollectionsAsync();
+    const localCollections = await figma.variables.getLocalVariableCollectionsAsync();
 
     const i18nCollection = localCollections.find((c) => c.name === "i18n");
 
@@ -107,8 +101,7 @@ export const handleI18nMessage = async (msg: I18nMessage): Promise<void> => {
     }
   } else if (msg.type === "createVariables") {
     const targetName = "i18n";
-    const localCollections =
-      await figma.variables.getLocalVariableCollectionsAsync();
+    const localCollections = await figma.variables.getLocalVariableCollectionsAsync();
 
     const i18nCollection = findOrCreateCollection(localCollections, targetName);
     if (i18nCollection.modes.length === 1) {
@@ -117,9 +110,7 @@ export const handleI18nMessage = async (msg: I18nMessage): Promise<void> => {
     }
 
     const targetModeId =
-      msg.language === "en"
-        ? i18nCollection.modes[0].modeId
-        : i18nCollection.modes[1].modeId;
+      msg.language === "en" ? i18nCollection.modes[0].modeId : i18nCollection.modes[1].modeId;
 
     for (const node of figma.currentPage.selection) {
       if (node.type === "TEXT" && node.visible && node.name.startsWith("#")) {
@@ -144,12 +135,7 @@ export const handleI18nMessage = async (msg: I18nMessage): Promise<void> => {
             if (lines[i].trim() !== "") {
               const varName = `${layerName}/p${n + 1}`;
               n++;
-              await createOrUpdateVariable(
-                varName,
-                lines[i],
-                i18nCollection,
-                targetModeId,
-              );
+              await createOrUpdateVariable(varName, lines[i], i18nCollection, targetModeId);
             }
           }
         }
