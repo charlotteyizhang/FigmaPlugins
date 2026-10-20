@@ -1,5 +1,5 @@
 // Browser-side SVGR wrapper. This module is bundled by esbuild as an IIFE and
-// injected into ui.html (see esbuild.bundle.mjs). It runs in the plugin's UI
+// injected into ui.html (see esbuild.bundle.mts). It runs in the plugin's UI
 // iframe (a real browser), NOT in the Figma sandbox, because @svgr/core is
 // Babel-based and needs a browser-like environment.
 import { transform } from "@svgr/core";
