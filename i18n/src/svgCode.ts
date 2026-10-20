@@ -19,7 +19,7 @@ const rgbaToHex = (v: RGBA): string => {
   return `#${hex(R)}${hex(G)}${hex(B)}${hex(A)}`;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 const resolveColor = async (value: any): Promise<string | undefined> => {
   if (typeof value === "object" && value !== null && "r" in value) {
     return rgbaToHex(value as RGBA);

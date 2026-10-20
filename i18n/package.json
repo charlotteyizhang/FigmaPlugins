@@ -6,8 +6,8 @@
   "author": "",
   "main": "code.js",
   "scripts": {
-    "lint": "eslint --ext .ts,.tsx --ignore-pattern node_modules .",
-    "lint:fix": "eslint --ext .ts,.tsx --ignore-pattern node_modules --fix .",
+    "lint": "oxlint --type-aware",
+    "lint:fix": "oxlint --type-aware --fix",
     "watch": "./node_modules/.bin/tsx esbuild.bundle.mjs --watch",
     "typecheck": "tsc --project tsconfig.json --noEmit && tsc --project tsconfig.ui.json --noEmit",
     "typecheck--watch": "npm run typecheck -- --watch",
@@ -16,44 +16,17 @@
     "format:check": "oxfmt --check"
   },
   "devDependencies": {
-    "@figma/eslint-plugin-figma-plugins": "1.0.0",
     "@figma/plugin-typings": "1.142.0",
     "@svgr/core": "8.1.0",
     "@svgr/plugin-jsx": "8.1.0",
     "@svgr/plugin-svgo": "8.1.0",
-    "@typescript-eslint/eslint-plugin": "8.71.2",
-    "@typescript-eslint/parser": "8.71.2",
     "esbuild": "0.28.0",
-    "eslint": "10.12.0",
     "os-browserify": "0.3.0",
     "oxfmt": "^0.74.0",
+    "oxlint": "^1.89.0",
+    "oxlint-tsgolint": "^7.0.2004",
     "path-browserify": "1.0.1",
     "tsx": "4.23.15",
     "typescript": "7.0.2"
-  },
-  "eslintConfig": {
-    "extends": [
-      "eslint:recommended",
-      "plugin:@typescript-eslint/recommended",
-      "plugin:@figma/figma-plugins/recommended"
-    ],
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-      "project": [
-        "./tsconfig.json",
-        "./tsconfig.ui.json"
-      ]
-    },
-    "root": true,
-    "rules": {
-      "@typescript-eslint/no-unused-vars": [
-        "error",
-        {
-          "argsIgnorePattern": "^_",
-          "varsIgnorePattern": "^_",
-          "caughtErrorsIgnorePattern": "^_"
-        }
-      ]
-    }
   }
 }
