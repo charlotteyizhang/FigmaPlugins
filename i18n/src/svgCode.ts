@@ -83,7 +83,7 @@ const normalizeHex = (hex: string): string => {
 
 const toPascalCase = (name: string): string => {
   const words = name
-    .replace(/[^a-zA-Z0-9]/g, " ")
+    .replaceAll(/[^a-zA-Z0-9]/g, " ")
     .split(" ")
     .filter((w) => w.length > 0);
   const pascal = words.map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join("");

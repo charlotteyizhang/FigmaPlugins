@@ -177,7 +177,7 @@ export const createCode = (formatType: "native" | "react", node: TextNode): stri
   const type = isNative ? "userLocale.userLanguage" : "language";
 
   let str = "";
-  const layerName = node.name.substring(1).replace(/\//g, "_");
+  const layerName = node.name.substring(1).replaceAll(/\//g, "_");
   const nodeText = node.characters;
   const lines = nodeText.split("\n");
   const isMultiParagraph = lines.length > 1;

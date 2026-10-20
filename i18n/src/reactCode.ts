@@ -477,7 +477,7 @@ const getTextKind = async (node: TextNode, queryKind: QueryKind): Promise<string
 const toCapitalFirstLetterCamelCase = (text: string): string => {
   const words = text
     .replace(/^[\d:]+/, "")
-    .replace(/[^a-zA-Z0-9]/g, " ")
+    .replaceAll(/[^a-zA-Z0-9]/g, " ")
     .split(" ");
   return words.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join("");
 };
@@ -485,7 +485,7 @@ const toCapitalFirstLetterCamelCase = (text: string): string => {
 const toLowercaseFirstLetterCamelCase = (text: string): string => {
   const words = text
     .replace(/^[\d:]+/, "")
-    .replace(/[^a-zA-Z0-9]/g, " ")
+    .replaceAll(/[^a-zA-Z0-9]/g, " ")
     .split(" ");
   return words
     .map((word, idx) =>
@@ -499,7 +499,7 @@ const hasIconWord = (text: string): boolean => /\bicon\b/i.test(text);
 
 const hasCardTitleWord = (text: string): boolean => text.toLowerCase().includes("card title");
 
-const replaceIconWord = (text: string): string => text.replace(/icon\//gi, "");
+const replaceIconWord = (text: string): string => text.replaceAll(/icon\//gi, "");
 
 const getIconSize = async (node: SceneNode): Promise<string> => {
   const nodeWidthId = node.boundVariables?.width?.id;

@@ -64,9 +64,9 @@ export const handleI18nMessage = async (msg: I18nMessage): Promise<void> => {
       variables.sort((a, b) => a.name.localeCompare(b.name));
 
       for (const variable of variables) {
-        const varName = variable.name.replace(/\//g, "_");
+        const varName = variable.name.replaceAll(/\//g, "_");
         const value = variable.valuesByMode[modes[i].modeId] ?? "i18n.TODO_TRANSLATE";
-        const escapedValue = variableValueToString(value).replace(/\n/g, "\\n");
+        const escapedValue = variableValueToString(value).replaceAll(/\n/g, "\\n");
 
         if (variable.name.includes("error")) {
           str += `"${varName}": ${generateErrorTemplateFn(escapedValue)},`;
@@ -150,7 +150,7 @@ export const handleI18nMessage = async (msg: I18nMessage): Promise<void> => {
     for (const node of figma.currentPage.selection) {
       if (node.type === "TEXT") {
         str += createCode(msg.formatType, node);
-        // const layerName = node.name.substring(1).replace(/\//g, "_");
+        // const layerName = node.name.substring(1).replaceAll(/\//g, "_");
         // const nodeText = node.characters;
         // const lines = nodeText.split("\n");
         // const isMultiParagraph = lines.length > 1;

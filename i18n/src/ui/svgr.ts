@@ -142,22 +142,22 @@ ${body}
 const toSkiaJsx = (body: string): string => {
   let out = body;
   // <Path> -> <skia.Path>, </Path> -> </skia.Path>, etc.
-  out = out.replace(/<(\/?)([A-Z][\w]*)/g, "<$1skia.$2");
+  out = out.replaceAll(/<(\/?)([A-Z][\w]*)/g, "<$1skia.$2");
   // d="..." -> path={mkSkiaPathFromSVGString("...")}
-  out = out.replace(/\bd="([^"]*)"/g, 'path={mkSkiaPathFromSVGString("$1")}');
+  out = out.replaceAll(/\bd="([^"]*)"/g, 'path={mkSkiaPathFromSVGString("$1")}');
   // SVG fill rule -> skia fillType; drop clipRule (no skia equivalent).
   out = out
-    .replace(/\bfillRule="evenodd"/g, 'fillType="evenOdd"')
-    .replace(/\bfillRule="nonzero"/g, 'fillType="winding"')
-    .replace(/\s*clipRule="[^"]*"/g, "");
+    .replaceAll(/\bfillRule="evenodd"/g, 'fillType="evenOdd"')
+    .replaceAll(/\bfillRule="nonzero"/g, 'fillType="winding"')
+    .replaceAll(/\s*clipRule="[^"]*"/g, "");
   // Stroke attributes -> skia paint props; a stroked path needs style="stroke".
   out = out
-    .replace(/\bstrokeLinecap=/g, "strokeCap=")
-    .replace(/\bstrokeLinejoin=/g, "strokeJoin=")
-    .replace(/\bstrokeMiterlimit=/g, "strokeMiter=")
-    .replace(/\bstroke=/g, 'style="stroke" color=');
+    .replaceAll(/\bstrokeLinecap=/g, "strokeCap=")
+    .replaceAll(/\bstrokeLinejoin=/g, "strokeJoin=")
+    .replaceAll(/\bstrokeMiterlimit=/g, "strokeMiter=")
+    .replaceAll(/\bstroke=/g, 'style="stroke" color=');
   // fill -> color (project convention; skia's documented prop is `color`).
-  out = out.replace(/\bfill=/g, "color=");
+  out = out.replaceAll(/\bfill=/g, "color=");
   return out;
 };
 
