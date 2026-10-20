@@ -1420,10 +1420,16 @@
     // ===== SHARED ELEMENTS =====
     const copyInput = document.getElementById("copy");
 
-    function copyToClipboard(text) {
-      copyInput.value = text;
-      copyInput.select();
-      document.execCommand("copy");
+    // Plugin iframes may not be granted clipboard permission, so fall back to
+    // the legacy execCommand path if the async API rejects or is unavailable.
+    async function copyToClipboard(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch {
+        copyInput.value = text;
+        copyInput.select();
+        document.execCommand("copy");
+      }
     }
 
     // ===== TOAST =====
@@ -1663,7 +1669,7 @@
           svgCodebox.classList.remove("hidden");
           svgEmptyState.classList.add("hidden");
           svgClearBtn.disabled = false;
-          copyToClipboard(code);
+          await copyToClipboard(code);
           showToast("Component copied to clipboard.");
         } catch (err) {
           console.error(err);
@@ -1679,7 +1685,7 @@
         reactCodebox.classList.remove("hidden");
         reactEmptyState.classList.add("hidden");
         reactClearBtn.disabled = false;
-        copyToClipboard(reactStr);
+        await copyToClipboard(reactStr);
         showToast("Code copied to clipboard.");
       } else if (pluginMessage.kind === "variables") {
         const container = document.getElementById("react-buttons");
@@ -1703,7 +1709,7 @@
         codebox.classList.remove("hidden");
         emptyState.classList.add("hidden");
         btnClear.disabled = false;
-        copyToClipboard(pluginMessage);
+        await copyToClipboard(pluginMessage);
 
         let successMessage = "Action completed!";
         if (lastAction === "add")
