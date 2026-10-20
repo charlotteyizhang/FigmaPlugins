@@ -6,6 +6,7 @@ import {
   generateTemplateFn,
   modeName,
   renameLayersToVariableName,
+  variableValueToString,
 } from "./helper";
 
 interface GenerateMsg {
@@ -65,7 +66,7 @@ export const handleI18nMessage = async (msg: I18nMessage): Promise<void> => {
       for (const variable of variables) {
         const varName = variable.name.replace(/\//g, "_");
         const value = variable.valuesByMode[modes[i].modeId] ?? "i18n.TODO_TRANSLATE";
-        const escapedValue = value.toString().replace(/\n/g, "\\n");
+        const escapedValue = variableValueToString(value).replace(/\n/g, "\\n");
 
         if (variable.name.includes("error")) {
           str += `"${varName}": ${generateErrorTemplateFn(escapedValue)},`;
@@ -89,16 +90,18 @@ export const handleI18nMessage = async (msg: I18nMessage): Promise<void> => {
       return figma.ui.postMessage("No i18nCollection found.");
     }
 
+    const renames: Array<Promise<void>> = [];
     for (const node of figma.currentPage.selection) {
       if (node.type === "TEXT") {
-        renameLayersToVariableName(node);
+        renames.push(renameLayersToVariableName(node));
       } else if (node.type === "INSTANCE") {
         const textNodes = node.findAllWithCriteria({ types: ["TEXT"] });
         for (const textNode of textNodes) {
-          renameLayersToVariableName(textNode);
+          renames.push(renameLayersToVariableName(textNode));
         }
       }
     }
+    await Promise.all(renames);
   } else if (msg.type === "createVariables") {
     const targetName = "i18n";
     const localCollections = await figma.variables.getLocalVariableCollectionsAsync();

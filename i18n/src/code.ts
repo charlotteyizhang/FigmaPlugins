@@ -6,7 +6,7 @@ figma.showUI(__html__, { width: 500, height: 680 });
 
 type Message = I18nMessage | ReactMessage | SvgMessage;
 
-figma.ui.onmessage = async (msg: Message) => {
+const handleMessage = async (msg: Message) => {
   if (I18N_MESSAGE_TYPES.has(msg.type)) {
     await handleI18nMessage(msg as I18nMessage);
   } else if (SVG_MESSAGE_TYPES.has(msg.type)) {
@@ -14,4 +14,8 @@ figma.ui.onmessage = async (msg: Message) => {
   } else {
     await handleReactMessage(msg as ReactMessage);
   }
+};
+
+figma.ui.onmessage = (msg: Message) => {
+  void handleMessage(msg);
 };

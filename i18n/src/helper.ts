@@ -12,6 +12,9 @@ export const findOrCreateCollection = (
   }
 };
 
+export const variableValueToString = (value: VariableValue): string =>
+  typeof value === "object" ? JSON.stringify(value) : String(value);
+
 export const modeName = {
   en: "en",
   ja: "ja",
@@ -157,7 +160,7 @@ export const createOrUpdateVariable = async (
     if (variableValue !== undefined && text !== variableValue) {
       variable.setValueForMode(targetModeId, text);
       figma.ui.postMessage(
-        `layer name already exists in i18n collection, replaced ${variableValue} with ${text}`,
+        `layer name already exists in i18n collection, replaced ${variableValueToString(variableValue)} with ${text}`,
       );
     } else {
       figma.ui.postMessage(
