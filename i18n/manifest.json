@@ -10,6 +10,6 @@
   "ui": "./target/ui.html",
   "permissions": ["teamlibrary"],
   "networkAccess": {
-    "allowedDomains": ["https://developer.mozilla.org/"]
+    "allowedDomains": ["none"]
   }
 }
