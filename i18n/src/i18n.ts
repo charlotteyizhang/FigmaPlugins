@@ -94,9 +94,8 @@ export const handleI18nMessage = async (msg: I18nMessage): Promise<void> => {
     for (const node of figma.currentPage.selection) {
       if (node.type === "TEXT") {
         renames.push(renameLayersToVariableName(node));
-      } else if (node.type === "INSTANCE") {
-        const textNodes = node.findAllWithCriteria({ types: ["TEXT"] });
-        for (const textNode of textNodes) {
+      } else if ("findAllWithCriteria" in node) {
+        for (const textNode of node.findAllWithCriteria({ types: ["TEXT"] })) {
           renames.push(renameLayersToVariableName(textNode));
         }
       }

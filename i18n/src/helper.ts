@@ -95,31 +95,35 @@ export const generateErrorTemplateFn = (input: string): string => {
   return matchStr !== input ? "(" + params.join(",") + ")=>" + "`" + matchStr + "`" : `"${input}"`;
 };
 
-export const renameLayersToVariableName = async (node: SceneNode) => {
-  const boundVariableCharacter = node.boundVariables?.characters;
-  if (boundVariableCharacter !== undefined) {
-    const variable = await figma.variables.getVariableByIdAsync(boundVariableCharacter.id);
-    if (variable !== null) {
-      const variableName = `#${variable.name}`;
-      node.name = variableName;
-      figma.ui.postMessage(`successfully renamed layer to ${variableName} `);
-    } else {
-      figma.ui.postMessage(`bound variable not found for layer ${node.name}, skipping rename`);
-    }
-  } else {
-    const inferredVariables = node.inferredVariables?.characters;
+const getBoundVariable = async (node: TextNode): Promise<Variable | null> => {
+  const direct = node.boundVariables?.characters;
+  if (direct !== undefined) {
+    return figma.variables.getVariableByIdAsync(direct.id);
+  }
 
-    const variableId =
-      inferredVariables !== undefined && inferredVariables.length > 0
-        ? ((await figma.variables.getVariableByIdAsync(inferredVariables[0].id)) ?? undefined)
-        : undefined;
-    if (variableId !== undefined) {
-      const variableName = `#${variableId.name}`;
-      node.name = variableName;
-      figma.ui.postMessage(`successfully renamed layer to ${variableName} `);
-    } else {
-      figma.ui.postMessage(`no variable found for layer ${node.name}, skipping rename`);
-    }
+  const propertyName = node.componentPropertyReferences?.characters;
+  if (propertyName === undefined) {
+    return null;
+  }
+
+  let parent = node.parent;
+  while (parent !== null && parent.type !== "INSTANCE") {
+    parent = parent.parent;
+  }
+  const alias = parent?.componentProperties?.[propertyName]?.boundVariables?.value?.id;
+
+  return alias !== undefined ? figma.variables.getVariableByIdAsync(alias) : null;
+};
+
+export const renameLayersToVariableName = async (node: TextNode) => {
+  const variable = await getBoundVariable(node);
+
+  if (variable !== null) {
+    const variableName = `#${variable.name}`;
+    node.name = variableName;
+    figma.ui.postMessage(`successfully renamed layer to ${variableName} `);
+  } else {
+    figma.ui.postMessage(`no bound variable found for layer ${node.name}, skipping rename`);
   }
 };
 
