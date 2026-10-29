@@ -1,0 +1,10 @@
+{
+  "editor.formatOnSave": false,
+  "[typescript][typescriptreact][javascript][javascriptreact][json][jsonc][html][css][markdown]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode",
+    "editor.formatOnSave": true
+  },
+  "editor.codeActionsOnSave": { "source.fixAll.oxc": "always" },
+  "oxc.path.oxfmt": "${workspaceFolder}/i18n/node_modules/.bin/oxfmt",
+  "oxc.fmt.configPath": "${workspaceFolder}/i18n/.oxfmtrc.json"
+}

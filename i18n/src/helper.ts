@@ -97,7 +97,6 @@ export const generateErrorTemplateFn = (input: string): string => {
 
 export const renameLayersToVariableName = async (node: SceneNode) => {
   const boundVariableCharacter = node.boundVariables?.characters;
-
   if (boundVariableCharacter !== undefined) {
     const variable = await figma.variables.getVariableByIdAsync(boundVariableCharacter.id);
     if (variable !== null) {
@@ -109,6 +108,7 @@ export const renameLayersToVariableName = async (node: SceneNode) => {
     }
   } else {
     const inferredVariables = node.inferredVariables?.characters;
+
     const variableId =
       inferredVariables !== undefined && inferredVariables.length > 0
         ? ((await figma.variables.getVariableByIdAsync(inferredVariables[0].id)) ?? undefined)
@@ -203,5 +203,5 @@ export const createColor = (
   colorValue: string,
 ): string =>
   formatType === "react"
-    ? `color={${colorName}Themed[theme].${colorValue}}`
+    ? `color={${colorName}[theme].${colorValue}}`
     : `color={${colorName}[theme].${colorValue}}`;

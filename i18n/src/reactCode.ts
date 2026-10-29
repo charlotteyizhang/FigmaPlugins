@@ -346,7 +346,7 @@ const getChildrenView = (props: ChildViewProps): Promise<string> => {
           );
           content = `<Icon ${colorStr} icon="${replaceIconWord(x.node.name)}" size={${iconSize ?? undefined}}/>`;
         } else if (x.node.name.includes("Button")) {
-          const buttonKind = x.node.componentProperties?.["Type"]?.value ?? "";
+          const buttonKind = x.node.componentProperties?.["kind"]?.value ?? "";
           const textNode = findTextNode(x.node);
 
           if (textNode !== null && textNode.type === "TEXT") {
@@ -359,7 +359,7 @@ const getChildrenView = (props: ChildViewProps): Promise<string> => {
                 ? "theme={theme} responsive={responsive}"
                 : x.queryKind === "WL"
                   ? "theme={appCtx.theme}"
-                  : "";
+                  : "theme={theme}";
             content = `<${x.node.name}${env ? ` ${env}` : ""} ${buttonKind === undefined ? "" : `kind="${buttonKind}"`} text={${translation}} onPress={()=>undefined}/>`;
           } else {
             const icon = x.node.findChild((n) => n.name.toLocaleLowerCase().includes("icon"));
