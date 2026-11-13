@@ -82,8 +82,11 @@ export const handleReactMessage = async (msg: ReactMessage): Promise<void> => {
     const libraryCollections =
       await figma.teamLibrary.getAvailableLibraryVariableCollectionsAsync();
 
-    const lunarSpacing = libraryCollections.find((c) => c.name === "spacing");
-    const lunarSpacingKey = lunarSpacing?.key;
+    // A file's own published collections can be missing from the library list, so fall back to the local one's key.
+    const localCollections = await figma.variables.getLocalVariableCollectionsAsync();
+    const lunarSpacingKey =
+      libraryCollections.find((c) => c.name === "spacing")?.key ??
+      localCollections.find((c) => c.name === "spacing")?.key;
 
     if (lunarSpacingKey === undefined) {
       figma.ui.postMessage({
